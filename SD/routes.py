@@ -230,3 +230,6 @@ def updateUser2():
             BR = str(BR).strip(",")
             BR = str(BR).strip("'")
             return render_template("updateUser2.html", title = "Update User", logged_in=logged_in, authLevel=authLevel, AL=AL, BR=BR, code=code)
+        
+if __name__ == "__main__":
+    app.run( debug=True ,host="127.0.0.1", port=5050)
