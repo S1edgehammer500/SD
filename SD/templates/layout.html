@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href = "{{ url_for('static', filename='styles.css') }}"/>
+        <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"/>
+        <meta name="viewport" content = "wclassth=device-width, intial-scale=1.0">
+        {% if title %}
+            <title>Horizon Restaurant - {{ title }}</title>
+        {% else %}
+            <title>Horizon Restaurant</title>
+        {% endif %}
+        </head>
+    {% block body %}
+    <body>
+    {% endblock body %}
+        <!--nav bar-->
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+              <ul class="nav navbar-nav">
+                <li><a href="{{ url_for('home') }}">Home</a></li>
+                {% if logged_in == True: %} 
+                <div class="navbar-header">
+                  <a class="navbar-brand" href="{{ url_for('home') }}">Horizon Restaurant</a>
+                </div>
+                  {% if authLevel == 'admin': %} 
+                    <li><a href="{{ url_for('userOptions') }}"><span class="glyphicon glyphicon-tasks"></span> Edit Users</a></li>
+                    <li><a href=#><span class="glyphicon glyphicon-tasks"></span> Edit Discounts</a></li>
+                    <li><a href=#><span class="glyphicon glyphicon-tasks"></span> Edit Restaurants</a></li>
+                    <li><a href=#><span class="glyphicon glyphicon-tasks"></span> Reports</a></li>
+                    <li><a href=#><span class="glyphicon glyphicon-th-large"></span> Change Base Restaurant</a></li>
+                    <li><a href=#><span class="glyphicon glyphicon-pencil"></span> Edit Menu</a></li>
+                  {% endif %}
+                  <li><a href=#><span></span> Menu</a></li>
+                  <li><a href=#><span class="glyphicon glyphicon-user"></span> Account</a></li>
+                  <li><a href=#><span class="glyphicon glyphicon-trash"> Order</span></a></li>
+                  <li><a href=#><span class="glyphicon glyphicon-trash"> Inventory</span></a></li>
+                  <li><a href=#><span class="glyphicon glyphicon-trash"> Reservations</span></a></li>
+                  <li><a href="{{ url_for('logout') }}"><span class="glyphicon glyphicon-user"> Logout</span></a></li>
+                {% else %}
+                  <li><a href="{{ url_for('login') }}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                {% endif %}
+              </ul>
+            </div>
+        </nav>
+        <br><br><br><br>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <ul>
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                <li>{{ message }}</li>
+            </div>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock content %}
+        <div class="footer container-fluid" style="text-decoration:none; position:fixed;">
+            <br>
+            <p>© 2022 Horizon Restaurant. All rights reserved &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=#>Privacy Statement</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Horizon Restaurant</p>
+        </div>
+      </body>
+</html>

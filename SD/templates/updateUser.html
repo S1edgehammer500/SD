@@ -1,0 +1,26 @@
+{% extends "layout.html" %} 
+{% block content %} 
+
+<form action="/updateUser2/" method="post">
+    <div class="receiptBox container-fluid">   
+            <table border=1 style="color:white" class="center">
+                    <tr>
+                        <th>Employee Code &nbsp;&nbsp;</th>
+                        <th>Authorisation Level &nbsp;&nbsp;</th>
+                        <th>Base Restaurant &nbsp;&nbsp;</th>
+                    {% for i in range(codeLen): %} 
+                        <tr>
+                            <td> {{employeeCode[i]}} </td>              
+                            <td> {{authorisationLevel[i]}} </td>
+                            <td> {{baseRestaurant[i]}} </td>
+                            <td> <input required type="radio" name="code" value="{{employeeCode[i]}}" checked></td>
+                        </tr>
+                    {% endfor %}
+                </table>
+                <br><br><br>
+                <form><input style="color:black" type="submit" value="Update User" size="100"></form><br><br><br>
+            </div>
+    </div>
+</form>
+<br><br><br><br><br>
+{% endblock content %}

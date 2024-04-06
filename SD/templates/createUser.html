@@ -1,0 +1,67 @@
+{% extends "layout.html" %} 
+{% block content %}
+<script>
+  function showPassword() {
+    var x = document.getElementById("password");
+    if (x.type === "password") {
+      x.type = "text";
+    } else {
+      x.type = "password";
+    }
+  }
+</script>
+<script>
+  function showConfirmPassword() {
+    var x = document.getElementById("Confirmpassword");
+    if (x.type === "password") {
+      x.type = "text";
+    } else {
+      x.type = "password";
+    }
+  }
+</script>
+        <!--register form-->
+        <form action="/createUser/" method="post">
+          <section class="vh-100">
+            <div class="container h-100">
+              <div class="row-d-flex justify-content-center">
+                <div class="register-form-container col-11 col-m-11 col-x-11">
+                    <form action="/createUser/" method="post">
+                    <div class="form-group">
+                      <label for="code">Employee Code:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
+                      <input required style="color:black" class="code" name="code" size="30" value="{{request.form.code}}"><br>
+                  </div>
+                  <div class="form-group">
+                      <label for="base">Base Restaurant:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
+                      <select style="color:black" name="base" id="base">
+                        {% for restaurant in restaurants %}
+                          <option value='{{restaurant}}'>{{ restaurant }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="auth">Authorisation Level:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
+                      <select style="color:black" name="auth" id="auth">
+                        <option style="color:black" value="staff">Staff</option>
+                        <option style="color:black" value="chef">Chef</option>
+                        <option style="color:black" value="manager">Manager</option>
+                        <option style="color:black" value="admin">Admin</option>
+                      </select>
+                    </div>
+                  <div class="form-group">
+                      <label for="password">Password (must be at least 6 characters):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
+                      <input required style="color:black" id="password" type="password" class="password" name="password" size="30" value="{{request.form.password}}"><br>
+                      <input type="checkbox" onclick="showPassword()">Show Password
+                  </div>
+                  <div class="form-group">
+                      <label for="confirmPassword">Confirm Password:<br></label>
+                      <input required style="color:black" type="password" class="confirmPassword" id="Confirmpassword" name="confirmPassword" size="30" value="{{request.form.confirmPassword}}"><br>
+                      <input type="checkbox" onclick="showConfirmPassword()">Show Password
+                        <div class=submit-button><form><input style="color:black" type="submit" value="Register" size="100"></form></div><br><br>
+                    </div>
+                </div>
+              </div>
+              <br><br><br>
+            </section>
+          </form>
+{% endblock content %}
