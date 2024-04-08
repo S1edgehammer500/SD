@@ -1,7 +1,6 @@
 from passlib.hash import sha256_crypt
 import re
 from Model.Database import *
-from flask import flash
 
 #User class
 class User:
@@ -145,10 +144,8 @@ class User:
             if re.fullmatch(pattern, code):
                 return 1
             else:
-                flash("Invalid employee code syntax", "danger")
                 return 0
         else:
-            flash("Invalid employee code syntax", "danger")
             return 0
         
     def validateAuthorisationSyntax(self, code):
@@ -179,10 +176,8 @@ class User:
             if re.fullmatch(pattern, pw):
                 return 1
             else:
-                flash("Invalid password syntax", "danger")
                 return 0
         else:
-            flash("Invalid password syntax", "danger")
             return 0
 
     
@@ -200,13 +195,11 @@ class User:
                 conn.close()
                 return 1    # correct username and password
             else:
-                flash("Incorrect password. Please try again", "danger")
                 conn.close()
                 return 0  # incorrect password
 
         else:
             print('Record does not exist')
-            flash("Account does not exist", "danger")
             conn.close()
             return 0    #record does not exist
 
@@ -229,19 +222,16 @@ class User:
         conn, cur = openConnection()
         if self.checkEmployeeCode(code):  
             print('Employee Code or Password already exists')
-            flash("Employee Code already exists", "danger")
             conn.close()
             return 0
         elif not (self.validateCodeSyntax(code)) and not (self.validateUserpasswordSyntax(pw)):
             print("Employee code or password syntax is incorrect")
-            flash("Employee code or password syntax is incorrect", "danger")
             conn.close()
             return 0
         else:
             query = 'INSERT INTO users (employeeCode, password, authorisationLevel, baseRestaurant) VALUES (? , ?,  ?,  ?);'
             cur.execute(query, (code, sha256_crypt.hash(pw), al, br))
             print('Account details successfully saved')
-            flash("Acccount details successfully saved", "success")
             conn.commit()
             conn.close()
             return 1

@@ -1,7 +1,6 @@
 import unittest
 from passlib.hash import sha256_crypt
 from Model.userModel import *
-from flask import flash
 
 def run_tests():
 
