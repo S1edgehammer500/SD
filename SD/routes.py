@@ -10,6 +10,9 @@ from flask import redirect, url_for
 from Model.userModel import *
 from Model.restaurantModel import *
 
+# User defined
+import strip
+
 app = Flask(__name__)
 app.secret_key = 'SK'
 
@@ -24,8 +27,10 @@ def login():
     else:
         logged_in = False
         authLevel = 'staff'
+
     form={}
     error = ''
+
     try:	
         if request.method == "POST":            
             code = request.form['code']
@@ -39,16 +44,17 @@ def login():
                 if currentUser.checkCodePassword(code, password) == 0:
                     #no record of this user exists                         
                     error = "User / password does not exist or password is incorrect, login again"
+                    flash("User does not exist", "danger")
                     return render_template("login.html", error=error, title="Login")
                 else:
                     print("Query successful")                          
-                    # verify passowrd hash and password received from user                                                           
-                    print("Logged in")     
                     currentUser.setLoginDetails(code, password) 
-                    authLevel = currentUser.getAuthorisation()                        
+                    authLevel = currentUser.getAuthorisation()                  
+                          
                     #set session variable
                     session['logged_in'] = True
-                    session['authLevel'] = authLevel                        
+                    session['authLevel'] = authLevel
+                    print("Logged in")                          
                     flash("You are now logged in", "success")                               
                     return redirect(url_for('home'))                            
             else:
@@ -76,12 +82,9 @@ def login_required(f):
 @login_required
 def home():
     # check to see what navbar to display
-    if "logged_in" in session and "authLevel" in session:
-        logged_in = session['logged_in']
-        authLevel = session['authLevel']
-    else:
-        logged_in = False
-        authLevel = 'staff'
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
     return render_template('home.html', title="Home", logged_in=logged_in, authLevel=authLevel)
 
 @app.route('/createUser/', methods=['POST', 'GET'])
@@ -91,18 +94,13 @@ def createUser():
     restaurant = Restaurant()
     restaurants = []
     tempRestaurants = restaurant.getAllRestaurants()
-    for res in tempRestaurants:
-        res = str(res).strip("(")
-        res = str(res).strip(")")
-        res = str(res).strip(",")
-        res = str(res).strip("'")
-        restaurants.append(res)
-    if "logged_in" in session and "authLevel" in session:
-        logged_in = session['logged_in']
-        authLevel = session['authLevel']
-    else:
-        logged_in = False
-        authLevel = 'staff'
+
+    restaurants = strip.it(tempRestaurants)
+
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+
     error = ''
     currentUser = User()
     if session['authLevel'] != 'admin':
@@ -129,10 +127,13 @@ def createUser():
                                 flash("Account is now registered", "success")
                                 return redirect(url_for('home'))
                             else:
+                                flash("User already exists", "danger")
                                 return render_template('createUser.html', error=error, title="Create User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
                         else:
+                            flash("Invalid username syntax", "danger")
                             return render_template('createUser.html', error=error, title="Create User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
                     else:
+                        flash("Invalid password syntax", "danger")
                         return render_template('createUser.html', error=error, title="Create User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
                 else:                
                     flash("Password and Confirm Password fields need to match", "danger")
@@ -155,23 +156,17 @@ def logout():
 @login_required
 def userOptions():
     # check to see what navbar to display
-    if "logged_in" in session and "authLevel" in session:
-        logged_in = session['logged_in']
-        authLevel = session['authLevel']
-    else:
-        logged_in = False
-        authLevel = 'staff'
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
     return render_template('userOptions.html', title="User Options", logged_in=logged_in, authLevel=authLevel)
 
 @app.route("/updateUser/", methods=['GET', 'POST'])
 @login_required
 def updateUser():
-    if "logged_in" in session and "authLevel" in session:
-        logged_in = session['logged_in']
-        authLevel = session['authLevel']
-    else:
-        logged_in = False
-        authLevel = 'staff'
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
     currentUser = User()
     if session['authLevel'] != 'admin':
         flash("You need to be an admin to access this page", "danger")
@@ -179,39 +174,24 @@ def updateUser():
     else:
         baseRestaurant = []
         tempBaseRestaurant = currentUser.getBaseRestaurants()
-        for res in tempBaseRestaurant:
-            res = str(res).strip("(")
-            res = str(res).strip(")")
-            res = str(res).strip(",")
-            res = str(res).strip("'")
-            baseRestaurant.append(res)
+        baseRestaurant = strip.it(tempBaseRestaurant)
+
         authorisationLevel = []
         tempAuthorisationLevel = currentUser.getAuthorisationLevels()
-        for auth in tempAuthorisationLevel:
-            auth = str(auth).strip("(")
-            auth = str(auth).strip(")")
-            auth = str(auth).strip(",")
-            auth = str(auth).strip("'")
-            authorisationLevel.append(auth)
+        authorisationLevel = strip.it(tempAuthorisationLevel)
+
         employeeCode = []
         tempEmployeeCode = currentUser.getEmployeeCodes()
-        for code in tempEmployeeCode:
-            code = str(code).strip("(")
-            code = str(code).strip(")")
-            code = str(code).strip(",")
-            code = str(code).strip("'")
-            employeeCode.append(code)
+        employeeCode = strip.it(tempEmployeeCode)
+
     return render_template('updateUser.html', title = "Update User", logged_in=logged_in, authLevel=authLevel, baseRestaurant=baseRestaurant, authorisationLevel=authorisationLevel, employeeCode=employeeCode, codeLen=len(employeeCode))
     
 @app.route("/updateUser2/", methods=['GET', 'POST'])
 @login_required
 def updateUser2():
-    if "logged_in" in session and "authLevel" in session:
-        logged_in = session['logged_in']
-        authLevel = session['authLevel']
-    else:
-        logged_in = False
-        authLevel = 'staff'
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
     currentUser = User()
     if session['authLevel'] != 'admin':
         flash("You need to be an admin to access this page", "danger")
@@ -219,16 +199,13 @@ def updateUser2():
     else:
         if request.method == ['POST']:
             code = request.form['code']
+
             AL = currentUser.getSpecificAuthorisationLevel(code)
-            AL = str(AL).strip("(")
-            Al = str(AL).strip(")")
-            AL = str(AL).strip(",")
-            AL = str(AL).strip("'")
+            AL = strip.it(AL)
+
             BR = currentUser.getSpecificBaseRestaurant(code)
-            BR = str(BR).strip("(")
-            BR = str(BR).strip(")")
-            BR = str(BR).strip(",")
-            BR = str(BR).strip("'")
+            BR = strip.it(BR)
+
             return render_template("updateUser2.html", title = "Update User", logged_in=logged_in, authLevel=authLevel, AL=AL, BR=BR, code=code)
         
 if __name__ == "__main__":
