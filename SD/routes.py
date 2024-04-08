@@ -48,12 +48,13 @@ def login():
                     return render_template("login.html", error=error, title="Login")
                 else:
                     print("Query successful")                          
-                    currentUser.setLoginDetails(code, password) 
-                    authLevel = currentUser.getAuthorisation()                  
+                    currentUser.setLoginDetails(code) 
+                    authLevel = currentUser.getAuthorisation()                 
                           
                     #set session variable
                     session['logged_in'] = True
                     session['authLevel'] = authLevel
+                    session['code'] = code
                     print("Logged in")                          
                     flash("You are now logged in", "success")                               
                     return redirect(url_for('home'))                            
@@ -172,6 +173,7 @@ def updateUser():
         flash("You need to be an admin to access this page", "danger")
         return redirect(url_for('home'))
     else:
+        currentUser.setLoginDetails(session['code']) 
         baseRestaurant = []
         tempBaseRestaurant = currentUser.getBaseRestaurants()
         baseRestaurant = strip.it(tempBaseRestaurant)
@@ -207,6 +209,32 @@ def updateUser2():
             BR = strip.it(BR)
 
             return render_template("updateUser2.html", title = "Update User", logged_in=logged_in, authLevel=authLevel, AL=AL, BR=BR, code=code)
+        
+@app.route("/changeBaseRestaurant/", methods=['GET', 'POST'])
+@login_required
+def changeBR():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    restaurant = Restaurant()
+    restaurants = []
+    tempRestaurants = restaurant.getAllRestaurants()
+    restaurants = strip.it(tempRestaurants)
+
+    currentUser = User()
+    currentUser.setLoginDetails(session['code'])
+    oldBR = currentUser.getBaseRestaurant()
+
+    if request.method == "POST":
+        tempNewBR = request.form['base']
+        newBR = restaurant.getRestaurantIDFromName(tempNewBR)
+        currentUser.updateBaseRestaurant(session['code'], newBR)
+        flash("Restaurant has been successfully changed", "success")
+        return render_template("changeBaseRestaurant.html",title = "Change Base Restaurant", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants, oldBR=oldBR)
+    else:
+        return render_template("changeBaseRestaurant.html",title = "Change Base Restaurant", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants, oldBR=oldBR)
+            
+
         
 if __name__ == "__main__":
     app.run( debug=True ,host="127.0.0.1", port=5050)
