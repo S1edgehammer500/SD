@@ -209,11 +209,20 @@ def updateUser2():
     authLevel = session['authLevel']
 
     currentUser = User()
+    restaurant = Restaurant()
+    restaurants = []
+    tempRestaurants = restaurant.getAllRestaurants()
 
-    if request.method == ['POST']:
+    restaurants = strip.it(tempRestaurants)
+
+    print(request.method)
+
+
+
+    if request.method == "POST":
         code = request.form['code']
 
-        print(code)
+        session['code'] = code
 
         AL = currentUser.getSpecificAuthorisationLevel(code)
         print(AL)
@@ -225,8 +234,9 @@ def updateUser2():
         BR = strip.it(BR)
         print(BR)
 
-        return render_template("updateUser2.html", title = "Update User", logged_in=logged_in, authLevel=authLevel, AL=AL, BR=BR, code=code)
-    return render_template("updateUser2.html", title = "Update User", logged_in=logged_in, authLevel=authLevel)
+        return render_template("updateUser2.html", title = "Update User", logged_in=logged_in, authLevel=authLevel, AL=AL, BR=BR, code=code, restaurants=restaurants)
+    
+    return render_template("updateUser2.html", title = "Update User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
 
 
 @app.route("/updateUser3/", methods=['GET', 'POST'])
@@ -237,24 +247,57 @@ def updateUser3():
     authLevel = session['authLevel']
 
     currentUser = User()
+    restaurant = Restaurant()
+    restaurants = []
+    tempRestaurants = restaurant.getAllRestaurants()
 
-    if request.method == ['POST']:
-        code = request.form['code']
+    restaurants = strip.it(tempRestaurants)
 
-        print(code)
+    
 
-        AL = currentUser.getSpecificAuthorisationLevel(code)
-        print(AL)
-        AL = strip.it(AL)
-        print(AL)
+    try:
+        if request.method == "POST":
+            
+            code = request.form['code']
+            base = restaurant.getRestaurantIDFromName(request.form['base'])
+            auth = request.form['auth']
+            print(base)
 
-        BR = currentUser.getSpecificBaseRestaurant(code)
-        print(BR)
-        BR = strip.it(BR)
-        print(BR)
 
-        return render_template("updateUser2.html", title = "Update User", logged_in=logged_in, authLevel=authLevel, AL=AL, BR=BR, code=code)
-    return render_template("updateUser2.html", title = "Update User", logged_in=logged_in, authLevel=authLevel)
+
+            if code != None and base != None and auth != None:
+    
+                if currentUser.validateCodeSyntax(code) == 1:
+        
+                    if currentUser.validateAuthorisationSyntax(auth) == 1:
+            
+                        if currentUser.validateBaseRestaurantSyntax(base) == 1:
+                
+
+                            previousCode = session['code']
+                            
+                            currentUser.updateBaseRestaurant(previousCode, base)
+                            currentUser.updateAuthorisation(previousCode, auth)
+                            print(code)
+                            print(previousCode)
+                            if code != previousCode:
+                                currentUser.updateCode(previousCode, code)
+
+                            flash("Well done bro!! This actually worked! You deserve a chicken and rice box from everyone who isn't on rn", 'info')
+
+                            return redirect(url_for('home'))
+                        else:
+                            flash("THere's something wrong", "error")
+                            return render_template('updateUser2.html', error="", title = "Update User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
+                    else:
+                        return render_template('updateUser2.html', error="", title = "Update User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
+                else:
+                    return render_template('updateUser2.html', error="", title = "Update User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
+            else:                
+                flash("Please don't leave any field empty", "danger")
+                return render_template('updateUser2.html', error="", title = "Update User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
+    except Exception as e:                
+        return render_template('updateUser2.html', error=e, title = "Update User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
         
 if __name__ == "__main__":
     app.run( debug=True ,host="127.0.0.1", port=5050)
