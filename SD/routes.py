@@ -44,8 +44,6 @@ def admin_required(f):
 
 
 
-
-
 # Routes
 
 @app.route("/")
@@ -215,13 +213,48 @@ def updateUser2():
     if request.method == ['POST']:
         code = request.form['code']
 
+        print(code)
+
         AL = currentUser.getSpecificAuthorisationLevel(code)
+        print(AL)
         AL = strip.it(AL)
+        print(AL)
 
         BR = currentUser.getSpecificBaseRestaurant(code)
+        print(BR)
         BR = strip.it(BR)
+        print(BR)
 
         return render_template("updateUser2.html", title = "Update User", logged_in=logged_in, authLevel=authLevel, AL=AL, BR=BR, code=code)
+    return render_template("updateUser2.html", title = "Update User", logged_in=logged_in, authLevel=authLevel)
+
+
+@app.route("/updateUser3/", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def updateUser3():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    currentUser = User()
+
+    if request.method == ['POST']:
+        code = request.form['code']
+
+        print(code)
+
+        AL = currentUser.getSpecificAuthorisationLevel(code)
+        print(AL)
+        AL = strip.it(AL)
+        print(AL)
+
+        BR = currentUser.getSpecificBaseRestaurant(code)
+        print(BR)
+        BR = strip.it(BR)
+        print(BR)
+
+        return render_template("updateUser2.html", title = "Update User", logged_in=logged_in, authLevel=authLevel, AL=AL, BR=BR, code=code)
+    return render_template("updateUser2.html", title = "Update User", logged_in=logged_in, authLevel=authLevel)
         
 if __name__ == "__main__":
     app.run( debug=True ,host="127.0.0.1", port=5050)
