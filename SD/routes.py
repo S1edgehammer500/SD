@@ -47,15 +47,13 @@ def login():
                     return render_template("login.html", error=error, title="Login")
                 else:
                     print("Query successful")                          
-
-                    # verify passowrd hash and password received from user                                                           
-                    print("Logged in")     
                     currentUser.setLoginDetails(code, password) 
                     authLevel = currentUser.getAuthorisation()                  
                           
                     #set session variable
                     session['logged_in'] = True
-                    session['authLevel'] = authLevel                        
+                    session['authLevel'] = authLevel
+                    print("Logged in")                          
                     flash("You are now logged in", "success")                               
                     return redirect(url_for('home'))                            
             else:
