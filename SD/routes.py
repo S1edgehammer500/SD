@@ -81,13 +81,14 @@ def login():
 
                     # verify passowrd hash and password received from user                                                           
                     print("Logged in")     
-                    currentUser.setLoginDetails(code, password) 
+                    currentUser.setLoginDetails(code) 
                     authLevel = currentUser.getAuthorisation()   
 
                             
                     #set session variable
                     session['logged_in'] = True
-                    session['authLevel'] = authLevel    
+                    session['authLevel'] = authLevel
+                    session['code'] = code    
                                         
                     flash("You are now logged in", "success")                            
 
@@ -190,18 +191,24 @@ def updateUser():
     authLevel = session['authLevel']
     
     currentUser = User()
+    currentUser.setLoginDetails(session['code'])
+    AL = currentUser.getAuthorisation()
+    BR = currentUser.getBaseRestaurant()
 
     employeeCode = []
     tempEmployeeCode = currentUser.getEmployeeCodes()
     employeeCode = strip.it(tempEmployeeCode)
+    employeeCode.append(session['code'])
 
     baseRestaurant = []
     tempBaseRestaurant = currentUser.getBaseRestaurants()
     baseRestaurant = strip.it(tempBaseRestaurant)
+    baseRestaurant.append(BR)
 
     authorisationLevel = []
     tempAuthorisationLevel = currentUser.getAuthorisationLevels()
     authorisationLevel = strip.it(tempAuthorisationLevel)
+    authorisationLevel.append(AL)
 
     return render_template('updateUser.html', title = "Update User", logged_in=logged_in, authLevel=authLevel, baseRestaurant=baseRestaurant, authorisationLevel=authorisationLevel, employeeCode=employeeCode, codeLen=len(employeeCode))
     
