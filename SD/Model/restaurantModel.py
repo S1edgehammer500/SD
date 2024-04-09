@@ -68,7 +68,7 @@ class Restaurant: #restaurant class
         
     def validateRestaurantSyntax(self, resName):
         if len(resName) > 0:
-            pattern = r'[A-Za-z]{6,}' # At least a 6 letter word
+            pattern = r'[A-Za-z]{4,}' # At least a 6 letter word
             if re.fullmatch(pattern, resName):
                 return 1
             else:
