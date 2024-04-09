@@ -191,6 +191,7 @@ def updateUser():
     authLevel = session['authLevel']
     
     currentUser = User()
+    currentUser.setLoginDetails(session['code'])
 
     currentUser.setLoginDetails(session['code'])   
 
@@ -201,6 +202,7 @@ def updateUser():
     tempEmployeeCode = currentUser.getEmployeeCodes()
     employeeCode = strip.it(tempEmployeeCode)
     employeeCode.append(session['code'])
+
 
     baseRestaurant = []
     tempBaseRestaurant = currentUser.getBaseRestaurants()
@@ -235,12 +237,14 @@ def updateUser2():
         session['code'] = code
 
         AL = currentUser.getSpecificAuthorisationLevel(code)
-        AL = int(strip.it(AL))
-        print(AL)
+        AL = strip.it(AL)[0]
 
         BR = currentUser.getSpecificBaseRestaurant(code)
         # BR comes back as a string so make sure to make it an int before using
-        BR = int(strip.it(BR))
+        BR = strip.it(BR)[0]
+
+        print(BR)
+        print(AL)
 
 
         return render_template("updateUser2.html", title = "Update User", logged_in=logged_in, authLevel=authLevel, AL=AL, BR=BR, code=code, restaurants=restaurants, restaurantLen=len(restaurants))
@@ -295,7 +299,7 @@ def updateUser3():
                             flash(f"You have successfully updated the user {code}", 'info')
                             return redirect(url_for('userOptions'))
                         else:
-                            flash("THere's something wrong", "error")
+                            flash("There's something wrong", "error")
                             return render_template('updateUser2.html', error="", title = "Update User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
                     else:
                         return render_template('updateUser2.html', error="", title = "Update User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
