@@ -223,7 +223,6 @@ def updateUser2():
     authLevel = session['authLevel']
 
     currentUser = User()
-    currentUser.setLoginDetails(session['previousCode'])
     restaurant = Restaurant()
     restaurants = []
     tempRestaurants = restaurant.getAllRestaurants()
@@ -233,8 +232,8 @@ def updateUser2():
 
     if request.method == "POST":
         code = request.form['code']
-
         session['previousCode'] = code
+        currentUser.setLoginDetails(session['previousCode'])
 
         AL = currentUser.getAuthorisation()
 
