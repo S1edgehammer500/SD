@@ -154,6 +154,7 @@ def createUser():
                         flash("Invalid password syntax", "danger")
                         return render_template('createUser.html', error=error, title="Create User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
                 else:
+                    flash("Invalid username syntax", "danger")
                     return render_template('createUser.html', error=error, title="Create User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
             else:                
                 flash("Password and Confirm Password fields need to match", "danger")
@@ -408,12 +409,13 @@ def createRestaurant():
                                 flash("Invalid restaurant syntax", "danger")
                                 return render_template('createRestaurant.html', error=error, title="Create Restaurant", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
                         else:
-                            flash("Invalid restaurant syntax", "danger")
+                            flash("Invalid table number", "danger")
                             return render_template('createRestaurant.html', error=error, title="Create Restaurant", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
                     else:
+                        flash("Invalid resaurant syntax", "danger")
                         return render_template('createRestaurant.html', error=error, title="Create Restaurant", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
                 else:
-                    flash("Restaurant name already exists")
+                    flash("Restaurant name already exists", "danger")
                     print("Restaurant name exists")
                     return render_template('createRestaurant.html', error=error, title="Create Restaurant", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
             else:                
