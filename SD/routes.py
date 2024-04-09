@@ -215,9 +215,6 @@ def updateUser2():
 
     restaurants = strip.it(tempRestaurants)
 
-    print(request.method)
-
-
 
     if request.method == "POST":
         code = request.form['code']
@@ -225,16 +222,15 @@ def updateUser2():
         session['code'] = code
 
         AL = currentUser.getSpecificAuthorisationLevel(code)
-        print(AL)
-        AL = strip.it(AL)
+        AL = int(strip.it(AL))
         print(AL)
 
         BR = currentUser.getSpecificBaseRestaurant(code)
-        print(BR)
-        BR = strip.it(BR)
-        print(BR)
+        # BR comes back as a string so make sure to make it an int before using
+        BR = int(strip.it(BR))
 
-        return render_template("updateUser2.html", title = "Update User", logged_in=logged_in, authLevel=authLevel, AL=AL, BR=BR, code=code, restaurants=restaurants)
+
+        return render_template("updateUser2.html", title = "Update User", logged_in=logged_in, authLevel=authLevel, AL=AL, BR=BR, code=code, restaurants=restaurants, restaurantLen=len(restaurants))
     
     return render_template("updateUser2.html", title = "Update User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
 
@@ -283,9 +279,8 @@ def updateUser3():
                             if code != previousCode:
                                 currentUser.updateCode(previousCode, code)
 
-                            flash("Well done bro!! This actually worked! You deserve a chicken and rice box from everyone who isn't on rn", 'info')
-
-                            return redirect(url_for('home'))
+                            flash(f"You have successfully updated the user {code}", 'info')
+                            return redirect(url_for('userOptions'))
                         else:
                             flash("THere's something wrong", "error")
                             return render_template('updateUser2.html', error="", title = "Update User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
