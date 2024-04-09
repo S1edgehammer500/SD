@@ -17,9 +17,9 @@ def create_reservation_table():
         else:
             c.execute('''
             CREATE TABLE reservation
-            (reservationID INTEGER PRIMARY KEY AUTOINCREMENT, restaurantID INT NOT NULL, tables STRING NOT NULL,
+            (reservationID INTEGER PRIMARY KEY AUTOINCREMENT, restaurantName varchar(200) NOT NULL, tables STRING NOT NULL,
            startTime DATETIME NOT NULL, endTime DATETIME NOT NULL,
-             FOREIGN KEY (restaurantID) REFERENCES restaurant(restaurantID) ON DELETE CASCADE)
+             FOREIGN KEY (restaurantName) REFERENCES restaurant(restaurantName) ON DELETE CASCADE)
             ''')
             conn.commit()
             print("Table 'reservation' created successfully")

@@ -135,17 +135,14 @@ def createUser():
         if request.method == "POST": 
             #getting data from form        
             code = request.form['code']
-            tempBR = request.form['base']
-            print(str(tempBR)) 
+            BR = request.form['base']
+            print(str(BR)) 
             AL = request.form['auth']
             password = request.form['password']
             confirmPassword = request.form['confirmPassword']                    
-            if code != None and tempBR != None and password != None and confirmPassword != None and confirmPassword == password:
+            if code != None and BR != None and password != None and confirmPassword != None and confirmPassword == password:
                 if currentUser.validateUserpasswordSyntax(password) == 1:
                     if currentUser.validateCodeSyntax(code) == 1:
-                        print(str(tempBR))
-                        BR = restaurant.getRestaurantIDFromName(tempBR)
-                        print(str(tempBR))
                         print(str(BR))
                         if currentUser.saveUserDetails(code, password, AL, BR) == 1:                      
                             flash("Account is now registered", "success")
@@ -248,18 +245,28 @@ def updateUser():
     currentUser = User()
     currentUser.setLoginDetails(session['code'])
 
+    BR = currentUser.getBaseRestaurant()
+    AL = currentUser.getAuthorisation()
+
     employeeCode = []
     tempEmployeeCode = currentUser.getEmployeeCodes()
     employeeCode = strip.it(tempEmployeeCode)
+    print(employeeCode)
+    employeeCode.append(session['code'])
 
 
     baseRestaurant = []
     tempBaseRestaurant = currentUser.getBaseRestaurants()
     baseRestaurant = strip.it(tempBaseRestaurant)
+    baseRestaurant.append(BR)
+    print(baseRestaurant)
 
     authorisationLevel = []
     tempAuthorisationLevel = currentUser.getAuthorisationLevels()
     authorisationLevel = strip.it(tempAuthorisationLevel)
+    authorisationLevel.append(AL)
+    print(authorisationLevel)
+    print(AL)
 
     return render_template('updateUser.html', title = "Update User", logged_in=logged_in, authLevel=authLevel, baseRestaurant=baseRestaurant, authorisationLevel=authorisationLevel, employeeCode=employeeCode, codeLen=len(employeeCode))
     
@@ -280,15 +287,12 @@ def updateUser2():
 
     if request.method == "POST":
         code = request.form['code']
+        session['previousCode'] = code
+        currentUser.setLoginDetails(session['previousCode'])
 
-        session['code'] = code
+        AL = currentUser.getAuthorisation()
 
-        AL = currentUser.getSpecificAuthorisationLevel(code)
-        AL = strip.it(AL)[0]
-
-        BR = currentUser.getSpecificBaseRestaurant(code)
-        # BR comes back as a string so make sure to make it an int before using
-        BR = strip.it(BR)[0]
+        BR = currentUser.getBaseRestaurant()
 
         print(BR)
         print(AL)
@@ -319,7 +323,7 @@ def updateUser3():
         if request.method == "POST":
             
             code = request.form['code']
-            base = restaurant.getRestaurantIDFromName(request.form['base'])
+            base = request.form['base']
             auth = request.form['auth']
             print(base)
 
@@ -334,7 +338,7 @@ def updateUser3():
                         if currentUser.validateBaseRestaurantSyntax(base) == 1:
                 
 
-                            previousCode = session['code']
+                            previousCode = session['previousCode']
                             
                             currentUser.updateBaseRestaurant(previousCode, base)
                             currentUser.updateAuthorisation(previousCode, auth)

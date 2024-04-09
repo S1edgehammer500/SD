@@ -17,14 +17,14 @@ def create_orders_table():
         else:
             c.execute('''
                     CREATE TABLE IF NOT EXISTS orders (
-            restaurantID INT NOT NULL,
+            restaurantName varchar(200) NOT NULL,
             orderID INTEGER PRIMARY KEY AUTOINCREMENT,
             status TEXT NOT NULL,
             orderPrice FLOAT NOT NULL,
             tableNumber INT NOT NULL,
             startTime DATETIME NOT NULL,
             readyTime DATETIME NOT NULL,
-            FOREIGN KEY (restaurantID) REFERENCES restaurant(restaurantID) ON DELETE CASCADE)
+            FOREIGN KEY (restaurantName) REFERENCES restaurant(restaurantName) ON DELETE CASCADE)
             ''')
             conn.commit()
             print("Table 'orders' created successfully")
