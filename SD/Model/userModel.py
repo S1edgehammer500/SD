@@ -252,39 +252,38 @@ class User:
             conn.close()
             return 0
     
-    def setLoginDetails(self, code, pw):
+    def setLoginDetails(self, code):
         conn, cur = openConnection()
-        query = "SELECT authorisationLevel, baseRestaurant FROM users WHERE employeeCode = ?;"
+        query = "SELECT password, authorisationLevel, baseRestaurant FROM users WHERE employeeCode = ?;"
         cur.execute(query, (code,))
         record = cur.fetchone()
         self.setCode(code)
-        self.setPassword(pw)
-        self.setAuthorisation(record[0])
-        print(record[0])
-        self.setBaseRestaurant(record[1])
+        self.setPassword(record[0])
+        self.setAuthorisation(record[1])
+        self.setBaseRestaurant(record[2])
         print("Login details set")
         conn.close()
 
     def getAuthorisationLevels(self):
         conn, cur = openConnection()
-        query = "SELECT authorisationLevel FROM users WHERE authorisationLevel != ? ORDER BY employeeCode;"
-        cur.execute(query, ('admin',))
+        query = "SELECT authorisationLevel FROM users WHERE authorisationLevel != ? AND baseRestaurant = ? ORDER BY employeeCode;"
+        cur.execute(query, ('admin', self.__baseRestaurant))
         record = cur.fetchall()
         conn.close()
         return record
     
     def getBaseRestaurants(self):
         conn, cur = openConnection()
-        query = "SELECT baseRestaurant FROM users WHERE authorisationLevel != ? ORDER BY employeeCode;"
-        cur.execute(query, ('admin',))
+        query = "SELECT baseRestaurant FROM users WHERE authorisationLevel != ? AND baseRestaurant = ? ORDER BY employeeCode;"
+        cur.execute(query, ('admin', self.__baseRestaurant))
         record = cur.fetchall()
         conn.close()
         return record
     
     def getEmployeeCodes(self):
         conn, cur = openConnection()
-        query = "SELECT employeeCode FROM users WHERE authorisationLevel != ? ORDER BY employeeCode;"
-        cur.execute(query, ('admin',))
+        query = "SELECT employeeCode FROM users WHERE authorisationLevel != ? AND baseRestaurant = ? ORDER BY employeeCode;"
+        cur.execute(query, ('admin', self.__baseRestaurant))
         record = cur.fetchall()
         conn.close()
         return record
