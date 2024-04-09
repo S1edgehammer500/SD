@@ -74,6 +74,7 @@ def login():
                 if currentUser.checkCodePassword(code, password) == 0:
                     #no record of this user exists                         
                     error = "User / password does not exist or password is incorrect, login again"
+                    flash("User does not exist", "danger")
                     return render_template("login.html", error=error, title="Login")
                 else:
                     print("Query successful")                          
@@ -89,6 +90,7 @@ def login():
                     session['authLevel'] = authLevel    
                                         
                     flash("You are now logged in", "success")                            
+
                     return redirect(url_for('home'))                            
             else:
                 flash("You have entered no details", "danger")
@@ -148,8 +150,10 @@ def createUser():
                             flash("Account is now registered", "success")
                             return redirect(url_for('home'))
                         else:
+                            flash("Invalid username syntax", "danger")
                             return render_template('createUser.html', error=error, title="Create User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
                     else:
+                        flash("Invalid password syntax", "danger")
                         return render_template('createUser.html', error=error, title="Create User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
                 else:
                     return render_template('createUser.html', error=error, title="Create User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
