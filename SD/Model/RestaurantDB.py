@@ -17,7 +17,7 @@ def create_restaurant_table():
         else:
             c.execute('''
             CREATE TABLE restaurant
-            (restaurantID INTEGER PRIMARY KEY AUTOINCREMENT, restaurantName varchar(200) NOT NULL, numberOfTables INTEGER NOT NULL)
+            (restaurantName varchar(200) NOT NULL PRIMARY KEY, numberOfTables INTEGER NOT NULL)
             ''')
             conn.commit()
             print("Table 'restaurant' created successfully")

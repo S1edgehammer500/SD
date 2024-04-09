@@ -17,8 +17,8 @@ def create_inventory_table():
         else:
             c.execute('''
             CREATE TABLE inventory
-            (inventoryID INTEGER PRIMARY KEY AUTOINCREMENT, restaurantID INT NOT NULL UNIQUE, itemID INT NOT NULL UNIQUE,
-           FOREIGN KEY (restaurantID) REFERENCES restaurant(restaurantID) ON DELETE CASCADE, FOREIGN KEY (itemID) REFERENCES item(itemID) ON DELETE CASCADE)
+            (inventoryID INTEGER PRIMARY KEY AUTOINCREMENT, restaurantName varchar(200) NOT NULL UNIQUE, itemID INT NOT NULL UNIQUE,
+           FOREIGN KEY (restaurantName) REFERENCES restaurant(restaurantName) ON DELETE CASCADE, FOREIGN KEY (itemID) REFERENCES item(itemID) ON DELETE CASCADE)
             ''')
             conn.commit()
             print("Table 'inventory' created successfully")
