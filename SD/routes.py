@@ -129,7 +129,6 @@ def createUser():
 
 
     error = ''
-    currentUser = User()
 
     try:
         if request.method == "POST": 
