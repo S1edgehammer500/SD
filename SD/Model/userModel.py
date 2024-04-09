@@ -257,6 +257,8 @@ class User:
         query = "SELECT password, authorisationLevel, baseRestaurant FROM users WHERE employeeCode = ?;"
         cur.execute(query, (code,))
         record = cur.fetchone()
+        print(code)
+        print(record)
         self.setCode(code)
         self.setPassword(record[0])
         self.setAuthorisation(record[1])

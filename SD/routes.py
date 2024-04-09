@@ -184,6 +184,61 @@ def userOptions():
 
     return render_template('userOptions.html', title="User Options", logged_in=logged_in, authLevel=authLevel)
 
+@app.route("/deleteUser/", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def deleteUser():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    currentUser = User()
+    currentUser.setLoginDetails(session['code'])
+
+    employeeCode = []
+    tempEmployeeCode = currentUser.getEmployeeCodes()
+    employeeCode = strip.it(tempEmployeeCode)
+
+
+    baseRestaurant = []
+    tempBaseRestaurant = currentUser.getBaseRestaurants()
+    baseRestaurant = strip.it(tempBaseRestaurant)
+
+    authorisationLevel = []
+    tempAuthorisationLevel = currentUser.getAuthorisationLevels()
+    authorisationLevel = strip.it(tempAuthorisationLevel)
+
+    return render_template('deleteUser.html', title = "Delete User", logged_in=logged_in, authLevel=authLevel, baseRestaurant=baseRestaurant, authorisationLevel=authorisationLevel, employeeCode=employeeCode, codeLen=len(employeeCode))
+
+@app.route("/deleteUser2/", methods=['GET', 'POST'])
+@login_required
+def deleteUser2():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    currentUser = User()
+
+    try:
+        if request.method == "POST":
+            # Code that you wanna delete
+            code = request.form['code']
+
+            # Users code. DON'T DELETE
+            usercode = session['code']
+
+            if code != usercode:
+                if currentUser.deleteUser(code):
+                    flash(f"You have successfully deleted the user {code}", 'info')
+                    return redirect(url_for('userOptions'))
+                else:
+                    flash(f"Account \"{code}\" does not exist", 'danger')
+                    return redirect(url_for('deleteUser'))
+            else:
+                flash("You cannot delete your own user", "danger")
+                return redirect(url_for('deleteUser'))
+    except Exception as e:  
+        return render_template('userOptions.html', error=e, title="User Options", logged_in=logged_in, authLevel=authLevel)
+
 @app.route("/updateUser/", methods=['GET', 'POST'])
 @login_required
 def updateUser():
