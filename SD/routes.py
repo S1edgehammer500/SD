@@ -16,6 +16,36 @@ import strip
 app = Flask(__name__)
 app.secret_key = 'SK'
 
+# Wrappers
+
+def login_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'logged_in' in session:
+            return f(*args, **kwargs)
+        else:
+            flash("You need to be logged in to access this page", "danger")
+            return render_template('login.html', title="Login")
+    return wrap 
+
+def admin_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'authLevel' in session:
+            if session['authLevel'] == 'admin':
+                return f(*args, **kwargs)
+            else:
+                flash("You need to be logged in as an admin to access this page", "danger")
+                return redirect(url_for('home'))
+        else:
+            flash("You need to be logged in to access this page", "danger")
+            return render_template('login.html', title="Login")
+    return wrap
+
+
+
+# Routes
+
 @app.route("/")
 @app.route('/login/', methods=["GET","POST"])
 def login():
@@ -48,15 +78,19 @@ def login():
                     return render_template("login.html", error=error, title="Login")
                 else:
                     print("Query successful")                          
-                    currentUser.setLoginDetails(code) 
-                    authLevel = currentUser.getAuthorisation()                 
-                          
+
+                    # verify passowrd hash and password received from user                                                           
+                    print("Logged in")     
+                    currentUser.setLoginDetails(code, password) 
+                    authLevel = currentUser.getAuthorisation()   
+
+                            
                     #set session variable
                     session['logged_in'] = True
-                    session['authLevel'] = authLevel
-                    session['code'] = code
-                    print("Logged in")                          
-                    flash("You are now logged in", "success")                               
+                    session['authLevel'] = authLevel    
+                                        
+                    flash("You are now logged in", "success")                            
+
                     return redirect(url_for('home'))                            
             else:
                 flash("You have entered no details", "danger")
@@ -69,16 +103,6 @@ def login():
     return render_template("login.html", form=form, error=error, title="Login", logged_in=logged_in, authLevel=authLevel)
 
 
-def login_required(f):
-    @wraps(f)
-    def wrap(*args, **kwargs):
-        if 'logged_in' in session:
-            return f(*args, **kwargs)
-        else:
-            flash("You need to be logged in to access this page", "danger")
-            return render_template('login.html', title="Login")
-    return wrap 
-
 @app.route("/home.html/")
 @login_required
 def home():
@@ -90,6 +114,7 @@ def home():
 
 @app.route('/createUser/', methods=['POST', 'GET'])
 @login_required
+@admin_required
 def createUser():
     currentUser = User()
     restaurant = Restaurant()
@@ -104,47 +129,43 @@ def createUser():
 
     error = ''
     currentUser = User()
-    if session['authLevel'] != 'admin':
-        flash("You need to be an admin to access this page", "danger")
-        return redirect(url_for('home'))
-    else:
-        try:
-            if request.method == "POST": 
-                #getting data from form        
-                code = request.form['code']
-                tempBR = request.form['base']
-                print(str(tempBR)) 
-                AL = request.form['auth']
-                password = request.form['password']
-                confirmPassword = request.form['confirmPassword']                    
-                if code != None and tempBR != None and password != None and confirmPassword != None and confirmPassword == password:
-                    if currentUser.validateUserpasswordSyntax(password) == 1:
-                        if currentUser.validateCodeSyntax(code) == 1:
-                            print(str(tempBR))
-                            BR = restaurant.getRestaurantIDFromName(tempBR)
-                            print(str(tempBR))
-                            print(str(BR))
-                            if currentUser.saveUserDetails(code, password, AL, BR) == 1:                      
-                                flash("Account is now registered", "success")
-                                return redirect(url_for('home'))
-                            else:
-                                flash("User already exists", "danger")
-                                return render_template('createUser.html', error=error, title="Create User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
+
+    try:
+        if request.method == "POST": 
+            #getting data from form        
+            code = request.form['code']
+            tempBR = request.form['base']
+            print(str(tempBR)) 
+            AL = request.form['auth']
+            password = request.form['password']
+            confirmPassword = request.form['confirmPassword']                    
+            if code != None and tempBR != None and password != None and confirmPassword != None and confirmPassword == password:
+                if currentUser.validateUserpasswordSyntax(password) == 1:
+                    if currentUser.validateCodeSyntax(code) == 1:
+                        print(str(tempBR))
+                        BR = restaurant.getRestaurantIDFromName(tempBR)
+                        print(str(tempBR))
+                        print(str(BR))
+                        if currentUser.saveUserDetails(code, password, AL, BR) == 1:                      
+                            flash("Account is now registered", "success")
+                            return redirect(url_for('home'))
                         else:
                             flash("Invalid username syntax", "danger")
                             return render_template('createUser.html', error=error, title="Create User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
                     else:
                         flash("Invalid password syntax", "danger")
                         return render_template('createUser.html', error=error, title="Create User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
-                else:                
-                    flash("Password and Confirm Password fields need to match", "danger")
-                    print("Passwords don't match")
+                else:
                     return render_template('createUser.html', error=error, title="Create User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
-            else:            
-                return render_template('createUser.html', error=error, title="Create User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)        
-        except Exception as e:                
-            return render_template('createUser.html', error=e, title="Create User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
-    
+            else:                
+                flash("Password and Confirm Password fields need to match", "danger")
+                print("Passwords don't match")
+                return render_template('createUser.html', error=error, title="Create User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
+        else:            
+            return render_template('createUser.html', error=error, title="Create User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)        
+    except Exception as e:                
+        return render_template('createUser.html', error=e, title="Create User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
+
 @app.route("/logout/")
 @login_required
 def logout():
@@ -169,54 +190,113 @@ def updateUser():
     authLevel = session['authLevel']
     
     currentUser = User()
-    currentUser.setLoginDetails(session['code'])   
 
-    BR = currentUser.getBaseRestaurant()
-    AL = currentUser.getAuthorisation()
+    employeeCode = []
+    tempEmployeeCode = currentUser.getEmployeeCodes()
+    employeeCode = strip.it(tempEmployeeCode)
 
-    if session['authLevel'] != 'admin':
-        flash("You need to be an admin to access this page", "danger")
-        return redirect(url_for('home'))
-    else:
-        currentUser.setLoginDetails(session['code']) 
-        baseRestaurant = []
-        tempBaseRestaurant = currentUser.getBaseRestaurants()
-        baseRestaurant = strip.it(tempBaseRestaurant)
-        baseRestaurant.append(BR)
+    baseRestaurant = []
+    tempBaseRestaurant = currentUser.getBaseRestaurants()
+    baseRestaurant = strip.it(tempBaseRestaurant)
 
-        authorisationLevel = []
-        tempAuthorisationLevel = currentUser.getAuthorisationLevels()
-        authorisationLevel = strip.it(tempAuthorisationLevel)
-        authorisationLevel.append(AL)
-
-        employeeCode = []
-        tempEmployeeCode = currentUser.getEmployeeCodes()
-        employeeCode = strip.it(tempEmployeeCode)
-        employeeCode.append(session['code'])
+    authorisationLevel = []
+    tempAuthorisationLevel = currentUser.getAuthorisationLevels()
+    authorisationLevel = strip.it(tempAuthorisationLevel)
 
     return render_template('updateUser.html', title = "Update User", logged_in=logged_in, authLevel=authLevel, baseRestaurant=baseRestaurant, authorisationLevel=authorisationLevel, employeeCode=employeeCode, codeLen=len(employeeCode))
     
 @app.route("/updateUser2/", methods=['GET', 'POST'])
 @login_required
+@admin_required
 def updateUser2():
     logged_in = session['logged_in']
     authLevel = session['authLevel']
 
     currentUser = User()
-    if session['authLevel'] != 'admin':
-        flash("You need to be an admin to access this page", "danger")
-        return redirect(url_for('home'))
-    else:
-        if request.method == ['POST']:
+    restaurant = Restaurant()
+    restaurants = []
+    tempRestaurants = restaurant.getAllRestaurants()
+
+    restaurants = strip.it(tempRestaurants)
+
+
+    if request.method == "POST":
+        code = request.form['code']
+
+        session['code'] = code
+
+        AL = currentUser.getSpecificAuthorisationLevel(code)
+        AL = int(strip.it(AL))
+        print(AL)
+
+        BR = currentUser.getSpecificBaseRestaurant(code)
+        # BR comes back as a string so make sure to make it an int before using
+        BR = int(strip.it(BR))
+
+
+        return render_template("updateUser2.html", title = "Update User", logged_in=logged_in, authLevel=authLevel, AL=AL, BR=BR, code=code, restaurants=restaurants, restaurantLen=len(restaurants))
+    
+    return render_template("updateUser2.html", title = "Update User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
+
+
+@app.route("/updateUser3/", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def updateUser3():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    currentUser = User()
+    restaurant = Restaurant()
+    restaurants = []
+    tempRestaurants = restaurant.getAllRestaurants()
+
+    restaurants = strip.it(tempRestaurants)
+
+    
+
+    try:
+        if request.method == "POST":
+            
             code = request.form['code']
+            base = restaurant.getRestaurantIDFromName(request.form['base'])
+            auth = request.form['auth']
+            print(base)
 
-            AL = currentUser.getSpecificAuthorisationLevel(code)
-            AL = strip.it(AL)
 
-            BR = currentUser.getSpecificBaseRestaurant(code)
-            BR = strip.it(BR)
 
-            return render_template("updateUser2.html", title = "Update User", logged_in=logged_in, authLevel=authLevel, AL=AL, BR=BR, code=code)
+            if code != None and base != None and auth != None:
+    
+                if currentUser.validateCodeSyntax(code) == 1:
+        
+                    if currentUser.validateAuthorisationSyntax(auth) == 1:
+            
+                        if currentUser.validateBaseRestaurantSyntax(base) == 1:
+                
+
+                            previousCode = session['code']
+                            
+                            currentUser.updateBaseRestaurant(previousCode, base)
+                            currentUser.updateAuthorisation(previousCode, auth)
+                            print(code)
+                            print(previousCode)
+                            if code != previousCode:
+                                currentUser.updateCode(previousCode, code)
+
+                            flash(f"You have successfully updated the user {code}", 'info')
+                            return redirect(url_for('userOptions'))
+                        else:
+                            flash("THere's something wrong", "error")
+                            return render_template('updateUser2.html', error="", title = "Update User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
+                    else:
+                        return render_template('updateUser2.html', error="", title = "Update User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
+                else:
+                    return render_template('updateUser2.html', error="", title = "Update User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
+            else:                
+                flash("Please don't leave any field empty", "danger")
+                return render_template('updateUser2.html', error="", title = "Update User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
+    except Exception as e:                
+        return render_template('updateUser2.html', error=e, title = "Update User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
         
 if __name__ == "__main__":
     app.run( debug=True ,host="127.0.0.1", port=5050)
