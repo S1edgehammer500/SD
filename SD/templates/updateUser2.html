@@ -14,7 +14,7 @@
                 <label for="base">Base Restaurant:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
                 <select style="color:black" name="base" id="base">
                   {% for i in range(restaurantLen): %}
-                    {% if i == BR %}
+                    {% if restaurants[i] == BR %}
                         <option selected="selected" value='{{restaurants[i]}}'>{{ restaurants[i] }} </option>
                     {% else %}
                         <option value='{{restaurants[i]}}'>{{ restaurants[i] }}</option>
@@ -25,25 +25,25 @@
               <div class="form-group">
                 <label for="auth">Authorisation Level:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
                 <select style="color:black" name="auth" id="auth">
-                  {% if AL == 0 %}
-                  <option selected="selected" style="color:black" value="staff">Staff</option>
+                  {% if AL == 'staff' %}
+                  <option selected="selected" style="color:black" value="staff">staff</option>
                   {% else %}
-                  <option style="color:black" value="staff">Staff</option>
+                  <option style="color:black" value="staff">staff</option>
                   {% endif%}
-                  {% if AL == 1 %}
-                  <option selected="selected" style="color:black" value="chef">Chef</option>
+                  {% if AL == 'chef' %}
+                  <option selected="selected" style="color:black" value="chef">chef</option>
                   {% else %}
-                  <option style="color:black" value="chef">Chef</option>
+                  <option style="color:black" value="chef">chef</option>
                   {% endif%}
-                  {% if AL == 2 %}
-                  <option selected="selected" style="color:black" value="manager">Manager</option>
+                  {% if AL == 'manager' %}
+                  <option selected="selected" style="color:black" value="manager">manager</option>
                   {% else %}
-                  <option style="color:black" value="manager">Manager</option>
+                  <option style="color:black" value="manager">manager</option>
                   {% endif%}
-                  {% if AL == 3 %}
-                  <option selected="selected" style="color:black" value="admin">Admin</option>
+                  {% if AL == 'admin' %}
+                  <option selected="selected" style="color:black" value="admin">admin</option>
                   {% else %}
-                  <option style="color:black" value="admin">Admin</option>
+                  <option style="color:black" value="admin">admin</option>
                   {% endif%}
                 </select>
             <div class=submit-button><form><input style="color:black" type="submit" value="Register" size="100"></form></div><br><br>

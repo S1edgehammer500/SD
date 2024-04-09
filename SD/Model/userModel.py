@@ -156,7 +156,7 @@ class User:
         
     def validateBaseRestaurantSyntax(self, base):
         conn, cur = openConnection()
-        query = 'SELECT restaurantID FROM restaurant WHERE restaurantID = ?;'
+        query = 'SELECT restaurantName FROM restaurant WHERE restaurantName = ?;'
         cur.execute(query, (base,))
         record = cur.fetchone()
         if record is not None:
