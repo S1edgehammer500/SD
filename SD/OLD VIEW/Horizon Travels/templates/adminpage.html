@@ -1,0 +1,79 @@
+{% extends "base.html" %}                        
+<!-- Andre Barnett - 22025153 -->
+{%block body%}
+<div class = "adminpage">
+<div class = "ajourney rounded">
+    <h5 class = "text-center pt-3"> Add Journey</h5>
+
+    <form action = "/admin/" method = "POST">
+
+        <p> Enter Departure City</p>
+        <input class = "form  " type="text"  required id = "DepartureCity" name = "DepartureCity" >
+
+        <p> Enter Arrival City</p>
+        <input class = "form " type="text"  required id = "ArrivalCity" name = "ArrivalCity" >
+
+
+        <p>Enter Deparure Time</p>
+        <input class = "form " type = "time" required name = "DepartureTime">
+
+        <p>Enter Arrival Time</p>
+        <input class = "form " type = "time" required name = "ArrivalTime">
+
+        <button type = "submit"> Add </button>
+
+    </form>
+
+</div>
+
+<div class = "adminmsg">
+    <h3 class = "text-center"> Output:</h3>
+    <h4 class = "text-center success"> {{message}}</h4>
+</div>
+
+<div class = "djourney rounded">
+    <h5 class = "text-center pt-3"> Delete Journey</h5>
+
+    <form action = "/admin/" method = "POST">
+
+        <p> Enter JourneyID</p>
+        
+        <input class = "form mb-2" type = "number" required id = "JourneyID" name = "JourneyID" value = -1 min = 0>
+
+        <button type = "submit"> Delete </button>
+
+        <p></p>
+
+    </form>
+
+</div>
+
+<div class = "duser rounded">
+    <h5 class = "text-center pt-3"> Delete Account</h5>
+
+    <form action = "/admin/" method = "POST">
+
+        <p>  Enter UserEmail</p>
+        
+        <input class = "form mb-2" type = "email" required id = "UserEmail" name = "UserEmail" >
+
+        <button type = "submit"> Delete </button>
+
+    </form>
+
+</div>
+
+
+<div class = "mreport ">
+    <div class = "bg-white rounded wrapper">
+
+
+            <h5 class = "text-center">Monthly Sales Report</h5>
+            <p class = "text-center success"> {{salesmessage}} </p>
+    </div>
+</div>
+
+</div>
+
+
+{%endblock%}

@@ -37,10 +37,10 @@
                 <!--Form Start-->
                 <form action = "/login/" method = "post">
                     <div class = "input group mb-3">
-                        <input class = "form-control" id="code" required = "True" placeholder= "Employee Code" name = "code" size = 30 value = "{{request.form.code}}"><br>
+                        <input type = "email" class = "form-control" id="email" required = "True" placeholder= "Email Address" name = "UserEmail" value = "{{request.form.UserEmail}}">
                     </div>
                     <div class = "input group  mb-3">
-                        <input type = "password" class = "form-control" id="password"  required = "True" placeholder= "Password" name = "password" size = 30 value = "{{request.form.password}}"><br>
+                        <input type = "password" class = "form-control" id="password"  required = "True" placeholder= "Password" name = "UserPassword" value = "{{request.form.UserPassword}}">
                     </div>
                     
                 <!--Form Button-->

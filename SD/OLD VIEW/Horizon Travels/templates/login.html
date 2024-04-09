@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+<!-- Andre Barnett - 22025153 -->
+{%block body%}
+<div class = "loginbox">
+
+    <div class = "container pt-5">
+        <div class = "row">
+            <div class = "col-md-4 bg-white m-auto rounded wrapper">
+                <h3 class = "text-center pt-3">Welcome Back!</h3>
+                <!--Form Start-->
+                <form action = "/login/" method = "post">
+                    <div class = "input group mb-3">
+                        <input type = "email" class = "form-control" id="email" required = "True" placeholder= "Email Address" name = "UserEmail" value = "{{request.form.UserEmail}}">
+                    </div>
+                    <div class = "input group  mb-3">
+                        <input type = "password" class = "form-control" id="password"  required = "True" placeholder= "Password" name = "UserPassword" value = "{{request.form.UserPassword}}">
+                    </div>
+                    
+                <!--Form Button-->
+                <div class = "d-grid mb-3">
+                    <button type = "submit"  class = "btn btn-success">Log In</button>
+                    </div>
+                <!--Form Close-->
+                </form>
+                <p class = "text-center error" > {{error}} </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{%endblock%}
+
+
+
+
