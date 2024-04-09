@@ -20,19 +20,26 @@
 }
 
 .login-form-container {
+  transform: translate(50%, 10%);
   box-sizing: border-box;
   height: auto;
   width:1000px;
   color: white;
   text-align: center;
   font-weight: bold;
-  background-color: black;
-  opacity: 0.95;
+  background-color: rgba(33, 37, 41); /* Set the background color of the text box with some opacity */
+  border: 03px solid white;
 
 }
 
+.black {
+
+  color: black;
+}
+
+
 body {
-    background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Restaurant_N%C3%A4sinneula.jpg/640px-Restaurant_N%C3%A4sinneula.jpg');
+    background-image: url('mainpagebg3.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -148,7 +155,8 @@ body {
     bottom: 0;
     left:0;
     width: 100%;
-    background-color: white;
-    color: black;
-    opacity: 0.8;
+    background-color:  rgba(33, 37, 41);
+    color: white;
+    opacity: 0.9;
+
   }
