@@ -15,11 +15,10 @@ class Restaurant: #restaurant class
         record = cur.fetchone()
         name = record[0]
         tables = record[1]
-        restaurant = Restaurant()
-        restaurant.setRestaurantName(name)
-        restaurant.setNumberOfTables(tables)
+        self.setRestaurantName(name)
+        self.setNumberOfTables(tables)
         conn.close()
-        return restaurant
+        
 
     #setters
 
