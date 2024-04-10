@@ -545,22 +545,34 @@ def updateRestaurant3():
             numberOfTables = request.form['numberOfTables']
 
             if restaurantName != None and numberOfTables != None:
-    
-                if restaurant.validateRestaurantSyntax(restaurantName) == 1:
-        
-                    if restaurant.validateTableNumberSyntax(numberOfTables) == 1:
-                        
-                        restaurant.updateRestaurant(restaurantName, numberOfTables)
-
-                        restaurant.updateRestaurant(restaurantName, numberOfTables)
-
+                if session["previousRestaurantName"] == restaurantName:
+                    if restaurant.updateNumberOfTables(restaurantName, numberOfTables):
                         flash(f"You have successfully updated the restaurant {restaurantName}", 'info')
                         return redirect(url_for('restaurantOptions'))
-                        
                     else:
+                        flash("Invalid table number syntax", "danger")
                         return render_template('updateRestaurant2.html', error="", title = "Update Restaurant", logged_in=logged_in, authLevel=authLevel)
+                    
+                    
+                if restaurant.updateRestaurantName(session['previousRestaurantName'], restaurantName):
+                    
+                    if restaurant.updateNumberOfTables(restaurantName, numberOfTables):
+                        pass
+                    else:
+                        flash("Invalid table number syntax", "danger")
+                        return render_template('updateRestaurant2.html', error="", title = "Update Restaurant", logged_in=logged_in, authLevel=authLevel)
+                    
                 else:
-                    return render_template('updateRestaurant2.html', error="", title = "Update Restaurant", logged_in=logged_in, authLevel=authLevel)
+                    if restaurant.checkRestaurantName(restaurantName) == 1: #0 means it doesnt exist 1 means it does
+                        flash("Restaurant already exists", "danger")
+                        return render_template('updateRestaurant2.html', error="", title = "Update Restaurant", logged_in=logged_in, authLevel=authLevel)
+                    elif restaurant.validateRestaurantSyntax(restaurantName) == 0:
+                        flash("Invalid restaurant syntax", "danger")
+                        return render_template('updateRestaurant2.html', error="", title = "Update Restaurant", logged_in=logged_in, authLevel=authLevel)
+                    
+                flash(f"You have successfully updated the restaurant {restaurantName}", 'info')
+                return redirect(url_for('restaurantOptions'))
+
             else:                
                 flash("Please don't leave any field empty", "danger")
                 return render_template('updateRestaurant2.html', error="", title = "Update Restaurant", logged_in=logged_in, authLevel=authLevel)
