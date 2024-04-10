@@ -5,31 +5,23 @@ import re
 
 class Restaurant: #restaurant class
     def __init__(self):
-        self.__restaurantID = ""
         self.__restaurantName = ""
         self.__numberOfTables = ""
 
-    def setRestaurantDetails(self, id):
+    def setRestaurantDetails(self, restaurantName):
         conn, cur = openConnection()
-        query = "SELECT * FROM restaurant WHERE restaurantID = ?;"
-        cur.execute(query,(id,))
+        query = "SELECT * FROM restaurant WHERE restaurantName = ?;"
+        cur.execute(query,(restaurantName,))
         record = cur.fetchone()
-        name = record[1]
-        tables = record[2]
+        name = record[0]
+        tables = record[1]
         restaurant = Restaurant()
-        restaurant.setRestaurantID(id)
         restaurant.setRestaurantName(name)
         restaurant.setNumberOfTables(tables)
         conn.close()
         return restaurant
 
     #setters
-    def setRestaurantID(self, id):
-        if self.checkRestaurantID(id):
-            self.__restaurantID = id
-            return 1
-        else:
-            return 0
 
     def setRestaurantName(self, resName):
         if self.validateRestaurantSyntax(resName):
@@ -46,8 +38,6 @@ class Restaurant: #restaurant class
             return 0
     
     #getters
-    def getRestaurantID(self):
-        return self.__restaurantID
 
     def getRestaurantName(self):
         return self.__restaurantName
@@ -76,19 +66,6 @@ class Restaurant: #restaurant class
         else:
             return 0
         
-    def checkRestaurantID(self, restaurantID): #checks if restaurant exists
-        conn, cur = openConnection()
-        query = 'SELECT restaurantID FROM restaurant WHERE restaurantID = ?;'
-        cur.execute(query, (restaurantID,))
-        record = cur.fetchone()
-        if record is not None:
-            print("restaurant exists")
-            conn.close()
-            return 1
-        else:
-            print("Restaurant does not exist")
-            conn.close()
-            return 0
     
     def checkRestaurantName(self, restaurantName):
         conn, cur = openConnection()
@@ -106,11 +83,11 @@ class Restaurant: #restaurant class
             return 0
 
         
-    def updateRestaurant(self, restaurantName=None, numberOfTables=None, restaurantID=None):
+    def updateRestaurant(self, restaurantName=None, numberOfTables=None):
         conn, cur = openConnection()
         if restaurantName != None:
-            query = 'UPDATE restaurant SET restaurantName = ?  WHERE restaurantID = ?;'
-            cur.execute(query, (restaurantName, restaurantID))
+            query = 'UPDATE restaurant SET restaurantName = ?;'
+            cur.execute(query, (restaurantName, ))
             conn.commit()
             print("Updated restaurant name")
             conn.close()
@@ -118,8 +95,8 @@ class Restaurant: #restaurant class
             print("restaurant name is none")
             conn.close
         if numberOfTables != None:
-            query2 = 'UPDATE restaurant SET numberOfTables = ?  WHERE restaurantID = ?;'
-            cur.execute(query2, (numberOfTables, restaurantID))
+            query2 = 'UPDATE restaurant SET numberOfTables = ?  WHERE restaurantName = ?;'
+            cur.execute(query2, (numberOfTables, ))
             conn.commit()
             print("Updates table number")
             conn.close()
@@ -172,11 +149,11 @@ class Restaurant: #restaurant class
         print("Restaurant ID!!!!!!!" + str(record[0]))
         return record[0]
         
-    def deleteRestaurant(self, ID):
+    def deleteRestaurant(self, restaurantName):
         conn, cur = openConnection()
-        if self.checkRestaurantID(ID):
-            query = 'DELETE FROM restaurant WHERE restaurantID = ?;'
-            cur.execute(query, (ID,))
+        if self.checkRestaurantName(restaurantName):
+            query = 'DELETE FROM restaurant WHERE restaurantName = ?;'
+            cur.execute(query, (restaurantName,))
             conn.commit()
             print("Restaurant successfully deleted")
             conn.commit()
@@ -196,7 +173,7 @@ class Restaurant: #restaurant class
             cur = conn.cursor()
             cur.execute("SELECT * FROM restaurant")
             rows = cur.fetchall()
-            restaurants = [(row[0], row[1], row[2]) for row in rows]
+            restaurants = [(row[0], row[1]) for row in rows]
             # Close the connection after fetching data
             conn.close()
             return restaurants
