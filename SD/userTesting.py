@@ -12,7 +12,7 @@ def run_tests():
             code = "Test17"
             pw = str(1234567)
             al = 'admin'
-            br = 1
+            br = "Bristol"
             result = self.model.saveUserDetails(code,sha256_crypt.hash(pw),al, br)
             self.assertEqual(result,1)
 
@@ -20,7 +20,7 @@ def run_tests():
             code = "Jake"
             pw = str(1234567)
             al = 'admin'
-            br = 1
+            br = "Bristol"
             result = self.model.saveUserDetails(code, sha256_crypt.hash(pw), al, br)
             self.assertEqual(result, 0)
 
@@ -28,7 +28,7 @@ def run_tests():
             code = "This code will be invalid"
             pw = str(12)
             al = 'admin'
-            br = 1
+            br = "Bristol"
             result = self.model.saveUserDetails(code, sha256_crypt.hash(pw), al, br)
             self.assertEqual(result, 0)
 
@@ -80,7 +80,7 @@ def run_tests():
 
         def test_update_br(self):
             code = 'Jake'
-            br = 2
+            br = "Manchester"
             result = self.model.updateBaseRestaurant(code, br)
             self.assertEqual(result, 1)
 

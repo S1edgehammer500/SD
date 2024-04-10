@@ -58,7 +58,7 @@ class Restaurant: #restaurant class
         if len(resName) > 0:
             pattern = r'[A-Za-z]{4,}' # At least a 6 letter word
             if re.fullmatch(pattern, resName):
-                if not (self.checkRestaurantName(self, resName)):
+                if not (self.checkRestaurantName(resName)):
 
                     return 1
                 else:
@@ -88,13 +88,16 @@ class Restaurant: #restaurant class
     def updateRestaurantName(self, previousName, currentName):
         conn, cur = openConnection()
         if previousName != None and currentName != None:
-            if self.checkRestaurantName(previousName):
-                if not(self.checkRestaurantName(currentName)):
-                        query = 'UPDATE restaurant SET restaurantName = ? WHERE restaurantName = ?;'
-                        cur.execute(query, (previousName, currentName))
-                        conn.commit()
-                        print("Updated restaurant name")
-                        conn.close()
+            if self.validateRestaurantSyntax(currentName):
+                if self.checkRestaurantName(previousName):
+                    if not(self.checkRestaurantName(currentName)):
+                            query = 'UPDATE restaurant SET restaurantName = ? WHERE restaurantName = ?;'
+                            cur.execute(query, (currentName, previousName))
+                            conn.commit()
+                            print("Updated restaurant name")
+                            conn.close()
+                    else:
+                        return 0
                 else:
                     return 0
             else:
@@ -107,12 +110,15 @@ class Restaurant: #restaurant class
     def updateNumberOfTables(self, restaurantName, numberOfTables):
         conn, cur = openConnection()
         if numberOfTables != None:
-            query = 'UPDATE restaurant SET numberOfTables = ? WHERE restaurantName = ?;'
-            cur.execute(query, (numberOfTables, restaurantName))
-            conn.commit()
-            print("Updated number of tables")
-            conn.close()
-            return 1
+            if self.validateTableNumberSyntax(numberOfTables):
+                query = 'UPDATE restaurant SET numberOfTables = ? WHERE restaurantName = ?;'
+                cur.execute(query, (numberOfTables, restaurantName))
+                conn.commit()
+                print("Updated number of tables")
+                conn.close()
+                return 1
+            else:
+                return 0
         else:
             print("Number of tables is none")
             conn.close
