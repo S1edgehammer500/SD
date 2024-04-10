@@ -15,11 +15,9 @@ class Restaurant: #restaurant class
         record = cur.fetchone()
         name = record[0]
         tables = record[1]
-        restaurant = Restaurant()
-        restaurant.setRestaurantName(name)
-        restaurant.setNumberOfTables(tables)
+        self.setRestaurantName(name)
+        self.setNumberOfTables(tables)
         conn.close()
-        return restaurant
 
     #setters
 
@@ -60,7 +58,11 @@ class Restaurant: #restaurant class
         if len(resName) > 0:
             pattern = r'[A-Za-z]{4,}' # At least a 6 letter word
             if re.fullmatch(pattern, resName):
-                return 1
+                if not (self.checkRestaurantName(self, resName)):
+
+                    return 1
+                else:
+                    return 0
             else:
                 return 0
         else:
@@ -83,25 +85,36 @@ class Restaurant: #restaurant class
             return 0
 
         
-    def updateRestaurant(self, restaurantName=None, numberOfTables=None):
+    def updateRestaurantName(self, previousName, currentName):
         conn, cur = openConnection()
-        if restaurantName != None:
-            query = 'UPDATE restaurant SET restaurantName = ?;'
-            cur.execute(query, (restaurantName, ))
-            conn.commit()
-            print("Updated restaurant name")
-            conn.close()
+        if previousName != None and currentName != None:
+            if self.checkRestaurantName(previousName):
+                if not(self.checkRestaurantName(currentName)):
+                        query = 'UPDATE restaurant SET restaurantName = ? WHERE restaurantName = ?;'
+                        cur.execute(query, (previousName, currentName))
+                        conn.commit()
+                        print("Updated restaurant name")
+                        conn.close()
+                else:
+                    return 0
+            else:
+                return 0
         else:
             print("restaurant name is none")
             conn.close
+        return 1
+    
+    def updateNumberOfTables(self, restaurantName, numberOfTables):
+        conn, cur = openConnection()
         if numberOfTables != None:
-            query2 = 'UPDATE restaurant SET numberOfTables = ?  WHERE restaurantName = ?;'
-            cur.execute(query2, (numberOfTables, ))
+            query = 'UPDATE restaurant SET numberOfTables = ? WHERE restaurantName = ?;'
+            cur.execute(query, (numberOfTables, restaurantName))
             conn.commit()
-            print("Updates table number")
+            print("Updated number of tables")
             conn.close()
+            return 1
         else:
-            print("restaurant tableNumber is none")
+            print("Number of tables is none")
             conn.close
         return 1
         
@@ -130,24 +143,6 @@ class Restaurant: #restaurant class
         records = cur.fetchall()
         conn.close()
         return records
-
-    def getRestaurantIDFromName(self, name): # drop down menu returns name selected. This is to be used in controller after they have received the name in order to get the ID and call createRestaurantInstance
-        conn, cur = openConnection()
-        query = "SELECT restaurantID FROM Restaurant WHERE restaurantName = ?;"
-        cur.execute(query, (name,))
-        record = cur.fetchone()
-        conn.close()
-        print("Restaurant ID!!!!!!!" + str(record[0]))
-        return record[0]
-    
-    def getRestaurantNameFromID(self, ID): # drop down menu returns name selected. This is to be used in controller after they have received the name in order to get the ID and call createRestaurantInstance
-        conn, cur = openConnection()
-        query = "SELECT restaurantName FROM Restaurant WHERE restaurantID = ?;"
-        cur.execute(query, (ID,))
-        record = cur.fetchone()
-        conn.close()
-        print("Restaurant ID!!!!!!!" + str(record[0]))
-        return record[0]
         
     def deleteRestaurant(self, restaurantName):
         conn, cur = openConnection()
@@ -163,9 +158,6 @@ class Restaurant: #restaurant class
             print("Restaurant doesn't exist or invalid syntax")
             conn.close()
             return 0
-        
-
-
 
     def get_restaurants(self):
         try:
