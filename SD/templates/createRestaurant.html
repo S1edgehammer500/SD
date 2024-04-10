@@ -1,0 +1,25 @@
+{% extends "layout.html" %} 
+{% block content %}
+
+<!--Create restaurant form-->
+<form action="/createRestaurant/" method="post">
+    <section class="vh-100">
+    <div class="container h-100">
+        <div class="row-d-flex justify-content-center">
+        <div class="register-form-container col-11 col-m-11 col-x-11">
+            <form action="/createRestaurant/" method="post">
+            <div class="form-group">
+                <label for="restaurantName">Restaurant Name (at least 4 characters):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
+                <input required style="color:black" class="restaurantName" name="restaurantName" size="30" value="{{request.form.restaurantName}}"><br>
+            </div>
+            <div class="form-group">
+                <label for="numberOfTables">Number of Tables (0-100):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
+                <input required style="color:black" id="numberOfTables" min="1" type="number" class="numberOfTables" name="numberOfTables" size="30" value="{{request.form.numberOfTables}}"><br>
+            </div>
+            <div class=submit-button><form><input style="color:black" type="submit" value="Register" size="100"></form></div><br><br>
+        </div>
+        </div>
+        <br><br><br>
+    </section>
+    </form>
+{% endblock content %}

@@ -1,8 +1,3 @@
-# 22013740 Luqmaan Abdullahi
-# 22025153 Andre Barnett
-# 22018158 Jake Tovey
-# 22016129 Plamen Tyufekchiev
-# 22062013 Serhii Mistota
 from Model.Database import * 
 conn, cur = openConnection()
 def create_inventory_table():
@@ -18,7 +13,7 @@ def create_inventory_table():
             c.execute('''
             CREATE TABLE inventory
             (inventoryID INTEGER PRIMARY KEY AUTOINCREMENT, restaurantName varchar(200) NOT NULL UNIQUE, itemID INT NOT NULL UNIQUE,
-           FOREIGN KEY (restaurantName) REFERENCES restaurant(restaurantName) ON DELETE CASCADE, FOREIGN KEY (itemID) REFERENCES item(itemID) ON DELETE CASCADE)
+           FOREIGN KEY (restaurantName) REFERENCES restaurant(restaurantName) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (itemID) REFERENCES item(itemID) ON DELETE CASCADE ON UPDATE CASCADE)
             ''')
             conn.commit()
             print("Table 'inventory' created successfully")

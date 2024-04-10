@@ -129,7 +129,6 @@ def createUser():
 
 
     error = ''
-    currentUser = User()
 
     try:
         if request.method == "POST": 
@@ -154,6 +153,7 @@ def createUser():
                         flash("Invalid password syntax", "danger")
                         return render_template('createUser.html', error=error, title="Create User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
                 else:
+                    flash("Invalid username syntax", "danger")
                     return render_template('createUser.html', error=error, title="Create User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
             else:                
                 flash("Password and Confirm Password fields need to match", "danger")
@@ -181,8 +181,65 @@ def userOptions():
 
     return render_template('userOptions.html', title="User Options", logged_in=logged_in, authLevel=authLevel)
 
+@app.route("/deleteUser/", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def deleteUser():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    currentUser = User()
+    currentUser.setLoginDetails(session['code'])
+
+    employeeCode = []
+    tempEmployeeCode = currentUser.getEmployeeCodes()
+    employeeCode = strip.it(tempEmployeeCode)
+
+
+    baseRestaurant = []
+    tempBaseRestaurant = currentUser.getBaseRestaurants()
+    baseRestaurant = strip.it(tempBaseRestaurant)
+
+    authorisationLevel = []
+    tempAuthorisationLevel = currentUser.getAuthorisationLevels()
+    authorisationLevel = strip.it(tempAuthorisationLevel)
+
+    return render_template('deleteUser.html', title = "Delete User", logged_in=logged_in, authLevel=authLevel, baseRestaurant=baseRestaurant, authorisationLevel=authorisationLevel, employeeCode=employeeCode, codeLen=len(employeeCode))
+
+@app.route("/deleteUser2/", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def deleteUser2():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    currentUser = User()
+
+    try:
+        if request.method == "POST":
+            # Code that you wanna delete
+            code = request.form['code']
+
+            # Users code. DON'T DELETE
+            usercode = session['code']
+
+            if code != usercode:
+                if currentUser.deleteUser(code):
+                    flash(f"You have successfully deleted the user {code}", 'info')
+                    return redirect(url_for('userOptions'))
+                else:
+                    flash(f"Account \"{code}\" does not exist", 'danger')
+                    return redirect(url_for('deleteUser'))
+            else:
+                flash("You cannot delete your own user", "danger")
+                return redirect(url_for('deleteUser'))
+    except Exception as e:  
+        return render_template('userOptions.html', error=e, title="User Options", logged_in=logged_in, authLevel=authLevel)
+
 @app.route("/updateUser/", methods=['GET', 'POST'])
 @login_required
+@admin_required
 def updateUser():
     logged_in = session['logged_in']
     authLevel = session['authLevel']
@@ -223,7 +280,6 @@ def updateUser2():
     authLevel = session['authLevel']
 
     currentUser = User()
-    currentUser.setLoginDetails(session['previousCode'])
     restaurant = Restaurant()
     restaurants = []
     tempRestaurants = restaurant.getAllRestaurants()
@@ -233,8 +289,8 @@ def updateUser2():
 
     if request.method == "POST":
         code = request.form['code']
-
         session['previousCode'] = code
+        currentUser.setLoginDetails(session['previousCode'])
 
         AL = currentUser.getAuthorisation()
 
@@ -292,6 +348,8 @@ def updateUser3():
                             print(previousCode)
                             if code != previousCode:
                                 currentUser.updateCode(previousCode, code)
+                                if previousCode == session['code']:
+                                    session['code'] = code
 
                             flash(f"You have successfully updated the user {code}", 'info')
                             return redirect(url_for('userOptions'))
@@ -307,6 +365,219 @@ def updateUser3():
                 return render_template('updateUser2.html', error="", title = "Update User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
     except Exception as e:                
         return render_template('updateUser2.html', error=e, title = "Update User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
+    
+#Beggining of restaurant crud
+
+@app.route("/restaurantOptions/")
+@login_required
+def restaurantOptions():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    return render_template('restaurantOptions.html', title="Restaurant Options", logged_in=logged_in, authLevel=authLevel)
+
+@app.route('/createRestaurant/', methods=['POST', 'GET'])
+@login_required
+@admin_required
+def createRestaurant():
+    restaurant = Restaurant()
+    restaurants = []
+    tempRestaurants = restaurant.getAllRestaurants()
+
+    restaurants = strip.it(tempRestaurants)
+
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+
+    error = ''
+
+    try:
+        if request.method == "POST": 
+            #getting data from form        
+            restaurantName = request.form['restaurantName']
+            numberOfTables = request.form['numberOfTables']
+            print(str(numberOfTables))                   
+            if restaurantName != None and numberOfTables != None:
+                if restaurant.checkRestaurantName(restaurantName) != 1:
+                    if restaurant.validateRestaurantSyntax(restaurantName) == 1:
+                        if restaurant.validateTableNumberSyntax(numberOfTables) == 1:
+                            print(str(numberOfTables))
+                            if restaurant.createRestaurant(restaurantName, numberOfTables) == 1:                      
+                                flash("Restaurant is now registered", "success")
+                                return redirect(url_for('home'))
+                            else:
+                                flash("Invalid restaurant syntax", "danger")
+                                return render_template('createRestaurant.html', error=error, title="Create Restaurant", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
+                        else:
+                            flash("Invalid table number", "danger")
+                            return render_template('createRestaurant.html', error=error, title="Create Restaurant", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
+                    else:
+                        flash("Invalid resaurant syntax", "danger")
+                        return render_template('createRestaurant.html', error=error, title="Create Restaurant", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
+                else:
+                    flash("Restaurant name already exists", "danger")
+                    print("Restaurant name exists")
+                    return render_template('createRestaurant.html', error=error, title="Create Restaurant", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
+            else:                
+                flash("Fields cannot be empty", "danger")
+                print("Passwords don't match")
+                return render_template('createRestaurant.html', error=error, title="Create Restaurant", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
+        else:            
+            return render_template('createRestaurant.html', error=error, title="Create Restaurant", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)        
+    except Exception as e:                
+        return render_template('createRestaurant.html', error=e, title="Create Restaurant", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
+
+
+@app.route("/deleteRestaurant/", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def deleteRestaurant():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    restaurant = Restaurant()
+    
+    restaurantName = []
+    tempRestaurantName = restaurant.getAllRestaurants()
+    restaurantName = strip.it(tempRestaurantName)
+
+    numberOfTables = []
+    tempNumberOfTables= [tables[1] for tables in restaurant.get_restaurants()]
+    numberOfTables = strip.it(tempNumberOfTables)
+
+    return render_template('deleteRestaurant.html', title = "Delete Restaurant", logged_in=logged_in, authLevel = authLevel, restaurantName=restaurantName, numberOfTables=numberOfTables, restaurantNameLen=len(restaurantName))
+
+
+@app.route("/deleteRestaurant2/", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def deleteRestaurant2():
+    print("in this function")
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    currentUser = User()
+    restaurant = Restaurant()
+    
+    try:
+        if request.method == "POST":
+            # Restaurant name that you wanna delete
+            restaurantName = request.form['restaurantName']
+
+            # Users code. DON'T DELETE
+            #restaurantName = session['code']
+            currentUserRestaurant = currentUser.getBaseRestaurant()
+            print(restaurantName)
+            print(currentUserRestaurant)
+            if restaurantName != currentUserRestaurant:
+                if restaurant.deleteRestaurant(restaurantName):
+                    flash(f"You have successfully deleted the restaurant {restaurantName}", 'info')
+                    return redirect(url_for('restaurantOptions'))
+                else:
+                    flash(f"Restaurant \"{restaurantName}\" does not exist", 'danger')
+                    return redirect(url_for('deleteRestaurant'))
+            else:
+                flash("You cannot delete your own restaurant", "danger")
+                return redirect(url_for('deleteRestaurant'))
+    except Exception as e:  
+        return render_template('restaurantOptions.html', error=e, title="Restaurant Options", logged_in=logged_in, authLevel=authLevel)
+
+@app.route("/updateRestaurant/", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def updateRestaurant():
+    
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    restaurant = Restaurant()
+    
+    restaurantName = []
+    tempRestaurantName = restaurant.getAllRestaurants()
+    restaurantName = strip.it(tempRestaurantName)
+
+    numberOfTables = []
+    tempNumberOfTables= [tables[1] for tables in restaurant.get_restaurants()]
+    numberOfTables = strip.it(tempNumberOfTables)
+
+    
+    return render_template('updateRestaurant.html', title = "Update Restaurant", logged_in=logged_in, authLevel = authLevel, restaurantName=restaurantName, numberOfTables=numberOfTables, restaurantNameLen=len(restaurantName))
+
+@app.route("/updateRestaurant2/", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def updateRestaurant2():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    restaurant = Restaurant()
+
+    if request.method == "POST":
         
+        restaurantName = request.form['restaurantName']
+        
+        session['previousRestaurantName'] = restaurantName
+        
+        restaurant.setRestaurantDetails(session['previousRestaurantName'])
+        
+        numberOfTables = int(restaurant.getNumberOfTables())
+        
+        return render_template("updateRestaurant2.html", title = "Update Restaurant", logged_in=logged_in, authLevel=authLevel,restaurantName=restaurantName, numberOfTables=numberOfTables, restaurantNameLen=len(restaurantName))
+    
+    return render_template("updateRestaurant2.html", title = "Update Restaurant", logged_in=logged_in, authLevel=authLevel)
+
+@app.route("/updateRestaurant3/", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def updateRestaurant3():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    restaurant = Restaurant()
+
+    try:
+        if request.method == "POST":
+            
+            restaurantName = request.form['restaurantName']
+            numberOfTables = request.form['numberOfTables']
+
+            if restaurantName != None and numberOfTables != None:
+                if session["previousRestaurantName"] == restaurantName:
+                    if restaurant.updateNumberOfTables(restaurantName, numberOfTables):
+                        flash(f"You have successfully updated the restaurant {restaurantName}", 'info')
+                        return redirect(url_for('restaurantOptions'))
+                    else:
+                        flash("Invalid table number syntax", "danger")
+                        return render_template('updateRestaurant2.html', error="", title = "Update Restaurant", logged_in=logged_in, authLevel=authLevel)
+                    
+                    
+                if restaurant.updateRestaurantName(session['previousRestaurantName'], restaurantName):
+                    
+                    if restaurant.updateNumberOfTables(restaurantName, numberOfTables):
+                        pass
+                    else:
+                        flash("Invalid table number syntax", "danger")
+                        return render_template('updateRestaurant2.html', error="", title = "Update Restaurant", logged_in=logged_in, authLevel=authLevel)
+                    
+                else:
+                    if restaurant.checkRestaurantName(restaurantName) == 1: #0 means it doesnt exist 1 means it does
+                        flash("Restaurant already exists", "danger")
+                        return render_template('updateRestaurant2.html', error="", title = "Update Restaurant", logged_in=logged_in, authLevel=authLevel)
+                    elif restaurant.validateRestaurantSyntax(restaurantName) == 0:
+                        flash("Invalid restaurant syntax", "danger")
+                        return render_template('updateRestaurant2.html', error="", title = "Update Restaurant", logged_in=logged_in, authLevel=authLevel)
+                    
+                flash(f"You have successfully updated the restaurant {restaurantName}", 'info')
+                return redirect(url_for('restaurantOptions'))
+
+            else:                
+                flash("Please don't leave any field empty", "danger")
+                return render_template('updateRestaurant2.html', error="", title = "Update Restaurant", logged_in=logged_in, authLevel=authLevel)
+    except Exception as e:                
+        return render_template('updateRestaurant2.html', error=e, title = "Update Restaurant", logged_in=logged_in, authLevel=authLevel)
+
 if __name__ == "__main__":
     app.run( debug=True ,host="127.0.0.1", port=5050)

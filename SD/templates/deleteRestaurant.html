@@ -1,0 +1,24 @@
+{% extends "layout.html" %} 
+{% block content %} 
+
+<form action="/deleteRestaurant2/" method="post">
+    <div class="receiptBox container-fluid">   
+            <table border=1 style="color:white" class="center">
+                    <tr>
+                        <th>Restaurant Name &nbsp;&nbsp;</th>
+                        <th>Table Number &nbsp;&nbsp;</th>
+                    {% for i in range(restaurantNameLen): %} 
+                        <tr>
+                            <td> {{restaurantName[i]}} </td>              
+                            <td> {{numberOfTables[i]}} </td>
+                            <td> <input required type="radio" name="restaurantName" value="{{restaurantName[i]}}" checked></td>
+                        </tr>
+                    {% endfor %}
+                </table>
+                <br><br><br>
+                <form><input style="color:black" type="submit" value="Delete Restaurant" onclick="return confirm('Are you sure?')" size="100"></form><br><br><br>
+            </div>
+    </div>
+</form>
+<br><br><br><br><br>
+{% endblock content %}
