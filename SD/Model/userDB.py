@@ -13,7 +13,7 @@ def create_user_table():
             c.execute('''
             CREATE TABLE users
             (employeeCode varchar(20) NOT NULL, password varchar(100) NOT NULL, authorisationLevel varchar(20) NOT NULL,
-           baseRestaurant varchar(200) NOT NULL, PRIMARY KEY (employeeCode),  FOREIGN KEY (baseRestaurant) REFERENCES restaurant(restaurantName) ON DELETE CASCADE)
+           baseRestaurant varchar(200) NOT NULL, PRIMARY KEY (employeeCode),  FOREIGN KEY (baseRestaurant) REFERENCES restaurant(restaurantName) ON DELETE CASCADE ON UPDATE CASCADE)
             ''')
             conn.commit()
             print("Table 'user' created successfully")

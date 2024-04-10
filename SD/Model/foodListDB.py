@@ -1,8 +1,3 @@
-# 22013740 Luqmaan Abdullahi
-# 22025153 Andre Barnett
-# 22018158 Jake Tovey
-# 22016129 Plamen Tyufekchiev
-# 22062013 Serhii Mistota
 from Model.Database import * 
 conn, cur = openConnection()
 def create_foodList_table():
@@ -18,7 +13,7 @@ def create_foodList_table():
             c.execute('''
             CREATE TABLE foodList
             (foodListID INTEGER PRIMARY KEY AUTOINCREMENT, orderID INT NOT NULL, foodID INT NOT NULL,
-                      FOREIGN KEY (orderID) REFERENCES orders(orderID) ON DELETE CASCADE, FOREIGN KEY (foodID) REFERENCES food(foodID) ON DELETE CASCADE)
+                      FOREIGN KEY (orderID) REFERENCES orders(orderID) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (foodID) REFERENCES food(foodID) ON DELETE CASCADE ON UPDATE CASCADE)
             ''')
             conn.commit()
             print("Table 'foodList' created successfully")

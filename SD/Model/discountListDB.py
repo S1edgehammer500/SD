@@ -1,9 +1,3 @@
-# 22013740 Luqmaan Abdullahi
-# 22025153 Andre Barnett
-# 22018158 Jake Tovey
-# 22016129 Plamen Tyufekchiev
-# 22062013 Serhii Mistota
-
 from Model.Database import * 
 conn, cur = openConnection()
 def create_discountList_table():
@@ -19,7 +13,7 @@ def create_discountList_table():
             c.execute('''
             CREATE TABLE discountList
             (discountListID INTEGER PRIMARY KEY AUTOINCREMENT, orderID INT NOT NULL, discountID INT NOT NULL,
-                      FOREIGN KEY (orderID) REFERENCES orders(orderID) ON DELETE CASCADE, FOREIGN KEY (discountID) REFERENCES discounts(discountID) ON DELETE CASCADE)
+                      FOREIGN KEY (orderID) REFERENCES orders(orderID) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (discountID) REFERENCES discounts(discountID) ON DELETE CASCADE ON UPDATE CASCADE)
             ''')
             conn.commit()
             print("Table 'discountList' created successfully")
