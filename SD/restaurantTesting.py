@@ -1,5 +1,4 @@
 import unittest
-from passlib.hash import sha256_crypt
 from Model.restaurantModel import *
 
 def run_tests():
