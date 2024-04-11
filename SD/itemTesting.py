@@ -78,18 +78,21 @@ def run_tests():
         def test4_update_quantity(self):
             name = 'Tomato'
             quantity = 30
+            self.model.setItemDetails(name)
             result = self.model.updateQuantity(quantity, name)
             self.assertEqual(result, 1)
 
         def test5_update_quantity_invalid_syntax(self):
             name = 'Tomato'
             quantity = 0
+            self.model.setItemDetails(name)
             result = self.model.updateQuantity(quantity, name)
             self.assertEqual(result, 0)
 
         def test6_update_quantity_invalid_name(self):
             name = 'Nothing'
             quantity = 30
+            self.model.setStockLimit(40)
             result = self.model.updateQuantity(quantity, name)
             self.assertEqual(result, 0)
         
@@ -113,7 +116,8 @@ def run_tests():
 
         def test94_update_quantity_invalid_syntax2(self):
             name = 'Tomato'
-            quantity = 61
+            quantity = 99
+            self.model.setItemDetails(name)
             result = self.model.updateQuantity(quantity, name)
             self.assertEqual(result, 0)
 

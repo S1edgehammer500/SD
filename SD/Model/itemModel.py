@@ -68,34 +68,34 @@ class Item: #item class
             return 0
 
     def validateQuantity(self, quantity):
-        if len(quantity)>0:
-            pattern = f'[1-9]{1,2}'
-            if re.fullmatch(pattern, quantity):
+        if int(quantity)>0:
+            pattern = r'[0-9]{1,2}' 
+            if re.fullmatch(pattern, str(quantity)):
                 return 1
             else:
-                print("Incorrect syntax")
+                print("Incorrect Quantity syntax")
                 return 0
         else:
-            print("Incorrect Syntax")
+            print("Incorrect Quantity Syntax")
             return 0
         
     def validateQuantity2(self, quantity, stockLimit):
-        if quantity > stockLimit:
+        if int(quantity) > int(stockLimit):
             return 0
         else:
             print("Quantity is above stock limit")
             return 1
 
     def validateStockLimit(self, stockLimit):
-        if len(stockLimit)>0:
-            pattern = f'[1-9]{1,2}'
-            if re.fullmatch(pattern, stockLimit):
+        if int(stockLimit):
+            pattern = r'[0-9]{1,2}'
+            if re.fullmatch(pattern, str(stockLimit)):
                 return 1
             else:
-                print("Invalid Syntax")
+                print("Invalid Stock Syntax")
                 return 0
         else:
-            print("Invalid Syntax")
+            print("Invalid Stock Syntax")
             return 0
         
     def checkName(self, itemName):
@@ -104,7 +104,7 @@ class Item: #item class
         cur.execute(query, (itemName,))
         records = cur.fetchone()
         if records is not None:  # Check if records is not None
-            print("Item already exists in this restaurant")
+            print("Item already exists")
             conn.close()
             return 1
         else:
@@ -133,7 +133,8 @@ class Item: #item class
             
     def updateQuantity(self, quantity, foodName):
         if quantity != None:
-            if self.validateQuantity(quantity) and self.validateQuantity2(quantity):
+            stockLimit = self.getStockLimit()
+            if self.validateQuantity(quantity) and self.validateQuantity2(quantity, stockLimit):
                 if self.checkName(foodName):
                     conn, cur = openConnection()
                     query = 'UPDATE item SET quantity = ? WHERE itemName = ?;'
@@ -169,7 +170,7 @@ class Item: #item class
     def createItem(self, name, quantity, stockLimit):
         conn, cur = openConnection()
         if not self.checkName(name):
-            if (self.validateQuantity(quantity)) and (self.validateName(name)) and (self.validateStockLimit(stockLimit)) and (self.validateQuantity2(quantity)):
+            if (self.validateQuantity(quantity)) and (self.validateName(name)) and (self.validateStockLimit(stockLimit)) and (self.validateQuantity2(quantity, stockLimit)):
                 query = 'INSERT INTO item (itemName, quantity, stockLimit) VALUES (?,?,?);'
                 cur.execute(query, (name, quantity, stockLimit))
                 conn.commit()
