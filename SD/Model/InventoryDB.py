@@ -13,7 +13,7 @@ def create_inventory_table():
             c.execute('''
             CREATE TABLE inventory
             (inventoryID INTEGER PRIMARY KEY AUTOINCREMENT, restaurantName varchar(200) NOT NULL UNIQUE, itemName varchar(200) NOT NULL,
-           FOREIGN KEY (restaurantName) REFERENCES restaurant(restaurantName) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (itemID) REFERENCES item(itemName) ON DELETE CASCADE ON UPDATE CASCADE)
+           FOREIGN KEY (restaurantName) REFERENCES restaurant(restaurantName) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (itemName) REFERENCES item(itemName) ON DELETE CASCADE ON UPDATE CASCADE)
             ''')
             conn.commit()
             print("Table 'inventory' created successfully")
