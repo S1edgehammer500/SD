@@ -606,6 +606,8 @@ def discountOptions():
 def createDiscount():
     discount = Discount()
 
+    
+
     logged_in = session['logged_in']
     authLevel = session['authLevel']
 
@@ -658,8 +660,9 @@ def deleteDiscount():
     
     discount = Discount()
     
+    dIDs, dValues = discount.get_discounts()
 
-    return render_template('deleteDiscount.html', title = "Delete Discount", logged_in=logged_in, authLevel = authLevel)#, restaurantName=restaurantName, numberOfTables=numberOfTables, restaurantNameLen=len(restaurantName))
+    return render_template('deleteDiscount.html', title = "Delete Discount", logged_in=logged_in, authLevel = authLevel, dIDs=dIDs, dValues=dValues, discountsLen = len(dIDs))
 
 
 

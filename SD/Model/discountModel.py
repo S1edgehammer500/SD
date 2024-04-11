@@ -180,11 +180,12 @@ class Discount:
             conn, cur = openConnection()
             cur = conn.cursor()
             cur.execute("SELECT * FROM discounts")
-            rows = cur.fetchall()
-            records = [(row[0], row[1]) for row in rows]
+            records = cur.fetchall()
+            dIDs = [row[0] for row in records]
+            dValues = [row[1] for row in records]
             # Close the connection after fetching data
             conn.close()
-            return records
+            return dIDs, dValues
         except sqlite3.Error as e:
             print("Error fetching discounts:", e)
             return []
