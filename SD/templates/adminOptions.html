@@ -40,13 +40,13 @@
 <div class="AdminBox">
     <h3 class="text-center pt-3">Edit Discounts</h3> <br>
 
-    <a href="#">
+    <a href="{{ url_for('createDiscount') }}">
         <button type="button">Add New Discount</button>
     </a>
-    <a href="#">
+    <a href="{{ url_for('updateDiscount') }}">
         <button type="button">Update Existing Discount</button>
     </a>
-    <a href="#">
+    <a href="{{ url_for('deleteDiscount') }}">
         <button type="button">Remove Discount</button>
     </a>
 
