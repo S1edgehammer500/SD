@@ -2,24 +2,40 @@
 {% block content %} 
 
 <form action="/updateRestaurant2/" method="post">
-    <div class="receiptBox container-fluid">   
-            <table border=1 style="color:white" class="center">
-                    <tr>
-                        <th>Restaurant Name &nbsp;&nbsp;</th>
-                        <th>Table Number &nbsp;&nbsp;</th>
-                    {% for i in range(restaurantNameLen): %} 
-                        <tr>
-                            <td> {{restaurantName[i]}} </td>              
-                            <td> {{numberOfTables[i]}} </td>
+    <div class="StandardBox">
 
-                            <td> <input required type="radio" name="restaurantName" value="{{restaurantName[i]}}" checked></td>
-                        </tr>
-                    {% endfor %}
-                </table>
-                <br><br><br>
-                <form><input style="color:black" type="submit" value="Update Restaurant" size="100"></form><br><br><br>
+        <h3 class="text-center pt-3 heading">Choose A Restaurant To Update Here</h3> <br>
+
+            <table border=1 style="color:rgb(255, 255, 255)" class="center">
+                <tr>
+                    <th class = "text-center" style = "width: 45%;" >Restaurant Name &nbsp;&nbsp;</th>
+                    <th class = "text-center" style = "width: 45%;">Table Number &nbsp;&nbsp;</th>
+                    <th class = "text-center" style = "width: 10%;">Select</th>
+                {% for i in range(restaurantNameLen): %} 
+                    <tr>
+                        <td> {{restaurantName[i]}} </td>              
+                        <td> {{numberOfTables[i]}} </td>
+
+                        <td> <input required type="radio" name="restaurantName" value="{{restaurantName[i]}}" checked></td>
+                    </tr>
+                {% endfor %}
+            </table>
+                <br><br>
+
+
+                <form>
+                    
+                    <div class = "d-grid mb-3">
+                        <button type = "submit"  class = "btn btn-light black">Submit</button>
+                        </div>
+                        <br>
             </div>
     </div>
 </form>
-<br><br><br><br><br>
+
+<br>
+
+
+
+
 {% endblock content %}

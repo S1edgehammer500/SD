@@ -18,16 +18,20 @@
             <div class="container-fluid">
               <ul class="nav navbar-nav">
                 {% if logged_in == True: %} 
-                <li><a href="{{ url_for('home') }}">Home</a></li>
                 <div class="navbar-header">
                   <a class="navbar-brand" href="{{ url_for('home') }}">Horizon Restaurant</a>
                 </div>
                   {% if authLevel == 'admin': %} 
                     <li><a href="{{ url_for('userOptions') }}"><span class="glyphicon glyphicon-tasks"></span> Edit Users</a></li>
-                    <li><a href="{{ url_for('discountOptions') }}"><span class="glyphicon glyphicon-tasks"></span> Edit Discounts</a></li>
+                    <li><a href=#><span class="glyphicon glyphicon-tasks"></span> Edit Discounts</a></li>
                     <li><a href="{{ url_for('restaurantOptions') }}"><span class="glyphicon glyphicon-tasks"></span> Edit Restaurants</a></li>
                     <li><a href=#><span class="glyphicon glyphicon-tasks"></span> Reports</a></li>
                     <li><a href=#><span class="glyphicon glyphicon-pencil"></span> Edit Menu</a></li>
+
+                    <li><a href="{{ url_for('adminOptions') }}"><span></span> Admin</a></li>
+
+                    
+
                   {% endif %}
                   <li><a href=#><span></span> Menu</a></li>
                   <li><a href=#><span class="glyphicon glyphicon-user"></span> Account</a></li>
@@ -47,7 +51,7 @@
           {% if messages %}
             <ul>
             {% for category, message in messages %}
-            <div class="alert alert-{{ category }}">
+            <div class="flash alert alert-{{ category }}">
                 <li>{{ message }}</li>
             </div>
             {% endfor %}
@@ -55,7 +59,7 @@
           {% endif %}
         {% endwith %}
         {% block content %}{% endblock content %}
-        <div class="footer container-fluid" style="text-decoration:none; position:fixed;">
+        <div class="footer container-fluid text-center" style="text-decoration:none; position:fixed;">
             <br>
             <p>© 2022 Horizon Restaurant. All rights reserved &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=#>Privacy Statement</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Horizon Restaurant</p>
         </div>
