@@ -147,7 +147,7 @@ def createUser():
                         print(str(BR))
                         if currentUser.saveUserDetails(code, password, AL, BR) == 1:                      
                             flash("Account is now registered", "success")
-                            return redirect(url_for('home'))
+                            return redirect(url_for('admin'))
                         else:
                             flash("Invalid username syntax", "danger")
                             return render_template('createUser.html', error=error, title="Create User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
@@ -200,22 +200,22 @@ def menu():
     logged_in = session['logged_in']
     authLevel = session['authLevel']
     
+
+    currentUser = User()
+    currentUser.setLoginDetails(session['code'])
+
+    currentRestaurant = currentUser.getBaseRestaurant()
+    print(currentRestaurant)
+
     currentMenu = Menu()
 
-    employeeCode = []
-    tempEmployeeCode = currentUser.getEmployeeCodes()
-    employeeCode = strip.it(tempEmployeeCode)
+    
+    foodList, priceList, allergyList = currentMenu.getMenuList(currentRestaurant)
 
+    print(foodList)
+    print(allergyList)
 
-    baseRestaurant = []
-    tempBaseRestaurant = currentUser.getBaseRestaurants()
-    baseRestaurant = strip.it(tempBaseRestaurant)
-
-    authorisationLevel = []
-    tempAuthorisationLevel = currentUser.getAuthorisationLevels()
-    authorisationLevel = strip.it(tempAuthorisationLevel)
-
-    return render_template('menu.html', title = "Menu", logged_in=logged_in, authLevel=authLevel, baseRestaurant=baseRestaurant, authorisationLevel=authorisationLevel, employeeCode=employeeCode, codeLen=len(employeeCode))
+    return render_template('menu.html', title = "Menu" , logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, allergyList = allergyList, listLen = len(foodList))
 
 @app.route("/deleteUser/", methods=['GET', 'POST'])
 @login_required

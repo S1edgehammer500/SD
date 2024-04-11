@@ -1,6 +1,4 @@
 {% extends "layout.html" %}
-
-
 {% block content %}
 
 
@@ -17,14 +15,13 @@
             <th class = "text-center" style = "width: 15%;">Price</th>
 
         </tr>
-        {% for i in range(codeLen): %} 
-        <tr>
-            <td> {{employeeCode[i]}} </td>              
-            <td> {{authorisationLevel[i]}} </td>
-            <td> {{baseRestaurant[i]}} </td>
-            <td> <input required type="radio" name="code" value="{{employeeCode[i]}}" checked></td>
-        </tr>
-    {% endfor %}
+            {% for i in range(listLen): %} 
+                <tr>
+                    <td> {{foodList[i]}} </td>              
+                    <td> {{allergyList[i]}} </td>
+                    <td> {{priceList[i]}} </td>
+                </tr>
+            {% endfor %}
 
     </table>
 

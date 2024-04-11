@@ -165,7 +165,7 @@ class Menu: #menu class
     def getRestaurantNames(self, restaurantName):
         conn, cur = openConnection()
         query = 'SELECT restaurantName FROM menu WHERE restaurantName = ? ORDER BY menuID;'
-        conn.execute(query, (restaurantName,))
+        cur.execute(query, (restaurantName,))
         record = cur.fetchall()
         conn.close()
         return record
@@ -173,10 +173,25 @@ class Menu: #menu class
     def getfoodNames(self, restaurantName):
         conn, cur = openConnection()
         query = 'SELECT foodName FROM menu WHERE restaurantName = ? ORDER BY menuID;'
-        conn.execute(query, (restaurantName,))
+        cur.execute(query, (restaurantName,))
         record = cur.fetchall()
         conn.close()
         return record
+    
+    def getMenuList(self,restaurantName):
+        conn, cur = openConnection()
+        query = 'SELECT food.foodName, price, allergyInfo FROM food JOIN menu ON food.foodName == menu.foodName WHERE menu.restaurantName = ? ORDER BY menu.menuID;'
+
+        cur.execute(query, (restaurantName,))
+        records = cur.fetchall()
+        foodList = [row[0] for row in records]
+        priceList = [row[1] for row in records]
+        allergyList = [row[2] for row in records]
+
+        # Close the connection after fetching data
+        conn.close()
+        return foodList, priceList, allergyList
+
         
     def delete_menu(self, id):
         try:
