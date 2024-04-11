@@ -11,20 +11,17 @@ class Food: #food class
 
     def setFoodDetails(self, name):
          conn, cur = openConnection()
-         query = "SELECT * FROM food WHERE name = ?;"
+         query = "SELECT * FROM food WHERE foodName = ?;"
          cur.execute(query,(id,))
          record = cur.fetchone()
          price = record[1]
-         name = record[2]
-         isAvailable = record[3]
-         allergyInfo = record[4]
-         food = Food()
-         food.setPrice(price)
-         food.setName(name)
-         food.setIsAvailable(isAvailable)
-         food.setAllergyInfo(allergyInfo)
+         isAvailable = record[2]
+         allergyInfo = record[3]
+         self.setPrice(price)
+         self.setName(name)
+         self.setIsAvailable(isAvailable)
+         self.setAllergyInfo(allergyInfo)
          conn.close()
-         return food
 
 
     #setters  
@@ -77,22 +74,22 @@ class Food: #food class
             if re.fullmatch(pattern, name):
                 return 1
             else:
-                print("Invalid Syntax")
+                print("Invalid Name Syntax")
                 return 0
         else:
-            print("Invalid Syntax")
+            print("Name length too small")
             return 0
 
     def validateAllergyInfo(self, allergyInfo):
         if allergyInfo is not None and len(allergyInfo) > 0:
-            pattern = r'[A-Za-z]{3,}'
+            pattern = r'[A-Za-z\s]{3,}'
             if re.fullmatch(pattern, allergyInfo):
                 return 1
             else:
-                print("Invalid Syntax")
+                print("Invalid allergy Syntax")
                 return 0
         else:
-            print("Invalid Syntax")
+            print("allergy Info too small")
             return 0
 
     #start of food model
@@ -122,10 +119,10 @@ class Food: #food class
         
 
 
-    def checkFoodName(self, foodName, restaurantName):
+    def checkName(self, foodName):
         conn, cur = openConnection()
-        query = "SELECT name FROM food WHERE name = ?;"
-        cur.execute(query, (name,))
+        query = "SELECT * FROM food WHERE foodName = ?;"
+        cur.execute(query, (foodName,))
         records = cur.fetchone()
         if records is not None:  # Check if records is not None
             print("Food already exists in this restaurant")
@@ -134,42 +131,93 @@ class Food: #food class
         else:
             conn.close()
             return 0
-
         
-    def updateFood(self, foodID=None, price=None, availability=None ):
-        isAvailable = True 
-        if foodID != None:
-            conn, cur = openConnection()
-            if price != None:
-                query = 'UPDATE food SET price = ? WHERE foodID = ?;'
-                cur.execute(query, (price, foodID))
-                conn.commit()
-                conn.close()
-                print("price updated")
-                return 1
-            if availability != None:
-                query2 = 'UPDATE food SET isAvailable = ? WHERE foodID = ?;'
-                cur.execute(query2, (availability, foodID))
-                conn.commit()
-                conn.close()
-                print("availability updated")
-                return 1
+    def updateFoodName(self, previousName, currentName):
+        if previousName != None and currentName != None:
+            if self.validateName(currentName):
+                if self.checkName(previousName):
+                    if not self.checkName(currentName):
+                        conn, cur = openConnection()
+                        query = 'UPDATE food SET foodName = ? WHERE foodName = ?;'
+                        cur.execute(query, (currentName, previousName))
+                        conn.commit()
+                        conn.close()
+                        return 1
+                    else:
+                        return 0
+                else:
+                    return 0
             else:
                 return 0
         else:
             return 0
+            
+    def updatePrice(self, price, foodName):
+        if price != None:
+            if self.validatePrice(price):
+                if self.checkName(foodName):
+                    conn, cur = openConnection()
+                    query = 'UPDATE food SET price = ? WHERE foodName = ?;'
+                    cur.execute(query, (price, foodName))
+                    conn.commit()
+                    conn.close()
+                    return 1
+                else:
+                    return 0
+            else:
+                return 0
+        else:
+            return 0
+        
+            
+    def updateAvailability(self, availability, foodName):
+        if availability != None:
+            if self.validateAvailability(availability):
+                if self.checkName(foodName):
+                    conn, cur = openConnection()
+                    query = 'UPDATE food SET isAvailable = ? WHERE foodName = ?;'
+                    cur.execute(query, (availability, foodName))
+                    conn.commit()
+                    conn.close()
+                    return 1
+                else:
+                    return 0
+            else:
+                return 0
+        else:
+            return 0
+        
+    def updateAllergyInfo(self, allergyInfo, foodName):
+        if allergyInfo != None:
+            if self.validateAllergyInfo(allergyInfo):
+                if self.checkName(foodName):
+                    conn, cur = openConnection()
+                    query = 'UPDATE food SET allergyInfo = ? WHERE foodName = ?;'
+                    cur.execute(query, (allergyInfo, foodName))
+                    conn.commit()
+                    conn.close()
+                    return 1
+                else:
+                    return 0
+            else:
+                return 0
+        else:
+            return 0
+        
 
         
-    def createFood(self, price, name, allergyInfo):
-        
+    def createFood(self, name, price, allergyInfo):
         conn, cur = openConnection()
-        if (self.validatePrice(price)) and (self.validateName(name)) and (self.validateAllergyInfo(allergyInfo)):
-            query = 'INSERT INTO food (price, name, isAvailable, allergyInfo) VALUES (? , ?, ?, ?);'
-            cur.execute(query, (price, name, True, allergyInfo))
-            conn.commit()
-            print("new food created")
-            conn.close()
-            return 1
+        if not self.checkName(name):
+            if (self.validatePrice(price)) and (self.validateName(name)) and (self.validateAllergyInfo(allergyInfo)):
+                query = 'INSERT INTO food (foodName, price, isAvailable, allergyInfo) VALUES (?,?,?,?);'
+                cur.execute(query, (name, price, True, allergyInfo))
+                conn.commit()
+                print("new food created")
+                conn.close()
+                return 1
+            else:
+                return 0
         else:
             print("Syntax error")
             return 0
@@ -186,11 +234,13 @@ class Food: #food class
         except sqlite3.Error as e:
             print("Error fetching food list:", e)
             return []
-    def delete_food(self, foodID):
+        
+    def delete_food(self, foodName):
         try:
             conn, cur = openConnection()
-            if self.checkFoodID(foodID):
-                cur.execute("DELETE FROM food WHERE foodID = ?", (foodID,))
+            if self.checkName(foodName):
+                query = "DELETE FROM food WHERE foodName = ?;"
+                cur.execute(query, (foodName,))
                 conn.commit()
                 conn.close()
                 return 1
