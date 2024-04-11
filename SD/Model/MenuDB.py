@@ -12,7 +12,7 @@ def create_menu_table():
         else:
             c.execute('''
             CREATE TABLE menu
-            (menuID INTEGER PRIMARY KEY AUTOINCREMENT, restaurantName varchar(200) NOT NULL UNIQUE, foodName varchar(200) NOT NULL UNIQUE,
+            (menuID INTEGER PRIMARY KEY AUTOINCREMENT, restaurantName varchar(200) NOT NULL, foodName varchar(200) NOT NULL,
            FOREIGN KEY (restaurantName) REFERENCES restaurant(restaurantName) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (foodName) REFERENCES food(foodName) ON DELETE CASCADE ON UPDATE CASCADE)
             ''')
             conn.commit()
