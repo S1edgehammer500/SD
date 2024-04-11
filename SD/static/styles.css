@@ -91,6 +91,27 @@
   }
 
 
+.title {
+
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 50px;
+  text-decoration: underline;
+}
+
+.menu-holder{
+
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+}
+
+
 .StandardBox {
   
   position: absolute;

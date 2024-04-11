@@ -189,7 +189,17 @@ def adminOptions():
     logged_in = session['logged_in']
     authLevel = session['authLevel']
 
-    return render_template('adminOptions.html', title="User Options", logged_in=logged_in, authLevel=authLevel)
+    return render_template('adminOptions.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
+
+
+@app.route("/menu/")
+@login_required
+def menu():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    return render_template('menu.html', title="Menu", logged_in=logged_in, authLevel=authLevel)
 
 @app.route("/deleteUser/", methods=['GET', 'POST'])
 @login_required
