@@ -10,10 +10,10 @@ def run_tests():
         def test1_create_inventory(self):
             restaurantName = "Bristol"
             itemName = "Tomato"
-            result = self.model.createInventory(id, restaurantName, itemName)
+            result = self.model.createInventory(restaurantName, itemName)
             self.assertEqual(result,1)
             restaurantName2 = "Manchester"
-            itemName2 = "Tomato"
+            itemName2 = "Lettuce"
             self.model.createInventory(restaurantName2, itemName2)
 
         def test2_create_existing_inventory(self):
@@ -55,56 +55,42 @@ def run_tests():
         def test6_update_restaurantName_invalid_id(self):
             id = 20
             restaurantName = "Bristol"
+            self.model.setItemName("Lettuce")
             result = self.model.updateRestaurantName(restaurantName, id)
             self.assertEqual(result, 0)
         
         def test7_update_itemName(self):
             id = 1
             itemName = "Lettuce"
-            result = self.model.updateitemName(itemName, id)
+            self.model.setInventoryDetails(id)
+            result = self.model.updateItemName(itemName, id)
             self.assertEqual(result, 1)
 
-        def test8_update_itemName_invalid_syntax(self):
-            id = 'Pizza'
-            itemName = "Not available"
-            result = self.model.updateitemName(itemName, id)
+        def test8_update_itemName_nonexistant(self):
+            id = 1
+            itemName = "Bacon"
+            self.model.setInventoryDetails(id)
+            result = self.model.updateItemName(itemName, id)
             self.assertEqual(result, 0)
 
         def test9_update_itemName_invalid_id(self):
-            id = 'Nothing'
-            itemName = False
-            result = self.model.updateitemName(itemName, id)
-            self.assertEqual(result, 0)
-        
-        def test91_update_allergy(self):
-            id = 'Pizza'
-            allergy = "No allergy risks"
-            result = self.model.updateAllergyInfo(allergy, id)
-            self.assertEqual(result, 1)
-
-        def test92_update_allergy_invalid_syntax(self):
-            id = 'Pizza'
-            allergy = "h"
-            result = self.model.updateAllergyInfo(allergy, id)
-            self.assertEqual(result, 0)
-
-        def test93_update_allergy_invalid_id(self):
-            id = 'Nothing'
-            allergy = "No allergy risk"
-            result = self.model.updateAllergyInfo(allergy, id)
+            id = 20
+            self.model.setRestaurantName("Manchester")
+            itemName = "Tomato"
+            result = self.model.updateItemName(itemName, id)
             self.assertEqual(result, 0)
 
     class TestDeleteinventory(unittest.TestCase):
         def setUp(self):
-            self.model = inventory()
+            self.model = Inventory()
 
         def test1_delete_inventory(self):
-            id = 'Burger'
+            id = 2
             result = self.model.delete_inventory(id)
             self.assertEqual(result, 1)
 
         def test2_delete_nonexistant_inventory(self):
-            id = 'Nothing'
+            id = 70
             result = self.model.delete_inventory(id)
             self.assertEqual(result, 0)
 

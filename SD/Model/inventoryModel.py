@@ -15,14 +15,14 @@ class Inventory: #inventory class
          record = cur.fetchone()
          restaurantName = record[1]
          itemName = record[2]
-         self.setrestaurantName(restaurantName)
+         self.setRestaurantName(restaurantName)
          self.setID(id)
-         self.setitemName(itemName)
+         self.setItemName(itemName)
          conn.close()
 
 
     #setters  
-    def setrestaurantName(self, restaurantName):
+    def setRestaurantName(self, restaurantName):
         if self.validateRestaurantName(restaurantName):
             self.__restaurantName = restaurantName
             return 1
@@ -40,7 +40,7 @@ class Inventory: #inventory class
             return 0
     
     #getters
-    def getrestaurantName(self):
+    def getRestaurantName(self):
         return self.__restaurantName
     
     def getID(self):
@@ -98,7 +98,7 @@ class Inventory: #inventory class
         conn, cur = openConnection()
         query = 'SELECT * FROM inventory WHERE restaurantName = ? AND itemName = ?;'
         cur.execute(query, (restaurantName, itemName))
-        record = cur.fethcone()
+        record = cur.fetchone()
         if record is not None:
             print("Restaurant and item combination exists")
             conn.close()
