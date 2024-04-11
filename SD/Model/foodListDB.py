@@ -12,8 +12,8 @@ def create_foodList_table():
         else:
             c.execute('''
             CREATE TABLE foodList
-            (foodListID INTEGER PRIMARY KEY AUTOINCREMENT, orderID INT NOT NULL, foodID INT NOT NULL,
-                      FOREIGN KEY (orderID) REFERENCES orders(orderID) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (foodID) REFERENCES food(foodID) ON DELETE CASCADE ON UPDATE CASCADE)
+            (foodListID INTEGER PRIMARY KEY AUTOINCREMENT, orderID INT NOT NULL, foodName varchar(200) NOT NULL,
+                      FOREIGN KEY (orderID) REFERENCES orders(orderID) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (foodName) REFERENCES food(foodName) ON DELETE CASCADE ON UPDATE CASCADE)
             ''')
             conn.commit()
             print("Table 'foodList' created successfully")

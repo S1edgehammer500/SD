@@ -12,7 +12,7 @@ def create_item_table():
         else:
             c.execute('''
             CREATE TABLE item
-            (itemID INTEGER PRIMARY KEY AUTOINCREMENT, quantity INT NOT NULL, name varchar(200) NOT NULL,
+            (itemName varchar(200) NOT NULL PRIMARY KEY, quantity INT NOT NULL,
            stockLimit INT NOT NULL)         
             ''')
             conn.commit()
