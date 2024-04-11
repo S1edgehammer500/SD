@@ -1,7 +1,7 @@
 from Model.Database import *
 import re
 
-class Food: #food class
+class Inventory: #inventory class
 
     def __init__(self):
         self.__ID = ""
@@ -93,17 +93,34 @@ class Food: #food class
             print("Inventory does not exist")
             conn.close()  # Close the connection
             return 0
+        
+    def checkRestaurantItem(self, restaurantName, itemName):
+        conn, cur = openConnection()
+        query = 'SELECT * FROM inventory WHERE restaurantName = ? AND itemName = ?;'
+        cur.execute(query, (restaurantName, itemName))
+        record = cur.fethcone()
+        if record is not None:
+            print("Restaurant and item combination exists")
+            conn.close()
+            return 1
+        else:
+            print("Restaurant and item combination don't exist")
+            conn.close()
+            return 0
             
     def updateRestaurantName(self, restaurantName, id):
         if restaurantName != None:
             if self.checkID(id):
                 if self.validateRestaurantName(restaurantName):
-                    conn, cur = openConnection()
-                    query = 'UPDATE inventory SET restaurantName = ? WHERE inventoryID = ?;'
-                    cur.execute(query, (restaurantName, id))
-                    conn.commit()
-                    conn.close()
-                    return 1
+                    if not self.checkRestaurantItem(restaurantName, self.__itemName):
+                        conn, cur = openConnection()
+                        query = 'UPDATE inventory SET restaurantName = ? WHERE inventoryID = ?;'
+                        cur.execute(query, (restaurantName, id))
+                        conn.commit()
+                        conn.close()
+                        return 1
+                    else:
+                        return 0
                 else:
                     return 0
             else:
@@ -116,12 +133,15 @@ class Food: #food class
         if itemName != None:
             if self.checkID(id):
                 if self.validateItemName(itemName):
-                    conn, cur = openConnection()
-                    query = 'UPDATE inventory SET itemName = ? WHERE inventoryID = ?;'
-                    cur.execute(query, (itemName, id))
-                    conn.commit()
-                    conn.close()
-                    return 1
+                    if not self.checkRestaurantItem(self.__restaurantName, itemName):
+                        conn, cur = openConnection()
+                        query = 'UPDATE inventory SET itemName = ? WHERE inventoryID = ?;'
+                        cur.execute(query, (itemName, id))
+                        conn.commit()
+                        conn.close()
+                        return 1
+                    else:
+                        return 0
                 else:
                     return 0
             else:
@@ -132,7 +152,7 @@ class Food: #food class
         
     def createInventory(self, restaurantName, itemName):
         conn, cur = openConnection()
-        if (self.validateRestaurantName(restaurantName)) and (self.validateItemName(itemName)):
+        if (self.validateRestaurantName(restaurantName)) and (self.validateItemName(itemName)) and not (self.checkRestaurantItem(restaurantName, itemName)):
             query = 'INSERT INTO inventory (restaurantName, itemName) VALUES (?,?);'
             cur.execute(query, (restaurantName, itemName))
             conn.commit()

@@ -1,148 +1,146 @@
 import unittest
-from Model.foodModel import *
+from Model.inventoryModel import *
 
 def run_tests():
 
-    class TestFoodCreation(unittest.TestCase):
+    class TestinventoryCreation(unittest.TestCase):
         def setUp(self):
-            self.model = Food()
+            self.model = Inventory()
 
-        def test1_create_food(self):
-            name = "Omelette"
-            price = 17.58
-            allergyInfo = "Contains eggs"
-            result = self.model.createFood(name, price, allergyInfo)
+        def test1_create_inventory(self):
+            restaurantName = "Bristol"
+            itemName = "Tomato"
+            result = self.model.createInventory(id, restaurantName, itemName)
             self.assertEqual(result,1)
-            name2 = "Burger"
-            price2 = 15.36
-            allergyInfo2 = "No allergy risk"
-            self.model.createFood(name2, price2, allergyInfo2)
+            restaurantName2 = "Bristol"
+            itemName2 = "Tomato"
+            self.model.createInventory(restaurantName2, itemName2)
 
-        def test2_create_existing_food(self):
-            name = "Omelette"
-            price = 17.58
+        def test2_create_existing_inventory(self):
+            id = "Omelette"
+            restaurantName = 17.58
             allergyInfo = "Contains eggs"
-            result = self.model.createFood(name, price, allergyInfo)
+            result = self.model.createinventory(id, restaurantName, allergyInfo)
             self.assertEqual(result, 0)
 
-        def test3_create_food_invalid_name(self):
-            name = "h"
-            price = 20
+        def test3_create_inventory_invalid_id(self):
+            id = "h"
+            restaurantName = 20
             allergyInfo = "Contains eggs"
-            result = self.model.createFood(name, price, allergyInfo)
+            result = self.model.createinventory(id, restaurantName, allergyInfo)
             self.assertEqual(result, 0)
 
-        def test4_create_food_invalid_price(self):
-            name = "Pizza"
-            price = 0
+        def test4_create_inventory_invalid_restaurantName(self):
+            id = "Pizza"
+            restaurantName = 0
             allergyInfo = "Contains cheese"
-            result = self.model.createFood(name, price, allergyInfo)
+            result = self.model.createinventory(id, restaurantName, allergyInfo)
             self.assertEqual(result, 0)
 
-        def test5_create_food_invalid_allergy(self):
-            name = "Pizza"
-            price = 20
+        def test5_create_inventory_invalid_allergy(self):
+            id = "Pizza"
+            restaurantName = 20
             allergyInfo = "h"
-            result = self.model.createFood(name, price, allergyInfo)
+            result = self.model.createinventory(id, restaurantName, allergyInfo)
             self.assertEqual(result, 0)
 
-    class TestUpdateFood(unittest.TestCase):
+    class TestUpdateinventory(unittest.TestCase):
         def setUp(self):
-            self.model = Food()
+            self.model = inventory()
 
-        def test1_successful_update_name(self):
-            name = 'Omelette'
-            newName = 'Pizza'
-            result = self.model.updateFoodName(name, newName)
+        def test1_successful_update_id(self):
+            id = 'Omelette'
+            newid = 'Pizza'
+            result = self.model.updateinventoryid(id, newid)
             self.assertEqual(result, 1)
 
-        def test2_existing_update_name(self):
-            name = 'Pizza'
-            newName = 'Burger'
-            result = self.model.updateFoodName(name, newName)
+        def test2_existing_update_id(self):
+            id = 'Pizza'
+            newid = 'Burger'
+            result = self.model.updateinventoryid(id, newid)
             self.assertEqual(result, 0)
 
-        def test3_invalid_name_syntax(self):
-            name = 'Pizza'
-            newName = 'h'
-            result = self.model.updateFoodName(name, newName)
+        def test3_invalid_id_syntax(self):
+            id = 'Pizza'
+            newid = 'h'
+            result = self.model.updateinventoryid(id, newid)
             self.assertEqual(result, 0)
 
-        def test4_update_price(self):
-            name = 'Pizza'
-            price = 15.36
-            result = self.model.updatePrice(price, name)
+        def test4_update_restaurantName(self):
+            id = 'Pizza'
+            restaurantName = 15.36
+            result = self.model.updaterestaurantName(restaurantName, id)
             self.assertEqual(result, 1)
 
-        def test5_update_price_invalid_syntax(self):
-            name = 'Pizza'
-            price = 0
-            result = self.model.updatePrice(price, name)
+        def test5_update_restaurantName_invalid_syntax(self):
+            id = 'Pizza'
+            restaurantName = 0
+            result = self.model.updaterestaurantName(restaurantName, id)
             self.assertEqual(result, 0)
 
-        def test6_update_price_invalid_name(self):
-            name = 'Nothing'
-            price = 15.36
-            result = self.model.updatePrice(price, name)
+        def test6_update_restaurantName_invalid_id(self):
+            id = 'Nothing'
+            restaurantName = 15.36
+            result = self.model.updaterestaurantName(restaurantName, id)
             self.assertEqual(result, 0)
         
-        def test7_update_availability(self):
-            name = 'Pizza'
-            availability = False
-            result = self.model.updateAvailability(availability, name)
+        def test7_update_itemName(self):
+            id = 'Pizza'
+            itemName = False
+            result = self.model.updateitemName(itemName, id)
             self.assertEqual(result, 1)
 
-        def test8_update_availability_invalid_syntax(self):
-            name = 'Pizza'
-            availability = "Not available"
-            result = self.model.updateAvailability(availability, name)
+        def test8_update_itemName_invalid_syntax(self):
+            id = 'Pizza'
+            itemName = "Not available"
+            result = self.model.updateitemName(itemName, id)
             self.assertEqual(result, 0)
 
-        def test9_update_availability_invalid_name(self):
-            name = 'Nothing'
-            availability = False
-            result = self.model.updateAvailability(availability, name)
+        def test9_update_itemName_invalid_id(self):
+            id = 'Nothing'
+            itemName = False
+            result = self.model.updateitemName(itemName, id)
             self.assertEqual(result, 0)
         
         def test91_update_allergy(self):
-            name = 'Pizza'
+            id = 'Pizza'
             allergy = "No allergy risks"
-            result = self.model.updateAllergyInfo(allergy, name)
+            result = self.model.updateAllergyInfo(allergy, id)
             self.assertEqual(result, 1)
 
         def test92_update_allergy_invalid_syntax(self):
-            name = 'Pizza'
+            id = 'Pizza'
             allergy = "h"
-            result = self.model.updateAllergyInfo(allergy, name)
+            result = self.model.updateAllergyInfo(allergy, id)
             self.assertEqual(result, 0)
 
-        def test93_update_allergy_invalid_name(self):
-            name = 'Nothing'
+        def test93_update_allergy_invalid_id(self):
+            id = 'Nothing'
             allergy = "No allergy risk"
-            result = self.model.updateAllergyInfo(allergy, name)
+            result = self.model.updateAllergyInfo(allergy, id)
             self.assertEqual(result, 0)
 
-    class TestDeleteFood(unittest.TestCase):
+    class TestDeleteinventory(unittest.TestCase):
         def setUp(self):
-            self.model = Food()
+            self.model = inventory()
 
-        def test1_delete_food(self):
-            name = 'Burger'
-            result = self.model.delete_food(name)
+        def test1_delete_inventory(self):
+            id = 'Burger'
+            result = self.model.delete_inventory(id)
             self.assertEqual(result, 1)
 
-        def test2_delete_nonexistant_food(self):
-            name = 'Nothing'
-            result = self.model.delete_food(name)
+        def test2_delete_nonexistant_inventory(self):
+            id = 'Nothing'
+            result = self.model.delete_inventory(id)
             self.assertEqual(result, 0)
 
     loader = unittest.TestLoader()
     runner = unittest.TextTestRunner()
 
-    create_food=loader.loadTestsFromTestCase(TestFoodCreation)
-    food_update=loader.loadTestsFromTestCase(TestUpdateFood)
-    delete_food=loader.loadTestsFromTestCase(TestDeleteFood)
-    all_tests = unittest.TestSuite([create_food,food_update,delete_food])
+    create_inventory=loader.loadTestsFromTestCase(TestinventoryCreation)
+    inventory_update=loader.loadTestsFromTestCase(TestUpdateinventory)
+    delete_inventory=loader.loadTestsFromTestCase(TestDeleteinventory)
+    all_tests = unittest.TestSuite([create_inventory,inventory_update,delete_inventory])
     
     runner.run(all_tests)
 run_tests()
