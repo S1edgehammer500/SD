@@ -10,6 +10,7 @@ from flask import redirect, url_for
 from Model.userModel import *
 from Model.restaurantModel import *
 from Model.discountModel import *
+from Model.menuModel import *
 
 # User defined
 import strip
@@ -192,14 +193,29 @@ def adminOptions():
     return render_template('adminOptions.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
 
 
-@app.route("/menu/")
+@app.route("/menu/", methods = ['GET', 'POST'])
 @login_required
 def menu():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
+    
+    currentMenu = Menu()
 
-    return render_template('menu.html', title="Menu", logged_in=logged_in, authLevel=authLevel)
+    employeeCode = []
+    tempEmployeeCode = currentUser.getEmployeeCodes()
+    employeeCode = strip.it(tempEmployeeCode)
+
+
+    baseRestaurant = []
+    tempBaseRestaurant = currentUser.getBaseRestaurants()
+    baseRestaurant = strip.it(tempBaseRestaurant)
+
+    authorisationLevel = []
+    tempAuthorisationLevel = currentUser.getAuthorisationLevels()
+    authorisationLevel = strip.it(tempAuthorisationLevel)
+
+    return render_template('menu.html', title = "Menu", logged_in=logged_in, authLevel=authLevel, baseRestaurant=baseRestaurant, authorisationLevel=authorisationLevel, employeeCode=employeeCode, codeLen=len(employeeCode))
 
 @app.route("/deleteUser/", methods=['GET', 'POST'])
 @login_required

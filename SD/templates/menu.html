@@ -1,16 +1,34 @@
 {% extends "layout.html" %}
 
 
-
-
-
 {% block content %}
 
 
 <h1 class = "title">Menu</h1>
 
 
-<div class = "menu-container">
+<div class = "menu-holder">
+
+    <table>
+
+        <tr>
+            <th class = "text-center" style = "width: 25%;">Name</th>
+            <th class = "text-center" style = "width: 60%;">Allergy Description</th>
+            <th class = "text-center" style = "width: 15%;">Price</th>
+
+        </tr>
+        {% for i in range(codeLen): %} 
+        <tr>
+            <td> {{employeeCode[i]}} </td>              
+            <td> {{authorisationLevel[i]}} </td>
+            <td> {{baseRestaurant[i]}} </td>
+            <td> <input required type="radio" name="code" value="{{employeeCode[i]}}" checked></td>
+        </tr>
+    {% endfor %}
+
+    </table>
+
+</div>
 
 
 

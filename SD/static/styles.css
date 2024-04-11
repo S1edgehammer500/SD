@@ -105,10 +105,20 @@
 .menu-holder{
 
   position: absolute;
-  top: 35%;
+  top: 30%;
   left: 50%;
   transform: translate(-50%, -50%);
+  height: auto;
+  width: 1000px;
 
+}
+
+.menu-holder table{
+  width: 100%;
+  
+  border: 2px solid white; /* Thick white outline */
+  color: white; /* Text color */
+  background-color: rgba(33, 37, 41);
 }
 
 
