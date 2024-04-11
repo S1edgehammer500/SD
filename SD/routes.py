@@ -9,6 +9,7 @@ from Model.Database import *
 from flask import redirect, url_for
 from Model.userModel import *
 from Model.restaurantModel import *
+from Model.discountModel import *
 
 # User defined
 import strip
@@ -578,6 +579,94 @@ def updateRestaurant3():
                 return render_template('updateRestaurant2.html', error="", title = "Update Restaurant", logged_in=logged_in, authLevel=authLevel)
     except Exception as e:                
         return render_template('updateRestaurant2.html', error=e, title = "Update Restaurant", logged_in=logged_in, authLevel=authLevel)
+
+
+#Beggining of discount crud
+
+@app.route("/discountOptions/")
+@login_required
+def discountOptions():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    return render_template('discountOptions.html', title="Restaurant Options", logged_in=logged_in, authLevel=authLevel)
+
+@app.route('/createDiscount/', methods=['POST', 'GET'])
+@login_required
+def createDiscount():
+    discount = Discount()
+
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+
+    error = ''
+
+    try:
+        if request.method == "POST": 
+            #getting data from form        
+            discountID = request.form['discountID']
+            discountValue = request.form['discountValue']
+
+                 
+            if discountID != None and discountValue != None:
+                if discount.checkDiscountValue(discountValue) != 1:
+                    if discount.validateDiscountIDSyntax(discountID) == 1:
+                        if discount.validateDiscountValueSyntax(discountValue) == 1:
+        
+
+                            if discount.createDiscount(discountID, discountValue) == 1:                      
+                                flash("Discount is now registered", "success")
+                                return redirect(url_for('discountOptions'))
+                            else:
+                                flash("Unexpected Error occured", "danger")
+                                return render_template('discountOptions.html', error=error, title="Discount Options", logged_in=logged_in, authLevel=authLevel)
+                        else:
+                            flash("Invalid discount value", "danger")
+                            return render_template('createDiscount.html', error=error, title="Create Discount", logged_in=logged_in, authLevel=authLevel)
+                    else:
+                        flash("Invalid Discount ID syntax", "danger")
+                        return render_template('createDiscount.html', error=error, title="Create Discount", logged_in=logged_in, authLevel=authLevel)
+                else:
+                    flash("Discount already exists", "danger")
+                    print("Discount exists")
+                    return render_template('createDiscount.html', error=error, title="Create Discount", logged_in=logged_in, authLevel=authLevel)
+            else:                
+                flash("Fields cannot be empty", "danger")
+                return render_template('createDiscount.html', error=error, title="Create Discount", logged_in=logged_in, authLevel=authLevel)
+        else:            
+            return render_template('createDiscount.html', error=error, title="Create Discount", logged_in=logged_in, authLevel=authLevel)        
+    except Exception as e:                
+        return render_template('createDiscount.html', error=e, title="Create Discount", logged_in=logged_in, authLevel=authLevel)
+
+
+@app.route("/deleteDiscount/", methods=['GET', 'POST'])
+@login_required
+def deleteDiscount():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    discount = Discount()
+    
+
+    return render_template('deleteDiscount.html', title = "Delete Discount", logged_in=logged_in, authLevel = authLevel)#, restaurantName=restaurantName, numberOfTables=numberOfTables, restaurantNameLen=len(restaurantName))
+
+
+
+@app.route("/updateDiscount/", methods=['GET', 'POST'])
+@login_required
+def updateDiscount():
+    
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    discount = Discount()
+
+
+  
+    return render_template('updateDiscount.html', title = "Update Discount", logged_in=logged_in, authLevel = authLevel)#, restaurantName=restaurantName, numberOfTables=numberOfTables, restaurantNameLen=len(restaurantName))
+
 
 if __name__ == "__main__":
     app.run( debug=True ,host="127.0.0.1", port=5050)
