@@ -182,6 +182,15 @@ def userOptions():
 
     return render_template('userOptions.html', title="User Options", logged_in=logged_in, authLevel=authLevel)
 
+@app.route("/adminOptions/")
+@login_required
+def adminOptions():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    return render_template('adminOptions.html', title="User Options", logged_in=logged_in, authLevel=authLevel)
+
 @app.route("/deleteUser/", methods=['GET', 'POST'])
 @login_required
 @admin_required
@@ -228,7 +237,7 @@ def deleteUser2():
             if code != usercode:
                 if currentUser.deleteUser(code):
                     flash(f"You have successfully deleted the user {code}", 'info')
-                    return redirect(url_for('userOptions'))
+                    return redirect(url_for('adminOptions'))
                 else:
                     flash(f"Account \"{code}\" does not exist", 'danger')
                     return redirect(url_for('deleteUser'))
@@ -236,7 +245,7 @@ def deleteUser2():
                 flash("You cannot delete your own user", "danger")
                 return redirect(url_for('deleteUser'))
     except Exception as e:  
-        return render_template('userOptions.html', error=e, title="User Options", logged_in=logged_in, authLevel=authLevel)
+        return render_template('adminOptions.html', error=e, title="User Options", logged_in=logged_in, authLevel=authLevel)
 
 @app.route("/updateUser/", methods=['GET', 'POST'])
 @login_required
@@ -353,7 +362,7 @@ def updateUser3():
                                     session['code'] = code
 
                             flash(f"You have successfully updated the user {code}", 'info')
-                            return redirect(url_for('userOptions'))
+                            return redirect(url_for('adminOptions'))
                         else:
                             flash("There's something wrong", "error")
                             return render_template('updateUser2.html', error="", title = "Update User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
@@ -476,7 +485,7 @@ def deleteRestaurant2():
             if restaurantName != currentUserRestaurant:
                 if restaurant.deleteRestaurant(restaurantName):
                     flash(f"You have successfully deleted the restaurant {restaurantName}", 'info')
-                    return redirect(url_for('restaurantOptions'))
+                    return redirect(url_for('adminOptions'))
                 else:
                     flash(f"Restaurant \"{restaurantName}\" does not exist", 'danger')
                     return redirect(url_for('deleteRestaurant'))
@@ -484,7 +493,7 @@ def deleteRestaurant2():
                 flash("You cannot delete your own restaurant", "danger")
                 return redirect(url_for('deleteRestaurant'))
     except Exception as e:  
-        return render_template('restaurantOptions.html', error=e, title="Restaurant Options", logged_in=logged_in, authLevel=authLevel)
+        return render_template('adminOptions.html', error=e, title="Restaurant Options", logged_in=logged_in, authLevel=authLevel)
 
 @app.route("/updateRestaurant/", methods=['GET', 'POST'])
 @login_required
@@ -549,7 +558,7 @@ def updateRestaurant3():
                 if session["previousRestaurantName"] == restaurantName:
                     if restaurant.updateNumberOfTables(restaurantName, numberOfTables):
                         flash(f"You have successfully updated the restaurant {restaurantName}", 'info')
-                        return redirect(url_for('restaurantOptions'))
+                        return redirect(url_for('adminOptions'))
                     else:
                         flash("Invalid table number syntax", "danger")
                         return render_template('updateRestaurant2.html', error="", title = "Update Restaurant", logged_in=logged_in, authLevel=authLevel)
@@ -572,7 +581,7 @@ def updateRestaurant3():
                         return render_template('updateRestaurant2.html', error="", title = "Update Restaurant", logged_in=logged_in, authLevel=authLevel)
                     
                 flash(f"You have successfully updated the restaurant {restaurantName}", 'info')
-                return redirect(url_for('restaurantOptions'))
+                return redirect(url_for('adminOptions'))
 
             else:                
                 flash("Please don't leave any field empty", "danger")

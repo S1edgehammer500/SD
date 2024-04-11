@@ -1,0 +1,93 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class = "AdminUserPos">
+<div class="AdminBox">
+    <h3 class="text-center pt-3">Edit Users</h3> <br>
+
+    <a href="{{ url_for('createUser') }}">
+        <button type="button">Add New User</button>
+    </a>
+    <a href="{{ url_for('updateUser') }}">
+        <button type="button">Update User Details</button>
+    </a>
+    <a href="{{ url_for('deleteUser') }}">
+        <button type="button">Remove User</button>
+    </a>
+</div>
+</div>
+
+<div class = "AdminRestaurantPos">
+<div class="AdminBox">
+    <h3 class="text-center pt-3">Edit Restaurant</h3> <br>
+
+    <a href="{{ url_for('createRestaurant') }}">
+        <button type="button">Add New Restaurant</button>
+    </a>
+    <a href="{{ url_for('updateRestaurant') }}">
+        <button type="button">Update Restaurant Details</button>
+    </a>
+    <a href="{{ url_for('deleteRestaurant') }}">
+        <button type="button">Remove Restaurant</button>
+    </a>
+
+</div>
+</div>
+
+
+
+<div class = "AdminDiscountPos">
+<div class="AdminBox">
+    <h3 class="text-center pt-3">Edit Discounts</h3> <br>
+
+    <a href="#">
+        <button type="button">Add New Discount</button>
+    </a>
+    <a href="#">
+        <button type="button">Update Existing Discount</button>
+    </a>
+    <a href="#">
+        <button type="button">Remove Discount</button>
+    </a>
+
+</div>
+</div>
+
+<div class = "AdminReportPos">
+<div class="AdminBox">
+    <h3 class="text-center pt-3">Reports</h3> <br>
+
+    <a href="#">
+        <button type="button">View Report</button>
+    </a>
+    <a href="#">
+        <button type="button">Update Report</button>
+    </a>
+    <a href="#">
+        <button type="button">Delete Report</button>
+    </a>
+
+</div>
+</div>
+
+
+<div class = "AdminMenuPos">
+<div class="AdminBox">
+    <h3 class="text-center pt-3">Edit Menu</h3> <br>
+
+    <a href="#">
+        <button type="button">Add New Item</button>
+    </a>
+    <a href="#">
+        <button type="button">Update Existing Item</button>
+    </a>
+    <a href="#">
+        <button type="button">Remove Item</button>
+    </a>
+
+</div>
+</div>
+
+
+
+{% endblock content %}

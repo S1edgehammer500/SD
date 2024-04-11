@@ -11,32 +11,30 @@
         {% endif %}
         </head>
     {% block body %}
-    <body>
+    <body class = "page1">
     {% endblock body %}
         <!--nav bar-->
         <nav class="navbar navbar-inverse">
             <div class="container-fluid">
               <ul class="nav navbar-nav">
                 {% if logged_in == True: %} 
-                <li><a href="{{ url_for('home') }}">Home</a></li>
                 <div class="navbar-header">
                   <a class="navbar-brand" href="{{ url_for('home') }}">Horizon Restaurant</a>
                 </div>
                   {% if authLevel == 'admin': %} 
-                    <li><a href="{{ url_for('userOptions') }}"><span class="glyphicon glyphicon-tasks"></span> Edit Users</a></li>
-                    <li><a href="{{ url_for('discountOptions') }}"><span class="glyphicon glyphicon-tasks"></span> Edit Discounts</a></li>
-                    <li><a href="{{ url_for('restaurantOptions') }}"><span class="glyphicon glyphicon-tasks"></span> Edit Restaurants</a></li>
-                    <li><a href=#><span class="glyphicon glyphicon-tasks"></span> Reports</a></li>
-                    <li><a href=#><span class="glyphicon glyphicon-pencil"></span> Edit Menu</a></li>
+                    <li><a href="{{ url_for('adminOptions') }}">Admin</a></li>
+
+                    
+
                   {% endif %}
-                  <li><a href=#><span></span> Menu</a></li>
-                  <li><a href=#><span class="glyphicon glyphicon-user"></span> Account</a></li>
-                  <li><a href=#><span class="glyphicon glyphicon-trash"> Order</span></a></li>
-                  <li><a href=#><span class="glyphicon glyphicon-trash"> Inventory</span></a></li>
-                  <li><a href=#><span class="glyphicon glyphicon-trash"> Reservations</span></a></li>
-                  <li><a href="{{ url_for('logout') }}"><span class="glyphicon glyphicon-user"> Logout</span></a></li>
+                  <li><a href=#> Menu</a></li>
+                  <li><a href=#> Account</a></li>
+                  <li><a href=#> Order</a></li>
+                  <li><a href=#>Inventory</a></li>
+                  <li><a href=#>Reservations</a></li>
+                  <li><a href="{{ url_for('logout') }}">Logout</a></li>
                 {% else %}
-                  <li><a href="{{ url_for('login') }}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                  <li><a href="{{ url_for('login') }}"> Login</a></li>
                 {% endif %}
               </ul>
             </div>
@@ -47,7 +45,7 @@
           {% if messages %}
             <ul>
             {% for category, message in messages %}
-            <div class="alert alert-{{ category }}">
+            <div class="flash alert alert-{{ category }}">
                 <li>{{ message }}</li>
             </div>
             {% endfor %}
@@ -55,7 +53,7 @@
           {% endif %}
         {% endwith %}
         {% block content %}{% endblock content %}
-        <div class="footer container-fluid" style="text-decoration:none; position:fixed;">
+        <div class="footer container-fluid text-center" style="text-decoration:none; position:fixed;">
             <br>
             <p>© 2022 Horizon Restaurant. All rights reserved &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=#>Privacy Statement</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Horizon Restaurant</p>
         </div>

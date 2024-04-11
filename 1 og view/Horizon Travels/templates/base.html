@@ -1,0 +1,212 @@
+<!DOCTYPE html>             
+<html lang="en">
+    <!-- Andre Barnett - 22025153 -->
+
+<head>
+
+    {%block head%}
+    <!--CSS file-->>
+    <link rel="stylesheet" href="{{url_for ('static', filename = 'style.css')}}">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--Bootstrap 5-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+        crossorigin="anonymous"></script>
+
+    {%endblock%}
+
+    {%block script%}
+    <script>
+        function getarrivalcity(DepartureCity) {
+            var req = new XMLHttpRequest();
+            ArrivalCity = document.getElementById('ArrivalCity');
+
+            req.onreadystatechange = function () {
+                if (req.readyState == 4) {
+                    if (req.status != 200) {
+                        //error handling code here
+                    }
+                    else {
+                        var response = JSON.parse(req.responseText);
+                        //document.getElementById('myDiv').innerHTML = response.username
+                        var size = response.size;
+                        //alert(response.returncities[0]);
+                        ArrivalCity.innerHTML = "";
+                        for (var i = 0; i < size; i++) {
+                            ArrivalCity.options.add(new Option(response.returncities[i], response.returncities[i]));
+                        }
+                    }
+                }
+            }
+            req.open('GET', '/returncity/?q=' + DepartureCity);
+            req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            req.send();
+            return false;
+        }
+
+        // var date = new Date();
+        // var tdate = date.getDate();
+        // var month = date.getMonth(); + 1;
+        // if (tdate < 10){
+        //     tdate = '0' + tdate;
+        // }
+        // if (month < 10) {
+        //     month = '0' + month;
+        // }
+        // var year = date.getUTCFullYear();
+        // var minDate = year + "-" + month + "-" +tdate;
+        // document.getElementByID("LeaveDate").setAttribute('min', minDate)
+
+        // console.log(minDate);
+
+        // var date = new(date);
+        // document.getElementByID("LeaveDate").setAttribute('min', date)
+
+    </script>
+
+    <script>
+        function setenddate() {
+            var selectedstartdate = document.getElementById("LeaveDate").value;
+            document.getElementById("ReturnDate").min = selectedstartdate;
+        }
+        function initialdate() {
+            var today = new Date();
+            var year = today.getFullYear();
+            var month = today.getMonth() + 1;
+            var month3 = today.getMonth() + 4;
+            var day = today.getDate();
+            if (month < 10) {
+                month = '0' + month;
+            }
+            if (day < 10) {
+                day = '0' + day;
+            }
+            today = year + '-' + month + '-' + day;
+            document.getElementById("LeaveDate").min = today;
+
+            
+            
+            if (month < 10) {
+                month3 = '0' + month3;
+            }
+
+            
+
+            if (month == 10) {
+                month3 = "01"
+                year += 1
+            }
+
+            if (month == 11) {
+                month3 = "02"
+                year += 1
+            }
+
+            if (month == 12) {
+                month3 = "03"
+                year += 1
+            }
+
+            in3months = year + '-' + month3 + '-' + day;
+            document.getElementById("LeaveDate").max = in3months;
+        }
+    </script>
+    {%endblock%}
+
+</head>
+
+{%block navbar%}
+<nav class="navbar navbar-expand-sm bg-opacity-100 bg-success navbar-dark justify-content-center fixed-top">
+
+    <div class="contianer-fluid ">
+
+        <ul class="navbar-nav">
+
+            <!-- button-->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="collapsibleNavbar">
+
+                <!-- Logo -->
+                <a class="navbar-brand" href="{{url_for('homepage')}}">
+                    <img src="{{url_for('static', filename = 'horizonlogo.png')}}" alt="Logo" style="width:40px"
+                        class="rounded-pill"></a>
+
+
+                <!-- Creates all the Links in the navbar-->
+                <li class="nav-item">
+                    <a class="nav-link" href="{{url_for('homepage')}}"> Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{url_for('booking')}}">Book Flights </a>
+                </li>
+                {% if usertype == 'none' %}
+                <div class="dropdown">
+                    <button type="button" class="btn btn-success dropdown-toggle bg-transparent"
+                        data-bs-toggle="dropdown">
+                        Account
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{url_for('login')}}">Log In</a></li>
+                        <li><a class="dropdown-item" href="{{url_for('register')}}">Sign Up</a></li>
+
+                    </ul>
+                </div>
+                {% endif %}
+                {% if usertype == 'standard' %}
+                <div class="dropdown">
+                    <button type="button" class="btn btn-success dropdown-toggle bg-transparent"
+                        data-bs-toggle="dropdown">
+                        {{UserEmail}}
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{url_for('account')}}">My Account</a></li>
+                        <li><a class="dropdown-item" href="{{url_for('logout')}}">Log Out</a></li>
+                    </ul>
+                </div>
+                {% endif %}
+                {% if usertype == 'admin' %}
+                <div class="dropdown">
+                    <button type="button" class="btn btn-success dropdown-toggle bg-transparent"
+                        data-bs-toggle="dropdown">
+                        {{UserEmail}}
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{url_for('account')}}">My Account</a></li>
+                        <li><a class="dropdown-item" href="{{url_for('adminpage')}}">Administrator</a></li>
+                        <li><a class="dropdown-item" href="{{url_for('logout')}}">Log Out</a></li>
+                    </ul>
+                </div>
+                {% endif %}
+
+            </div>
+        </ul>
+    </div>
+</nav>
+
+<nav class="navbar navbar-expand-sm bg-opacity-100 bg-success navbar-dark justify-content-center fixed-bottom">
+
+    <div class="contianer-fluid ">
+
+        <span class="navbar-text">Horizon Travels © All Rights Reserved</span>
+
+    </div>
+
+</nav>
+
+{%endblock%}
+
+<body>
+
+
+    {%block body%}
+
+    {%endblock%}
+</body>
+
+</html>
