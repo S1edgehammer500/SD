@@ -170,10 +170,10 @@ class Inventory: #inventory class
         conn.close()
         return record
     
-    def getItemNames(self, itemName):
+    def getItemNames(self, restaurantName):
         conn, cur = openConnection()
-        query = 'SELECT itemName FROM inventory WHERE itemName = ? ORDER BY inventoryID;'
-        conn.execute(query, (itemName,))
+        query = 'SELECT itemName FROM inventory WHERE restaurantName = ? ORDER BY inventoryID;'
+        conn.execute(query, (restaurantName,))
         record = cur.fetchall()
         conn.close()
         return record

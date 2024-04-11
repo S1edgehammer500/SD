@@ -1,23 +1,23 @@
 from Model.Database import *
 import re
 
-class Inventory: #inventory class
+class Menu: #menu class
 
     def __init__(self):
         self.__ID = ""
         self.__restaurantName = ""
-        self.__itemName = ""
+        self.__foodName = ""
 
-    def setInventoryDetails(self, id):
+    def setMenuDetails(self, id):
          conn, cur = openConnection()
-         query = "SELECT * FROM inventory WHERE inventoryID = ?;"
+         query = "SELECT * FROM menu WHERE menuID = ?;"
          cur.execute(query,(id,))
          record = cur.fetchone()
          restaurantName = record[1]
-         itemName = record[2]
+         foodName = record[2]
          self.setRestaurantName(restaurantName)
          self.setID(id)
-         self.setItemName(itemName)
+         self.setFoodName(foodName)
          conn.close()
 
 
@@ -32,9 +32,9 @@ class Inventory: #inventory class
     def setID(self, id):
         self.__ID = id
         
-    def setItemName(self, itemName):
-        if self.validateItemName(itemName):
-            self.__itemName = itemName
+    def setFoodName(self, foodName):
+        if self.validateFoodName(foodName):
+            self.__foodName = foodName
             return 1
         else:
             return 0
@@ -46,8 +46,8 @@ class Inventory: #inventory class
     def getID(self):
         return self.__ID
     
-    def getItemName(self):
-        return self.__itemName
+    def getFoodName(self):
+        return self.__foodName
 
     #validators
 
@@ -65,10 +65,10 @@ class Inventory: #inventory class
             conn.close()
             return 0
 
-    def validateItemName(self, itemName):
+    def validateFoodName(self, foodName):
         conn, cur = openConnection()
-        query = 'SELECT itemName FROM item WHERE itemName = ?;'
-        cur.execute(query, (itemName,))
+        query = 'SELECT foodName FROM food WHERE foodName = ?;'
+        cur.execute(query, (foodName,))
         record = cur.fetchone()
         if record is not None:
             print("Item exists")
@@ -81,30 +81,30 @@ class Inventory: #inventory class
         
     def checkID(self, ID):
         conn, cur = openConnection()
-        query = 'SELECT * FROM inventory WHERE inventoryID = ?;'
+        query = 'SELECT * FROM menu WHERE menuID = ?;'
         cur.execute(query, (ID,))
         record = cur.fetchone()
         if record is not None:
             
-            print("Inventory exists")
+            print("menu exists")
             conn.close()  # Close the connection
             return 1
         else:
-            print("Inventory does not exist")
+            print("menu does not exist")
             conn.close()  # Close the connection
             return 0
         
-    def checkRestaurantItem(self, restaurantName, itemName):
+    def checkRestaurantFood(self, restaurantName, foodName):
         conn, cur = openConnection()
-        query = 'SELECT * FROM inventory WHERE restaurantName = ? AND itemName = ?;'
-        cur.execute(query, (restaurantName, itemName))
+        query = 'SELECT * FROM menu WHERE restaurantName = ? AND foodName = ?;'
+        cur.execute(query, (restaurantName, foodName))
         record = cur.fetchone()
         if record is not None:
-            print("Restaurant and item combination exists")
+            print("Restaurant and food combination exists")
             conn.close()
             return 1
         else:
-            print("Restaurant and item combination don't exist")
+            print("Restaurant and food combination don't exist")
             conn.close()
             return 0
             
@@ -112,9 +112,9 @@ class Inventory: #inventory class
         if restaurantName != None:
             if self.checkID(id):
                 if self.validateRestaurantName(restaurantName):
-                    if not self.checkRestaurantItem(restaurantName, self.__itemName):
+                    if not self.checkRestaurantFood(restaurantName, self.__foodName):
                         conn, cur = openConnection()
-                        query = 'UPDATE inventory SET restaurantName = ? WHERE inventoryID = ?;'
+                        query = 'UPDATE menu SET restaurantName = ? WHERE menuID = ?;'
                         cur.execute(query, (restaurantName, id))
                         conn.commit()
                         conn.close()
@@ -129,14 +129,14 @@ class Inventory: #inventory class
             return 0
         
             
-    def updateItemName(self, itemName, id):
-        if itemName != None:
+    def updateFoodName(self, foodName, id):
+        if foodName != None:
             if self.checkID(id):
-                if self.validateItemName(itemName):
-                    if not self.checkRestaurantItem(self.__restaurantName, itemName):
+                if self.validateFoodName(foodName):
+                    if not self.checkRestaurantFood(self.__restaurantName, foodName):
                         conn, cur = openConnection()
-                        query = 'UPDATE inventory SET itemName = ? WHERE inventoryID = ?;'
-                        cur.execute(query, (itemName, id))
+                        query = 'UPDATE menu SET foodName = ? WHERE menuID = ?;'
+                        cur.execute(query, (foodName, id))
                         conn.commit()
                         conn.close()
                         return 1
@@ -150,13 +150,13 @@ class Inventory: #inventory class
             return 0
 
         
-    def createInventory(self, restaurantName, itemName):
+    def createMenu(self, restaurantName, foodName):
         conn, cur = openConnection()
-        if (self.validateRestaurantName(restaurantName)) and (self.validateItemName(itemName)) and not (self.checkRestaurantItem(restaurantName, itemName)):
-            query = 'INSERT INTO inventory (restaurantName, itemName) VALUES (?,?);'
-            cur.execute(query, (restaurantName, itemName))
+        if (self.validateRestaurantName(restaurantName)) and (self.validateFoodName(foodName)) and not (self.checkRestaurantFood(restaurantName, foodName)):
+            query = 'INSERT INTO menu (restaurantName, foodName) VALUES (?,?);'
+            cur.execute(query, (restaurantName, foodName))
             conn.commit()
-            print("new inventory created")
+            print("new menu created")
             conn.close()
             return 1
         else:
@@ -164,32 +164,32 @@ class Inventory: #inventory class
         
     def getRestaurantNames(self, restaurantName):
         conn, cur = openConnection()
-        query = 'SELECT restaurantName FROM inventory WHERE restaurantName = ? ORDER BY inventoryID;'
+        query = 'SELECT restaurantName FROM menu WHERE restaurantName = ? ORDER BY menuID;'
         conn.execute(query, (restaurantName,))
         record = cur.fetchall()
         conn.close()
         return record
     
-    def getItemNames(self, itemName):
+    def getfoodNames(self, restaurantName):
         conn, cur = openConnection()
-        query = 'SELECT itemName FROM inventory WHERE itemName = ? ORDER BY inventoryID;'
-        conn.execute(query, (itemName,))
+        query = 'SELECT foodName FROM menu WHERE restaurantName = ? ORDER BY menuID;'
+        conn.execute(query, (restaurantName,))
         record = cur.fetchall()
         conn.close()
         return record
         
-    def delete_inventory(self, id):
+    def delete_menu(self, id):
         try:
             conn, cur = openConnection()
             if self.checkID(id):
-                query = "DELETE FROM inventory WHERE inventoryID = ?;"
+                query = "DELETE FROM menu WHERE menuID = ?;"
                 cur.execute(query, (id,))
                 conn.commit()
                 conn.close()
                 return 1
             else:
-                print("Inventory doesn't exists or invalid syntax")
+                print("menu doesn't exists or invalid syntax")
                 conn.close()
                 return 0
         except sqlite3.Error as e:
-            print("Error deleting inventory:", e)
+            print("Error deleting menu:", e)
