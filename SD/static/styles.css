@@ -83,7 +83,7 @@
 }
 
   .AdminBox button {
-    margin: 10px auto; /* Center the buttons horizontally */
+    margin: 10px auto; /* Center the buttons horizontally */ 
     display: block;
     font-size: 16px;
     color: rgba(33, 37, 41);
@@ -94,7 +94,7 @@
 .StandardBox {
   
   position: absolute;
-  top: 50%;
+  top: 45%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 700px;
@@ -121,6 +121,9 @@
     text-align: center;
   }
 
+.StandardBox h1 {
+  font-size: 60px;
+}
 
 .heading {
 
@@ -148,6 +151,21 @@ color: black;
 
 
 body {
+  /* background-image: url('mainpagebg3.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed; */
+
+  margin: 0;
+  padding: 0;
+}
+
+body.page1 {
+  background-image: url('congruent_outline.png');
+
+}
+
+body.page2 {
   background-image: url('mainpagebg3.jpg');
   background-size: cover;
   background-repeat: no-repeat;
