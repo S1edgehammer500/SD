@@ -12,7 +12,7 @@ class Food: #food class
     def setFoodDetails(self, name):
          conn, cur = openConnection()
          query = "SELECT * FROM food WHERE foodName = ?;"
-         cur.execute(query,(id,))
+         cur.execute(query,(name,))
          record = cur.fetchone()
          price = record[1]
          isAvailable = record[2]
@@ -92,7 +92,6 @@ class Food: #food class
             print("allergy Info too small")
             return 0
 
-    #start of food model
     def validatePrice(self,price):
         try:
             # Convert price to float and handle potential exceptions for invalid input
@@ -228,7 +227,7 @@ class Food: #food class
             cur = conn.cursor()
             cur.execute("SELECT * FROM food")
             rows = cur.fetchall()
-            food_list = [(row[0], row[1], row[2], row[3], row[4]) for row in rows]
+            food_list = [(row[0], row[1], row[2], row[3]) for row in rows]
             conn.close()
             return food_list
         except sqlite3.Error as e:
