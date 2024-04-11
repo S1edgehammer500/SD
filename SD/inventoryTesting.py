@@ -61,7 +61,7 @@ def run_tests():
         
         def test7_update_itemName(self):
             id = 1
-            itemName = "Lettuce"
+            itemName = "Cookies"
             self.model.setInventoryDetails(id)
             result = self.model.updateItemName(itemName, id)
             self.assertEqual(result, 1)
