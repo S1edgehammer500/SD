@@ -236,6 +236,9 @@
 .StandardBox h1 {
   font-size: 60px;
 }
+.datetime-selector {
+  color: rgba(33, 37, 41);
+}
 
 .heading {
 
@@ -258,9 +261,12 @@
 
   .black {
 
-color: black;
+  color: rgba(33, 37, 41);
 }
 
+.white{
+  color:white;
+}
 
 body {
   /* background-image: url('mainpagebg3.jpg');
