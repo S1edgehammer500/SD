@@ -87,6 +87,8 @@
     display: block;
     font-size: 16px;
     color: rgba(33, 37, 41);
+    background-color: white;
+    border-color: white;
 
   }
 
@@ -100,6 +102,64 @@
   color: white;
   font-size: 50px;
   text-decoration: underline;
+}
+
+.custom-checkbox {
+
+
+  appearance: none; /* Removes default styles */
+  width: 15px;
+  height: 15px;
+  border: 2px solid #ccc; /* Border color */
+  border-radius: 4px; /* Rounded corners */
+  cursor: pointer;
+  background-color: white;
+  border-color: white;
+  
+  
+}
+
+.custom-checkbox:checked {
+  background-color: white; /* Background color when checked */
+}
+
+.custom-checkbox:checked::before {
+  content: 'X'; /* Unicode character for a tick mark */
+  display: block;
+  width: 100%;
+  height: 100%;
+  font-size: 12px; /* Adjust size of the tick mark */
+  line-height: 15px;
+  text-align: center;
+  color: black; /* Tick mark color */
+}
+
+.reservation-holder{
+
+  position: absolute;
+  top: 30%;
+  left: 40%;
+  transform: translate(-50%, -50%);
+  height: auto;
+  width: 1000px;
+
+}
+
+.reservation-holder table{
+  width: 100%;
+  
+  border: 2px solid white; /* Thick white outline */
+  color: white; /* Text color */
+  background-color: rgba(33, 37, 41);
+}
+
+
+.reservation-options{
+  
+  position: absolute;
+  top: 50%;
+  left: 85%;
+  transform: translate(-50%, -50%);
 }
 
 .menu-holder{
@@ -136,6 +196,27 @@
   text-align: center;
   
 }
+
+.StandardBox button {
+  background-color: white;
+  border-color: white;
+  color: rgba(33, 37, 41);
+}
+
+.StandardBox input {
+  background-color: white;
+  border-color: white;
+  
+}
+
+
+.StandardBox select {
+
+  background-color: white;
+  border-color: white;
+  color: rgba(33, 37, 41);
+}
+
 
 .StandardBox table {
 
@@ -317,4 +398,42 @@ margin-right: auto;
   color: white;
   opacity: 0.9;
 
+}
+
+
+
+:root {
+  --scrollbar-track-color: #333; /* scrollbar track */
+  --scrollbar-thumb-color: #666; /* scrollbar thumb */
+  --scrollbar-corner-color: #333; /* scrollbar corner */
+}
+
+/* Style the scrollbar for WebKit (Chrome, Safari, Opera) */
+::-webkit-scrollbar {
+  width: 12px; /* Width of the scrollbar */
+}
+
+/* Style the scrollbar track */
+::-webkit-scrollbar-track {
+  background-color: var(--scrollbar-track-color);
+}
+
+/* Style the scrollbar thumb */
+::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb-color);
+}
+
+/* Style the scrollbar corner */
+::-webkit-scrollbar-corner {
+  background-color: var(--scrollbar-corner-color);
+}
+
+/* Style the scrollbar track */
+html {
+  scrollbar-color: var(--scrollbar-thumb-color) var(--scrollbar-track-color);
+}
+
+/* Style the scrollbar thumb */
+html::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb-color);
 }

@@ -31,7 +31,7 @@
                   <li><a href="{{ url_for('account') }}"> Account</a></li>
                   <li><a href=#> Order</a></li>
                   <li><a href=#>Inventory</a></li>
-                  <li><a href=#>Reservations</a></li>
+                  <li><a href="{{ url_for('reservation') }}">Reservations</a></li>
                   <li><a href="{{ url_for('logout') }}">Logout</a></li>
                 {% else %}
                   <li><a href="{{ url_for('login') }}"> Login</a></li>
