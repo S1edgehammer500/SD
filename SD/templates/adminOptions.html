@@ -75,10 +75,10 @@
 <div class="AdminBox">
     <h3 class="text-center pt-3">Edit Menu</h3> <br>
 
-    <a href="{{ url_for('createFood') }}">
+    <a href="{{ url_for('createFoodMenu') }}">
         <button type="button">Add New Item</button>
     </a>
-    <a href="#">
+    <a href="{{url_for('updateFoodMenu')}}">
         <button type="button">Update Existing Item</button>
     </a>
     <a href="{{ url_for('deleteFoodMenu') }}">
