@@ -1,12 +1,13 @@
 {% extends "layout.html" %} 
 {% block content %}
 
+<div class = "StandardBox">
+
+    <h3 class="text-center pt-3 heading">Choose A Discount To Delete Here</h3> <br>
+
+
 <!--Create restaurant form-->
-<form action="/createDiscount/" method="post">
-    <section class="vh-100">
-    <div class="container h-100">
-        <div class="row-d-flex justify-content-center">
-        <div class="register-form-container col-11 col-m-11 col-x-11">
+
             <form action="/createDiscount/" method="post">
             <div class="form-group">
                 <label for="discountID">Discount ID:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
@@ -17,9 +18,8 @@
                 <input required style="color:black" id="discountValue" min="1" max="100" type="number" class="discountValue" name="discountValue" size="30" value="{{request.form.discountValue}}"><br>
             </div>
             <div class=submit-button><form><input style="color:black" type="submit" value="Create Discount" size="100"></form></div><br><br>
-        </div>
-        </div>
-        <br><br><br>
-    </section>
-    </form>
+            </form>
+
+
+</div>
 {% endblock content %}

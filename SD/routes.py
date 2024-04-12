@@ -193,6 +193,15 @@ def adminOptions():
 
     return render_template('adminOptions.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
 
+@app.route("/reservation/")
+@login_required
+def reservation():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    return render_template('reservation.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
+
 
 @app.route("/menu/", methods = ['GET', 'POST'])
 @login_required
@@ -211,7 +220,7 @@ def menu():
     currentMenu = Menu()
 
     
-    foodList, priceList, allergyList = currentMenu.getMenuList(currentRestaurant)
+    foodList, priceList, allergyList, idList = currentMenu.getMenuList(currentRestaurant)
 
 
     return render_template('menu.html', title = "Menu" , logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, allergyList = allergyList, listLen = len(foodList))
@@ -234,10 +243,61 @@ def deleteFoodMenu():
     currentMenu = Menu()
 
     
-    foodList, priceList, allergyList = currentMenu.getMenuList(currentRestaurant)
+    foodList, priceList, allergyList, idList = currentMenu.getMenuList(currentRestaurant)
 
 
-    return render_template('deleteFoodMenu.html', title = "Menu" , logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, allergyList = allergyList, listLen = len(foodList))
+    return render_template('deleteFoodMenu.html', title = "Menu" , logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, listLen = len(foodList), idList = idList)
+
+
+@app.route("/deleteFoodMenu2/", methods = ['GET', 'POST'])
+@login_required
+def deleteFoodMenu2():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    error = ""
+
+    
+    currentMenu = Menu()
+
+    try:
+        if request.method == "POST":
+
+            print("method is posting")
+
+            foodID = request.form['foodID']
+
+            
+            print(foodID)
+
+            if foodID != None:
+                
+                if currentMenu.delete_menu(foodID) == 1:
+                                                           
+                    flash ("Food successfully deleted from the menu", "success")
+                    return redirect(url_for('deleteFoodMenu'))
+
+                else:
+                    flash ("Error deleting food from the menu", "danger")
+                    return render_template('deleteFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+
+
+            else:
+                flash ("Select a food to delete", "danger")
+                return render_template('deleteFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+
+
+        else:
+            return redirect(url_for('deleteFoodMenu'))
+
+
+    except Exception as e:
+        
+        return render_template('home.html', error=e, title="Restaurant Options", logged_in=logged_in, authLevel=authLevel)
+
+
+    
 
 
 
@@ -847,10 +907,10 @@ def createDiscount():
 
                             if discount.createDiscount(discountID, discountValue) == 1:                      
                                 flash("Discount is now registered", "success")
-                                return redirect(url_for('discountOptions'))
+                                return redirect(url_for('home'))
                             else:
                                 flash("Unexpected Error occured", "danger")
-                                return render_template('discountOptions.html', error=error, title="Discount Options", logged_in=logged_in, authLevel=authLevel)
+                                return render_template('home.html', error=error, title="Discount Options", logged_in=logged_in, authLevel=authLevel)
                         else:
                             flash("Invalid discount value", "danger")
                             return render_template('createDiscount.html', error=error, title="Create Discount", logged_in=logged_in, authLevel=authLevel)
