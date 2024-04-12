@@ -25,6 +25,12 @@ def run_tests():
             result = self.model.createRestaurant(name, numberOfTables)
             self.assertEqual(result, 0)
 
+        def create_restaurant_invalid_tables(self):
+            name = "Stockholm"
+            numberOfTables = 200
+            result = self.model.createRestaurant(name, numberOfTables)
+            self.assertEqual(result, 0)
+
     class TestUpdateRestaurant(unittest.TestCase):
         def setUp(self):
             self.model = Restaurant()

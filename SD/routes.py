@@ -9,6 +9,9 @@ from Model.Database import *
 from flask import redirect, url_for
 from Model.userModel import *
 from Model.restaurantModel import *
+from Model.discountModel import *
+from Model.menuModel import *
+from Model.foodModel import *
 
 # User defined
 import strip
@@ -145,7 +148,7 @@ def createUser():
                         print(str(BR))
                         if currentUser.saveUserDetails(code, password, AL, BR) == 1:                      
                             flash("Account is now registered", "success")
-                            return redirect(url_for('home'))
+                            return redirect(url_for('admin'))
                         else:
                             flash("Invalid username syntax", "danger")
                             return render_template('createUser.html', error=error, title="Create User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
@@ -180,6 +183,88 @@ def userOptions():
     authLevel = session['authLevel']
 
     return render_template('userOptions.html', title="User Options", logged_in=logged_in, authLevel=authLevel)
+
+@app.route("/adminOptions/")
+@login_required
+def adminOptions():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    return render_template('adminOptions.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
+
+
+@app.route("/menu/", methods = ['GET', 'POST'])
+@login_required
+def menu():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+
+    currentUser = User()
+    currentUser.setLoginDetails(session['code'])
+
+    currentRestaurant = currentUser.getBaseRestaurant()
+
+
+    currentMenu = Menu()
+
+    
+    foodList, priceList, allergyList = currentMenu.getMenuList(currentRestaurant)
+
+
+    return render_template('menu.html', title = "Menu" , logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, allergyList = allergyList, listLen = len(foodList))
+
+
+@app.route("/deleteFoodMenu/", methods = ['GET', 'POST'])
+@login_required
+def deleteFoodMenu():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+
+    currentUser = User()
+    currentUser.setLoginDetails(session['code'])
+
+    currentRestaurant = currentUser.getBaseRestaurant()
+
+
+    currentMenu = Menu()
+
+    
+    foodList, priceList, allergyList = currentMenu.getMenuList(currentRestaurant)
+
+
+    return render_template('deleteFoodMenu.html', title = "Menu" , logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, allergyList = allergyList, listLen = len(foodList))
+
+
+
+@app.route("/account/", methods = ['GET'])
+@login_required
+def account():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+
+    currentUser = User()
+    currentUser.setLoginDetails(session['code'])
+
+    currentRestaurant = currentUser.getBaseRestaurant()
+
+    print(currentRestaurant)
+
+    currentCode = currentUser.getCode()
+
+    currentLevel = currentUser.getAuthorisation()
+
+
+
+    return render_template('account.html', title = "Account" , logged_in=logged_in, authLevel=authLevel, currentLevel = currentLevel, currentCode = currentCode, currentRestaurant = currentRestaurant )
+
+
 
 @app.route("/deleteUser/", methods=['GET', 'POST'])
 @login_required
@@ -227,7 +312,7 @@ def deleteUser2():
             if code != usercode:
                 if currentUser.deleteUser(code):
                     flash(f"You have successfully deleted the user {code}", 'info')
-                    return redirect(url_for('userOptions'))
+                    return redirect(url_for('adminOptions'))
                 else:
                     flash(f"Account \"{code}\" does not exist", 'danger')
                     return redirect(url_for('deleteUser'))
@@ -235,7 +320,7 @@ def deleteUser2():
                 flash("You cannot delete your own user", "danger")
                 return redirect(url_for('deleteUser'))
     except Exception as e:  
-        return render_template('userOptions.html', error=e, title="User Options", logged_in=logged_in, authLevel=authLevel)
+        return render_template('adminOptions.html', error=e, title="User Options", logged_in=logged_in, authLevel=authLevel)
 
 @app.route("/updateUser/", methods=['GET', 'POST'])
 @login_required
@@ -352,7 +437,7 @@ def updateUser3():
                                     session['code'] = code
 
                             flash(f"You have successfully updated the user {code}", 'info')
-                            return redirect(url_for('userOptions'))
+                            return redirect(url_for('adminOptions'))
                         else:
                             flash("There's something wrong", "error")
                             return render_template('updateUser2.html', error="", title = "Update User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
@@ -430,6 +515,151 @@ def createRestaurant():
         return render_template('createRestaurant.html', error=e, title="Create Restaurant", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
 
 
+@app.route('/createFood/', methods=['POST', 'GET'])
+@login_required
+@admin_required
+def createFood():
+
+    currentUser = User()
+    currentFood = Food()
+    currentMenu = Menu()
+
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    
+    currentUser.setLoginDetails(session['code'])
+
+    currentRestaurant = currentUser.getBaseRestaurant()
+
+    print ("The restaurant is: ", currentRestaurant)
+
+    error = ''
+
+    try: 
+        if request.method == "POST":
+
+            print("here3")
+
+            foodName = request.form['foodName']
+            print(foodName)
+            foodAllergy = request.form['foodAllergy']
+            print(foodAllergy)
+            foodPrice = request.form['priceOfFood']
+
+            
+            
+    
+            print(foodPrice)
+
+
+            if foodName != None and foodAllergy != None and foodPrice != None:
+
+                if  currentFood.validateName(foodName) == 1:
+                    
+                    if currentFood.validateAllergyInfo(foodAllergy) == 1:
+
+                        if currentFood.validatePrice(foodPrice) == 1:
+                            
+                            if currentFood.checkName(foodName) == 1: #if food exists in table food
+
+                                if currentMenu.validateRestaurantName(currentRestaurant) == 1: 
+                                    
+                                        if currentMenu.validateFoodName(foodName) == 1:
+                                            
+                                            if currentMenu.checkRestaurantFood(currentRestaurant,foodName) != 1:
+
+                                                if currentMenu.createMenu(currentRestaurant, foodName) == 1:
+
+                                                    flash("Item has successfully been added to the menu", "success")
+                                                    return redirect(url_for('menu'))
+
+                                                else:
+                                                    flash ("Failed to add item to the menu", "danger")
+                                                    return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+
+
+                                            else:
+                                                flash ("Food item already exists in the menu table", "danger")
+                                                return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+
+                                        
+                                        else:
+                                            flash ("Food Item does not exist in food table", "danger")
+                                            return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+
+                                else:
+                                    flash ("Restaurant is Invalid", "danger")
+                                    return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+
+                                
+
+                            
+                            else:   #if food doesnt exist in food
+                                
+                                if currentFood.createFood(foodName, foodPrice, foodAllergy) == 1:   #creates food in food table
+                                    
+                                    if currentMenu.validateRestaurantName(currentRestaurant) == 1: 
+                                        
+                                        if currentMenu.validateFoodName(foodName) == 1:
+                                            
+                                            if currentMenu.checkRestaurantFood(currentRestaurant,foodName) != 1:
+
+                                                if currentMenu.createMenu(currentRestaurant, foodName) == 1:
+
+                                                    flash("Item has successfully been added to the menu", "success")
+                                                    return redirect(url_for('menu'))
+
+                                                else:
+                                                    flash ("Failed to add item to the menu", "danger")
+                                                    return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+
+
+                                            else:
+                                                flash ("Food item already exists in the menu table", "danger")
+                                                return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+
+                                        
+                                        else:
+                                            flash ("Food Item does not exist in food table", "danger")
+                                            return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+
+                                    else:
+                                        flash ("Restaurant is Invalid", "danger")
+                                        return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+
+                                else:
+                                    flash ("Failed to create food in food table", "danger")
+                                    return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+                        else:  
+                            flash ("Food price is invalid", "danger")
+                            return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+
+                    else:
+                        flash ("Food allergy is invalid", "danger")
+                        return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+
+                else:
+                    flash ("Food name is invalid", "danger")
+                    return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+
+            else:
+                flash ("Fields cannot be empty", "danger")
+                return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+
+            
+
+        
+        else: 
+            return(render_template('createFood.html', title="Create Food", logged_in=logged_in, authLevel = authLevel))
+    
+    except Exception as e:
+        print("here2")
+        return(render_template('createFood.html', title="Create Food", error = e, logged_in=logged_in, authLevel = authLevel))
+    
+
+
+
 @app.route("/deleteRestaurant/", methods=['GET', 'POST'])
 @login_required
 @admin_required
@@ -475,7 +705,7 @@ def deleteRestaurant2():
             if restaurantName != currentUserRestaurant:
                 if restaurant.deleteRestaurant(restaurantName):
                     flash(f"You have successfully deleted the restaurant {restaurantName}", 'info')
-                    return redirect(url_for('restaurantOptions'))
+                    return redirect(url_for('adminOptions'))
                 else:
                     flash(f"Restaurant \"{restaurantName}\" does not exist", 'danger')
                     return redirect(url_for('deleteRestaurant'))
@@ -483,7 +713,7 @@ def deleteRestaurant2():
                 flash("You cannot delete your own restaurant", "danger")
                 return redirect(url_for('deleteRestaurant'))
     except Exception as e:  
-        return render_template('restaurantOptions.html', error=e, title="Restaurant Options", logged_in=logged_in, authLevel=authLevel)
+        return render_template('adminOptions.html', error=e, title="Restaurant Options", logged_in=logged_in, authLevel=authLevel)
 
 @app.route("/updateRestaurant/", methods=['GET', 'POST'])
 @login_required
@@ -548,7 +778,7 @@ def updateRestaurant3():
                 if session["previousRestaurantName"] == restaurantName:
                     if restaurant.updateNumberOfTables(restaurantName, numberOfTables):
                         flash(f"You have successfully updated the restaurant {restaurantName}", 'info')
-                        return redirect(url_for('restaurantOptions'))
+                        return redirect(url_for('adminOptions'))
                     else:
                         flash("Invalid table number syntax", "danger")
                         return render_template('updateRestaurant2.html', error="", title = "Update Restaurant", logged_in=logged_in, authLevel=authLevel)
@@ -571,13 +801,207 @@ def updateRestaurant3():
                         return render_template('updateRestaurant2.html', error="", title = "Update Restaurant", logged_in=logged_in, authLevel=authLevel)
                     
                 flash(f"You have successfully updated the restaurant {restaurantName}", 'info')
-                return redirect(url_for('restaurantOptions'))
+                return redirect(url_for('adminOptions'))
 
             else:                
                 flash("Please don't leave any field empty", "danger")
                 return render_template('updateRestaurant2.html', error="", title = "Update Restaurant", logged_in=logged_in, authLevel=authLevel)
     except Exception as e:                
         return render_template('updateRestaurant2.html', error=e, title = "Update Restaurant", logged_in=logged_in, authLevel=authLevel)
+
+
+#Beggining of discount crud
+
+@app.route("/discountOptions/")
+@login_required
+def discountOptions():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    return render_template('discountOptions.html', title="Restaurant Options", logged_in=logged_in, authLevel=authLevel)
+
+@app.route('/createDiscount/', methods=['POST', 'GET'])
+@login_required
+def createDiscount():
+    discount = Discount()
+
+    
+
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+
+    error = ''
+
+    try:
+        if request.method == "POST": 
+            #getting data from form        
+            discountID = request.form['discountID']
+            discountValue = request.form['discountValue']
+
+                 
+            if discountID != None and discountValue != None:
+                if discount.checkDiscountValue(discountValue) != 1:
+                    if discount.validateDiscountIDSyntax(discountID) == 1:
+                        if discount.validateDiscountValueSyntax(discountValue) == 1:
+        
+
+                            if discount.createDiscount(discountID, discountValue) == 1:                      
+                                flash("Discount is now registered", "success")
+                                return redirect(url_for('discountOptions'))
+                            else:
+                                flash("Unexpected Error occured", "danger")
+                                return render_template('discountOptions.html', error=error, title="Discount Options", logged_in=logged_in, authLevel=authLevel)
+                        else:
+                            flash("Invalid discount value", "danger")
+                            return render_template('createDiscount.html', error=error, title="Create Discount", logged_in=logged_in, authLevel=authLevel)
+                    else:
+                        flash("Invalid Discount ID syntax", "danger")
+                        return render_template('createDiscount.html', error=error, title="Create Discount", logged_in=logged_in, authLevel=authLevel)
+                else:
+                    flash("Discount already exists", "danger")
+                    print("Discount exists")
+                    return render_template('createDiscount.html', error=error, title="Create Discount", logged_in=logged_in, authLevel=authLevel)
+            else:                
+                flash("Fields cannot be empty", "danger")
+                return render_template('createDiscount.html', error=error, title="Create Discount", logged_in=logged_in, authLevel=authLevel)
+        else:            
+            return render_template('createDiscount.html', error=error, title="Create Discount", logged_in=logged_in, authLevel=authLevel)        
+    except Exception as e:                
+        return render_template('createDiscount.html', error=e, title="Create Discount", logged_in=logged_in, authLevel=authLevel)
+
+
+@app.route("/deleteDiscount/", methods=['GET', 'POST'])
+@login_required
+def deleteDiscount():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    discount = Discount()
+    
+    dIDs, dValues = discount.get_discounts()
+
+    return render_template('deleteDiscount.html', title = "Delete Discount", logged_in=logged_in, authLevel = authLevel, dIDs=dIDs, dValues=dValues, discountsLen = len(dIDs))
+
+@app.route("/deleteDiscount2/", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def deleteDiscount2():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    discount = Discount()
+
+    print("delete")
+
+    try:
+        if request.method == "POST":
+            # Code that you wanna delete
+            dID = request.form['selected']
+
+   
+            if discount.deleteDiscount(dID):
+                flash(f"You have successfully deleted the discount with ID {dID}", 'info')
+                return redirect(url_for('adminOptions'))
+            else:
+                flash(f"Discount with ID \"{dID}\" does not exist", 'danger')
+                return redirect(url_for('deleteUser'))
+            
+    except Exception as e:  
+        return render_template('adminOptions.html', error=e, title="User Options", logged_in=logged_in, authLevel=authLevel)
+
+
+@app.route("/updateDiscount/", methods=['GET', 'POST'])
+@login_required
+def updateDiscount():
+    
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    discount = Discount()
+
+    dIDs, dValues = discount.get_discounts()
+  
+    return render_template('updateDiscount.html', title = "Update Discount", logged_in=logged_in, authLevel = authLevel, dIDs=dIDs, dValues=dValues, discountsLen = len(dIDs))
+
+@app.route("/updateDiscount2/", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def updateDiscount2():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    currentDiscount = Discount()
+    
+
+    if request.method == "POST":
+        dID = request.form['selected']
+        session['previousdID'] = dID
+        currentDiscount.setDiscountDetails(dID)
+
+        dValue = currentDiscount.getDiscountValue()
+
+
+        return render_template("updateDiscount2.html", title = "Update Discount", logged_in=logged_in, authLevel=authLevel, discountID=dID, discountValue=dValue)
+    
+    return render_template("updateDiscount2.html", title = "Update Discount", logged_in=logged_in, authLevel=authLevel)
+
+@app.route("/updateDiscount3/", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def updateDiscount3():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    discount = Discount()    
+
+    try:
+    
+        if request.method == "POST":
+        
+            
+            dID = request.form['discountID']
+            dValue = request.form['discountValue']
+
+            print(f"dID {dID}")
+            print(f"dValue {dValue}")
+
+            if dID != None and dValue != None:
+    
+                if discount.validateDiscountIDSyntax(dID) == 1:
+        
+                    if discount.validateDiscountValueSyntax(dValue) == 1:
+
+                        previousdID = session['previousdID']
+                        
+
+                        if discount.updateDiscountValue(previousdID, dValue):
+                            print(f"Previous dID {previousdID}")
+
+                            if dID != previousdID:
+                                discount.updateDiscountID(previousdID, dID)
+
+                            print("hello")
+
+                            flash(f"You have successfully updated the discount {dID}", 'info')
+                            return redirect(url_for('adminOptions'))
+                        else:
+                            flash("Unexpected error occured")
+                            return render_template('updateDiscount2.html', error="", title = "Update Discount", logged_in=logged_in, authLevel=authLevel)
+                    else:
+                        flash("Discount value is in the wrong format")
+                        return render_template('updateDiscount2.html', error="", title = "Update Discount", logged_in=logged_in, authLevel=authLevel)
+                else:
+                    flash("Discount ID is in the wrong format")
+                    return render_template('updateDiscount2.html', error="", title = "Update Discount", logged_in=logged_in, authLevel=authLevel)
+            else:                
+                flash("Please don't leave any field empty", "danger")
+                return render_template('updateDiscount2.html', error="", title = "Update Discount", logged_in=logged_in, authLevel=authLevel)
+    except Exception as e:                
+        return render_template('updateDiscount2.html', error=e, title = "Update Discount", logged_in=logged_in, authLevel=authLevel)
+
 
 if __name__ == "__main__":
     app.run( debug=True ,host="127.0.0.1", port=5050)

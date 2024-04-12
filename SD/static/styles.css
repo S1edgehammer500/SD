@@ -1,154 +1,320 @@
 .register-form {
-    border: 2px solid;
-    height: auto;
-    margin: auto;
-    background-color: black;
-    box-sizing: border-box;
-    color: grey;
-    opacity: 0.8;
+  border: 2px solid;
+  height: auto;
+  margin: auto;
+  background-color: black;
+  box-sizing: border-box;
+  color: grey;
+  opacity: 0.8;
 }
 
 .register-form-container {
-    box-sizing: content-box;
-    height: auto;
-    width: 1000px;
-    color: white;
-    text-align: center;
-    font-weight: bold;
-    background-color: black;
-    opacity: 0.95;
-}
-
-.login-form-container {
-  box-sizing: border-box;
+  box-sizing: content-box;
   height: auto;
-  width:1000px;
+  width: 1000px;
   color: white;
   text-align: center;
   font-weight: bold;
   background-color: black;
   opacity: 0.95;
+}
+
+.login-form-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-sizing: border-box;
+  height: auto;
+  width: 1000px;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  background-color: rgba(33, 37, 41); /* Adjust opacity as needed */
+  border: 3px solid white;
+}
+
+.AdminUserPos{
+  position: absolute;
+  top: 35%;
+  left: 20%;
+  transform: translate(-50%, -50%);
+}
+
+.AdminReportPos{
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+
+.AdminRestaurantPos{
+  position: absolute;
+  top: 35%;
+  left: 80%;
+  transform: translate(-50%, -50%);
+}
+
+.AdminDiscountPos{
+  position: absolute;
+  top: 75%;
+  left: 35%;
+  transform: translate(-50%, -50%);
+}
+
+.AdminMenuPos{
+  position: absolute;
+  top: 75%;
+  left: 65%;
+  transform: translate(-50%, -50%);
+}
+
+
+.AdminBox{
+
+  width: 250px;
+  height: 250px;
+  border: 3px solid white;
+  background-color: rgba(33, 37, 41); /* Adjust opacity as needed */
+  color: white;         /* Set the text Color */
+  text-decoration-line: underline;
 
 }
 
+  .AdminBox button {
+    margin: 10px auto; /* Center the buttons horizontally */ 
+    display: block;
+    font-size: 16px;
+    color: rgba(33, 37, 41);
+
+  }
+
+
+.title {
+
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 50px;
+  text-decoration: underline;
+}
+
+.menu-holder{
+
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: auto;
+  width: 1000px;
+
+}
+
+.menu-holder table{
+  width: 100%;
+  
+  border: 2px solid white; /* Thick white outline */
+  color: white; /* Text color */
+  background-color: rgba(33, 37, 41);
+}
+
+
+.StandardBox {
+  
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 700px;
+  height: auto;
+  border: 3px solid white;
+  background-color: rgba(33, 37, 41); /* Adjust opacity as needed */
+  color: white;         /* Set the text Color */
+  text-align: center;
+  
+}
+
+.StandardBox table {
+
+  width: 600px;
+  
+  border: 2px solid white; /* Thick white outline */
+  color: white; /* Text color */
+
+}
+  /* Style for table headings */
+  th, td {
+    border: 2px solid white; 
+    padding: 10px;
+    text-align: center;
+  }
+
+.StandardBox h1 {
+  font-size: 60px;
+}
+
+.heading {
+
+  text-decoration: underline;
+  font-weight: bold;
+
+
+}
+
+
+.flash{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  position: fixed; /* Fixed position to keep the messages visible even when scrolling */
+  top: 70px; /* Adjust as needed */
+  left: 20px; /* Adjust as needed */
+  z-index: 9999; /* Ensure messages are displayed on top of other content */
+}
+
+  .black {
+
+color: black;
+}
+
+
 body {
-    background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Restaurant_N%C3%A4sinneula.jpg/640px-Restaurant_N%C3%A4sinneula.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+  /* background-image: url('mainpagebg3.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed; */
+
+  margin: 0;
+  padding: 0;
+}
+
+body.page1 {
+  background-image: url('congruent_outline.png');
+
+}
+
+body.page2 {
+  background-image: url('mainpagebg3.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 .row:after {
-    content: "";
-    clear: both;
-    display: block;
+  content: "";
+  clear: both;
+  display: block;
 }
 [class*="col-"] {
-    float: left;
-    padding: 15px;
+  float: left;
+  padding: 15px;
 }
 
 [class*="col-"] {
-    width: 100%;
+  width: 100%;
 }
 
 @media only screen and (min-width: 400px) {
-    /* For mobiles: */
-    .col-x-1 {width: 8.33%; font-size: 6px;}
-    .col-x-2 {width: 16.66%;}
-    .col-x-3 {width: 25%;}
-    .col-x-4 {width: 33.33%;}
-    .col-x-5 {width: 41.66%;}
-    .col-x-6 {width: 50%;}
-    .col-x-7 {width: 58.33%;}
-    .col-x-8 {width: 66.66%;}
-    .col-x-9 {width: 75%;}
-    .col-x-10 {width: 83.33%;}
-    .col-x-11 {width: 91.66%;}
-    .col-x-12 {width: 100%;}
+  /* For mobiles: */
+  .col-x-1 {width: 8.33%; font-size: 6px;}
+  .col-x-2 {width: 16.66%;}
+  .col-x-3 {width: 25%;}
+  .col-x-4 {width: 33.33%;}
+  .col-x-5 {width: 41.66%;}
+  .col-x-6 {width: 50%;}
+  .col-x-7 {width: 58.33%;}
+  .col-x-8 {width: 66.66%;}
+  .col-x-9 {width: 75%;}
+  .col-x-10 {width: 83.33%;}
+  .col-x-11 {width: 91.66%;}
+  .col-x-12 {width: 100%;}
 }
 
 @media only screen and (min-width: 700px) {
-    /* For tablets: */
-    .col-m-1 {width: 8.33%; font-size: 13px;}
-    .col-m-2 {width: 16.66%;}
-    .col-m-3 {width: 25%;}
-    .col-m-4 {width: 33.33%;}
-    .col-m-5 {width: 41.66%;}
-    .col-m-6 {width: 50%;}
-    .col-m-7 {width: 58.33%;}
-    .col-m-8 {width: 66.66%;}
-    .col-m-9 {width: 75%;}
-    .col-m-10 {width: 83.33%;}
-    .col-m-11 {width: 91.66%;}
-    .col-m-12 {width: 100%;}
+  /* For tablets: */
+  .col-m-1 {width: 8.33%; font-size: 13px;}
+  .col-m-2 {width: 16.66%;}
+  .col-m-3 {width: 25%;}
+  .col-m-4 {width: 33.33%;}
+  .col-m-5 {width: 41.66%;}
+  .col-m-6 {width: 50%;}
+  .col-m-7 {width: 58.33%;}
+  .col-m-8 {width: 66.66%;}
+  .col-m-9 {width: 75%;}
+  .col-m-10 {width: 83.33%;}
+  .col-m-11 {width: 91.66%;}
+  .col-m-12 {width: 100%;}
 }
 @media only screen and (min-width: 900px) {
-    /* For desktop: */
-    .col-1 {width: 8.33%; font-size:20px;}
-    .col-2 {width: 16.66%;}
-    .col-3 {width: 25%;}
-    .col-4 {width: 33.33%;}
-    .col-5 {width: 41.66%;}
-    .col-6 {width: 50%;}
-    .col-7 {width: 58.33%;}
-    .col-8 {width: 66.66%;}
-    .col-9 {width: 75%;}
-    .col-10 {width: 83.33%;}
-    .col-11 {width: 91.66%;}
-    .col-12 {width: 100%;}
+  /* For desktop: */
+  .col-1 {width: 8.33%; font-size:20px;}
+  .col-2 {width: 16.66%;}
+  .col-3 {width: 25%;}
+  .col-4 {width: 33.33%;}
+  .col-5 {width: 41.66%;}
+  .col-6 {width: 50%;}
+  .col-7 {width: 58.33%;}
+  .col-8 {width: 66.66%;}
+  .col-9 {width: 75%;}
+  .col-10 {width: 83.33%;}
+  .col-11 {width: 91.66%;}
+  .col-12 {width: 100%;}
 }
 
 .center {
-  margin-left: auto;
-  margin-right: auto;
+margin-left: auto;
+margin-right: auto;
 }
 
-  .homeBox {
-    border: solid 1px;
-    margin-right: 200px;
-    background-color: black;
-    color: white;
-    height: 100px;
-    font-weight: bold;
-    text-align: center;
-    text-decoration: none;
-    opacity: 0.9;
-  }
+.homeBox {
+  border: solid 1px;
+  margin-right: 200px;
+  background-color: black;
+  color: white;
+  height: 100px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  opacity: 0.9;
+}
 
-  .receiptBox {
-    border: solid 1px;
-    margin-right: 200px;
-    background-color: black;
-    color: white;
-    height: auto;
-    width: fit-content;
-    font-weight: bold;
-    text-align: center;
-    text-decoration: none;
-    opacity: 0.9;
-  }
+.receiptBox {
+  border: solid 1px;
+  margin-right: 200px;
+  background-color: black;
+  color: white;
+  height: auto;
+  width: fit-content;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  opacity: 0.9;
+}
 
-  .resourcesBox {
-    border: solid 1px;
-    margin-right: 200px;
-    background-color: black;
-    color: white;
-    height: auto;
-    font-weight: bold;
-    text-align: center;
-    text-decoration: none;
-    opacity: 0.9;
-  }
-  
-  .footer {
-    bottom: 0;
-    left:0;
-    width: 100%;
-    background-color: white;
-    color: black;
-    opacity: 0.8;
-  }
+.resourcesBox {
+  border: solid 1px;
+  margin-right: 200px;
+  background-color: black;
+  color: white;
+  height: auto;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  opacity: 0.9;
+}
+
+.footer {
+  bottom: 0;
+  left:0;
+  width: 100%;
+  background-color:  rgba(33, 37, 41);
+  color: white;
+  opacity: 0.9;
+
+}

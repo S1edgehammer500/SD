@@ -1,0 +1,40 @@
+{% extends "base.html" %}  
+<!-- Andre Barnett - 22025153 -->
+{%block body%}
+
+<div class = "userbookings container-lg">
+    <div class = "bg-white rounded wrapper" >
+        <h1 class = "text-center">Bookings</h1>
+
+        {% for ID in bookings %}
+
+        <!-- <form> <input type=" text" class="form-control" placeholder = "Booking {{ID}}"> </form> -->
+        
+        <div class = "bookingrow pt-2 text-center"> <h5> SeatID: {{SeatList[ID]}} To: {{ArrivalCityList[ID]}}  From: {{DepartureCityList[ID]}} Date: {{DateList[ID]}} Departure Time: {{TimeList[ID]}} BookingID: {{ID}}</h5> </div>
+
+        {%endfor%}
+
+
+</div>
+
+<div class = "cancelbooking ">
+    <div class = "bg-white rounded wrapper">
+
+        <form action = "/account/" method = "POST">
+            <h5 class = "text-center"> Enter a SeatID to cancel</h5>
+
+            <input type = "number" name = "cancelid" max = 120 min = 0 required >
+
+            <input type = "submit">
+
+            <p> {{message}}</p>
+
+
+
+        </form>
+
+    </div>
+</div>
+
+
+{%endblock%}

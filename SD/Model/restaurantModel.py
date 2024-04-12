@@ -58,11 +58,7 @@ class Restaurant: #restaurant class
         if len(resName) > 0:
             pattern = r'[A-Za-z]{4,}' # At least a 6 letter word
             if re.fullmatch(pattern, resName):
-                if not (self.checkRestaurantName(resName)):
-
-                    return 1
-                else:
-                    return 0
+                return 1
             else:
                 return 0
         else:
