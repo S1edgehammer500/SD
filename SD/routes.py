@@ -664,6 +664,33 @@ def deleteDiscount():
 
     return render_template('deleteDiscount.html', title = "Delete Discount", logged_in=logged_in, authLevel = authLevel, dIDs=dIDs, dValues=dValues, discountsLen = len(dIDs))
 
+@app.route("/deleteDiscount2/", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def deleteDiscount2():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    discount = Discount()
+
+    print("delete")
+
+    try:
+        if request.method == "POST":
+            # Code that you wanna delete
+            dID = request.form['selected']
+
+   
+            if discount.deleteDiscount(dID):
+                flash(f"You have successfully deleted the discount with ID {dID}", 'info')
+                return redirect(url_for('adminOptions'))
+            else:
+                flash(f"Discount with ID \"{dID}\" does not exist", 'danger')
+                return redirect(url_for('deleteUser'))
+            
+    except Exception as e:  
+        return render_template('adminOptions.html', error=e, title="User Options", logged_in=logged_in, authLevel=authLevel)
 
 
 @app.route("/updateDiscount/", methods=['GET', 'POST'])
@@ -675,9 +702,85 @@ def updateDiscount():
     
     discount = Discount()
 
-
+    dIDs, dValues = discount.get_discounts()
   
-    return render_template('updateDiscount.html', title = "Update Discount", logged_in=logged_in, authLevel = authLevel)#, restaurantName=restaurantName, numberOfTables=numberOfTables, restaurantNameLen=len(restaurantName))
+    return render_template('updateDiscount.html', title = "Update Discount", logged_in=logged_in, authLevel = authLevel, dIDs=dIDs, dValues=dValues, discountsLen = len(dIDs))
+
+@app.route("/updateDiscount2/", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def updateDiscount2():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    currentDiscount = Discount()
+    
+
+    if request.method == "POST":
+        dID = request.form['selected']
+        session['previousdID'] = dID
+        currentDiscount.setDiscountDetails(dID)
+
+        dValue = currentDiscount.getDiscountValue()
+
+
+        return render_template("updateDiscount2.html", title = "Update Discount", logged_in=logged_in, authLevel=authLevel, discountID=dID, discountValue=dValue)
+    
+    return render_template("updateDiscount2.html", title = "Update Discount", logged_in=logged_in, authLevel=authLevel)
+
+@app.route("/updateDiscount3/", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def updateDiscount3():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    discount = Discount()    
+
+    try:
+    
+        if request.method == "POST":
+        
+            
+            dID = request.form['discountID']
+            dValue = request.form['discountValue']
+
+            print(f"dID {dID}")
+            print(f"dValue {dValue}")
+
+            if dID != None and dValue != None:
+    
+                if discount.validateDiscountIDSyntax(dID) == 1:
+        
+                    if discount.validateDiscountValueSyntax(dValue) == 1:
+
+                        previousdID = session['previousdID']
+                        
+
+                        if discount.updateDiscountValue(previousdID, dValue):
+                            print(f"Previous dID {previousdID}")
+
+                            if dID != previousdID:
+                                discount.updateDiscountID(previousdID, dID)
+
+                            print("hello")
+
+                            flash(f"You have successfully updated the discount {dID}", 'info')
+                            return redirect(url_for('adminOptions'))
+                        else:
+                            flash("Unexpected error occured")
+                            return render_template('updateDiscount2.html', error="", title = "Update Discount", logged_in=logged_in, authLevel=authLevel)
+                    else:
+                        flash("Discount value is in the wrong format")
+                        return render_template('updateDiscount2.html', error="", title = "Update Discount", logged_in=logged_in, authLevel=authLevel)
+                else:
+                    flash("Discount ID is in the wrong format")
+                    return render_template('updateDiscount2.html', error="", title = "Update Discount", logged_in=logged_in, authLevel=authLevel)
+            else:                
+                flash("Please don't leave any field empty", "danger")
+                return render_template('updateDiscount2.html', error="", title = "Update Discount", logged_in=logged_in, authLevel=authLevel)
+    except Exception as e:                
+        return render_template('updateDiscount2.html', error=e, title = "Update Discount", logged_in=logged_in, authLevel=authLevel)
 
 
 if __name__ == "__main__":

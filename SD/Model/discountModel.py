@@ -50,7 +50,7 @@ class Discount:
                 conn.close()
                 return 0
             else:
-                query2 = "UPDATE discount SET discountID = ? WHERE discountID = ?;"
+                query2 = "UPDATE discounts SET discountID = ? WHERE discountID = ?;"
                 cur.execute(query2, (newdID, dID))
                 conn.commit()
                 conn.close()
@@ -59,11 +59,11 @@ class Discount:
             conn.close()
             return 0
 
-    def updateDiscountValue(self, dID, dCode):
+    def updateDiscountValue(self, dID, dValue):
         conn, cur = openConnection()
-        if self.validateDiscountValueSyntax(dCode):
-            query = "UPDATE users SET discountValue = ? WHERE discountID = ?;"
-            cur.execute(query, (dCode, dID))
+        if self.validateDiscountValueSyntax(dID):
+            query = "UPDATE discounts SET discountValue = ? WHERE discountID = ?;"
+            cur.execute(query, (dValue, dID))
             conn.commit()
             conn.close()
             return 1
@@ -98,7 +98,7 @@ class Discount:
 
     def deleteDiscount(self, dID):
         conn, cur = openConnection()
-        if self.checkEmployeeCode(dID):
+        if self.checkDiscountID(dID):
             query = 'DELETE FROM discounts WHERE discountID = ?;'
 
             cur.execute(query, (dID,))
@@ -167,7 +167,7 @@ class Discount:
     
     def setDiscountDetails(self, dID):
         conn, cur = openConnection()
-        query = "SELECT password, authorisationLevel, baseRestaurant FROM users WHERE employeeCode = ?;"
+        query = "SELECT discountValue FROM discounts WHERE discountID = ?;"
         cur.execute(query, (dID,))
         record = cur.fetchone()
         self.setDiscountID(dID)
