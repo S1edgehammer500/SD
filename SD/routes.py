@@ -116,6 +116,16 @@ def home():
     
     return render_template('home.html', title="Home", logged_in=logged_in, authLevel=authLevel)
 
+
+@app.route("/inventory/")
+@login_required
+def inventory():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    return render_template('inventory.html', title="Home", logged_in=logged_in, authLevel=authLevel)
+
 @app.route('/createUser/', methods=['POST', 'GET'])
 @login_required
 @admin_required
