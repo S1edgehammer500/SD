@@ -263,6 +263,14 @@ class Inventory: #inventory class
         # Close the connection after fetching data
         conn.close()
         return itemList, quantityList, stockLimitList
+    
+    def getInventoryID(self, restaurantName):
+        conn, cur = openConnection()
+        query = 'SELECT inventoryID FROM inventory WHERE restaurantName = ? ORDER BY inventoryID;'
+        cur.execute(query, (restaurantName,))
+        record = cur.fetchall()
+        conn.close()
+        return record
         
     def delete_inventory(self, id):
         try:

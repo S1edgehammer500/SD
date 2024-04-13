@@ -920,7 +920,6 @@ def deleteRestaurant():
 @login_required
 @admin_required
 def deleteRestaurant2():
-    print("in this function")
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
@@ -936,8 +935,7 @@ def deleteRestaurant2():
             # Users code. DON'T DELETE
             #restaurantName = session['code']
             currentUserRestaurant = currentUser.getBaseRestaurant()
-            print(restaurantName)
-            print(currentUserRestaurant)
+
             if restaurantName != currentUserRestaurant:
                 if restaurant.deleteRestaurant(restaurantName):
                     flash(f"You have successfully deleted the restaurant {restaurantName}", 'info')
@@ -1447,15 +1445,6 @@ def createInventory():
 
 
 
-
-
-
-
-
-
-
-
-
 @app.route("/order/")
 @login_required
 def order():
@@ -1486,9 +1475,65 @@ def createOrder():
     return render_template('createOrder.html', title="order", logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, allergyList = allergyList, idList = idList, listLen = len(foodList))
 
 
+@app.route("/deleteInventory/", methods=['GET', 'POST'])
+@login_required
+@chef_required
+def deleteInventory():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    currentUser = User()
+    inventory = Inventory()
+    currentUser.setLoginDetails(session['code'])
+    
+    currentRestaurant = currentUser.getBaseRestaurant()
+    
+    inventoryID = []
+    tempInventoryID = inventory.getInventoryID(currentRestaurant)
+    inventoryID = strip.it(tempInventoryID)
+    
+    itemName = []
+    tempItemName = inventory.getItemNames(currentRestaurant)
+    itemName = strip.it(tempItemName)
+    
+    itemQuantity = []
+    tempItemQuantity = inventory.getItemQuantity(currentRestaurant)
+    itemQuantity = strip.it(tempItemQuantity)
+    
+    itemSL = []
+    tempItemSL = inventory.getItemStockLimit(currentRestaurant)
+    itemSL = strip.it(tempItemSL)
+    
+    return render_template('deleteInventory.html', title = "Delete Inventory" , logged_in=logged_in, authLevel=authLevel, inventoryID = inventoryID, itemName = itemName, itemQuantity = itemQuantity, itemSL=itemSL, listLen = len(itemName))
 
+@app.route("/deleteInventory2/", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def deleteInventory2():
+    inventory = Inventory()
 
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    try:
+        if request.method == "POST":
+            # Item name that you wanna delete
+            inventoryID = request.form['inventoryID']
+            inventory.setInventoryDetails(inventoryID)
+            
+            itemName = inventory.getItemName()
+  
+            if inventory.delete_inventory(inventoryID):
+                flash(f"You have successfully deleted the item {itemName}", 'info')
+                return redirect(url_for('inventory'))
+            else:
+                flash(f"Item \"{itemName}\" does not exist", 'danger')
+                return redirect(url_for('deleteInventory'))
+                
+    except Exception as e:  
+        return render_template('deleteInventory.html', error=e, title="Delete Inventory", logged_in=logged_in, authLevel=authLevel)
 
+    
 @app.route("/createOrder2/")
 @login_required
 def createOrder2():
