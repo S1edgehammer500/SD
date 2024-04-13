@@ -1385,11 +1385,6 @@ def inventory():
     stockLimit = []
     tempStockLimit = inventory.getItemStockLimit(currentRestaurant)
     stockLimit = strip.it(tempStockLimit)
-
-    print(currentRestaurant)
-    print(items)
-    print(quantity)
-    print(stockLimit)
     
     return render_template('inventory.html', title = "Inventory" , logged_in=logged_in, authLevel=authLevel, items = items, quantity = quantity, stockLimit=stockLimit, listLen = len(items))
 
@@ -1425,19 +1420,19 @@ def createInventory():
                                         flash("Item has been created", "success")
                                         return redirect(url_for('inventory'))
                                     else:
-                                        flash("Invalid stock limit syntax", "danger")
+                                        flash("Could not create item", "danger")
                                         return render_template('createInventory.html', error=error, title="Create Invnentory", logged_in=logged_in, authLevel=authLevel)
                                 else:
                                     flash("Item already exists in the restaurant", "danger")
                                     return render_template('createInventory.html', error=error, title="Create Invnentory", logged_in=logged_in, authLevel=authLevel)
                             else:
-                                flash("Invalid stock limit syntax", "danger")
+                                flash("Invalid stock limit (1-99)", "danger")
                                 return render_template('createInventory.html', error=error, title="Create Invnentory", logged_in=logged_in, authLevel=authLevel)
                         else:
                             flash("Quantity cannot be more than stock limit", "danger")
                             return render_template('createInventory.html', error=error, title="Create Inventory", logged_in=logged_in, authLevel=authLevel)
                     else:
-                        flash("Invalid quantity input", "danger")
+                        flash("Invalid quantity input (1-99)", "danger")
                         return render_template('createInventory.html', error=error, title="Create Inventory", logged_in=logged_in, authLevel=authLevel)
                 else:
                     flash("Item not available in the warehouse", "danger")

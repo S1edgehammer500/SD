@@ -249,6 +249,20 @@ class Inventory: #inventory class
         record = cur.fetchall()
         conn.close()
         return record
+    
+    def getInventoryList(self,restaurantName):
+        conn, cur = openConnection()
+        query = 'SELECT item.itemName, quantity, stockLimit FROM item JOIN inventory ON item.itemName == inventory.itemName WHERE inventory.restaurantName = ? ORDER BY inventory.inventoryID;'
+
+        cur.execute(query, (restaurantName,))
+        records = cur.fetchall()
+        itemList = [row[0] for row in records]
+        quantityList = [row[1] for row in records]
+        stockLimitList = [row[2] for row in records]
+
+        # Close the connection after fetching data
+        conn.close()
+        return itemList, quantityList, stockLimitList
         
     def delete_inventory(self, id):
         try:
