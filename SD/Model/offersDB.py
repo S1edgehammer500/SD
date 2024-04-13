@@ -12,7 +12,8 @@ def create_offer_table():
         else:
             c.execute('''
             CREATE TABLE offer
-            (offerID INTEGER PRIMARY KEY AUTOINCREMENT, offerDescription varchar(200) NOT NULL, restaurantName varchar(200) FOREIGN KEY (restaurantName) REFERENCES restaurant(restaurantName) ON DELETE CASCADE ON UPDATE CASCADE)
+            (offerID INTEGER PRIMARY KEY AUTOINCREMENT, offerDescription varchar(200) NOT NULL, restaurantName varchar(200),
+             FOREIGN KEY (restaurantName) REFERENCES restaurant(restaurantName) ON DELETE CASCADE ON UPDATE CASCADE)
             ''')
             conn.commit()
             print("Table 'offer' created successfully")
