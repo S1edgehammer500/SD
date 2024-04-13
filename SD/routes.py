@@ -150,7 +150,7 @@ def home():
 
 @app.route('/createUser/', methods=['POST', 'GET'])
 @login_required
-@manager_required
+@admin_required
 def createUser():
     currentUser = User()
     restaurant = Restaurant()
@@ -275,7 +275,7 @@ def deleteUser2():
 
 @app.route("/updateUser/", methods=['GET', 'POST'])
 @login_required
-@manager_required
+@admin_required
 def updateUser():
     logged_in = session['logged_in']
     authLevel = session['authLevel']
@@ -470,7 +470,7 @@ def createRestaurant():
 
 @app.route('/createFoodMenu/', methods=['POST', 'GET'])
 @login_required
-@admin_required
+@chef_required
 def createFoodMenu():
 
     currentUser = User()
@@ -613,6 +613,7 @@ def createFoodMenu():
 
 @app.route("/updateFoodMenu/", methods = ['GET', 'POST'])
 @login_required
+@chef_required
 def updateFoodMenu():
     # check to see what navbar to display
     logged_in = session['logged_in']
@@ -635,6 +636,7 @@ def updateFoodMenu():
 
 @app.route("/updateFoodMenu2/", methods = ['GET', 'POST'])
 @login_required
+@chef_required
 def updateFoodMenu2():
     # check to see what navbar to display
     logged_in = session['logged_in']
@@ -671,6 +673,7 @@ def updateFoodMenu2():
 
 @app.route("/updateFoodMenu3/", methods = ['GET', 'POST'])
 @login_required
+@chef_required
 def updateFoodMenu3():
     # check to see what navbar to display
     logged_in = session['logged_in']
@@ -854,6 +857,7 @@ def discountOptions():
 
 @app.route('/createDiscount/', methods=['POST', 'GET'])
 @login_required
+@manager_required
 def createDiscount():
     discount = Discount()
 
@@ -905,6 +909,7 @@ def createDiscount():
 
 @app.route("/deleteDiscount/", methods=['GET', 'POST'])
 @login_required
+@manager_required
 def deleteDiscount():
     logged_in = session['logged_in']
     authLevel = session['authLevel']
@@ -917,7 +922,7 @@ def deleteDiscount():
 
 @app.route("/deleteDiscount2/", methods=['GET', 'POST'])
 @login_required
-@admin_required
+@manager_required
 def deleteDiscount2():
     # check to see what navbar to display
     logged_in = session['logged_in']
@@ -946,6 +951,7 @@ def deleteDiscount2():
 
 @app.route("/updateDiscount/", methods=['GET', 'POST'])
 @login_required
+@manager_required
 def updateDiscount():
     
     logged_in = session['logged_in']
@@ -959,7 +965,7 @@ def updateDiscount():
 
 @app.route("/updateDiscount2/", methods=['GET', 'POST'])
 @login_required
-@admin_required
+@manager_required
 def updateDiscount2():
     logged_in = session['logged_in']
     authLevel = session['authLevel']
@@ -981,7 +987,7 @@ def updateDiscount2():
 
 @app.route("/updateDiscount3/", methods=['GET', 'POST'])
 @login_required
-@admin_required
+@manager_required
 def updateDiscount3():
     logged_in = session['logged_in']
     authLevel = session['authLevel']
@@ -1429,7 +1435,7 @@ def deleteInventory():
 
 @app.route("/deleteInventory2/", methods=['GET', 'POST'])
 @login_required
-@admin_required
+@chef_required
 def deleteInventory2():
     inventory = Inventory()
 
