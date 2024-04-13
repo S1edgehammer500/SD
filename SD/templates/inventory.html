@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block content %}
+
+
+<h1 class = "title">Inventory</h1>
+
+
+<div class = "reservation-holder">
+
+    <table>
+
+        <tr>
+            <th class = "text-center" style = "width: 20%;">ID</th>
+            <th class = "text-center" style = "width: 30%;">Item Name</th>
+            <th class = "text-center" style = "width: 25%;">Quantity</th>
+            <th class = "text-center" style = "width: 25%;">Stock Limit</th>
+        </tr>
+
+        <!-- LOOK IN MENU.HTML TO HELP PUT IN DATA -->
+    
+    </table>
+
+</div>
+
+<div class = "reservation-options">
+
+    <div class = "AdminBox">
+
+    <h3 class="txt-size text-center pt-3">Inventory Options</h3>
+
+    <a href="{{ url_for('createInventory') }}">
+        <button type="button">Add To Inventory</button>
+    </a>
+    <a href="#">
+        <button type="button">Update The Inventory</button>
+    </a>
+    <a href="#">
+        <button type="button">Delete From Inventory</button>
+    </a>
+    </div>
+</div>
+
+
+</div>
+
+
+
+{% endblock content %}
