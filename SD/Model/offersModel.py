@@ -109,7 +109,7 @@ class Offers: #offers class
     def updateOfferDescription(self, offerDescription, ID):
         if offerDescription != None:
             if self.validateOfferDescription(offerDescription):
-                if self.checkID(ID) and self.checkRestaurantDesc(self.__restaurantName, offerDescription):
+                if self.checkID(ID) and not (self.checkRestaurantDesc(self.__restaurantName, offerDescription)):
                     conn, cur = openConnection()
                     query = 'UPDATE offer SET offerDescription = ? WHERE offerID = ?;'
                     cur.execute(query, (offerDescription,ID))

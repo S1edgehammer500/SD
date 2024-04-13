@@ -75,7 +75,7 @@ class Menu: #menu class
             conn.close()
             return 1
         else:
-            print("Item does not exist")
+            print("Food does not exist")
             conn.close()
             return 0
         
