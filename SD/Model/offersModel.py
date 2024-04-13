@@ -6,6 +6,7 @@ class Offers: #offers class
     def __init__(self):
         self.__ID = ""
         self.__offerDescription = ""
+        self.__restaurantName = ""
 
     def setOfferDetails(self, ID):
          conn, cur = openConnection()
@@ -13,8 +14,10 @@ class Offers: #offers class
          cur.execute(query,(ID,))
          record = cur.fetchone()
          offerDescription = record[1]
+         restaurantName = record[2]
          self.setOfferDescription(offerDescription)
          self.setID(ID)
+         self.setRestaurantName(restaurantName)
          conn.close()
 
 
@@ -27,8 +30,12 @@ class Offers: #offers class
             return 0
 
     def setID(self, ID):
-        if self.validateID(ID):
-            self.__ID = ID
+        self.__ID = ID
+        return 1
+    
+    def setRestaurantName(self, restaurantName):
+        if self.validateRestaurantName(restaurantName):
+            self.__restaurantName = restaurantName
             return 1
         else:
             return 0
@@ -40,7 +47,38 @@ class Offers: #offers class
     def getID(self):
         return self.__ID
     
+    def getRestaurantName(self):
+        return self.__restaurantName
+    
     #validators
+
+    def validateRestaurantName(self, restaurantName):
+        conn, cur = openConnection()
+        query = 'SELECT restaurantName FROM restaurant WHERE restaurantName = ?;'
+        cur.execute(query, (restaurantName,))
+        record = cur.fetchone()
+        if record is not None:
+            print("restaurant exists")
+            conn.close()
+            return 1
+        else:
+            print("Restaurant does not exist")
+            conn.close()
+            return 0
+        
+    def checkRestaurantDesc(self, restaurantName, offerDescription):
+        conn, cur = openConnection()
+        query = 'SELECT * FROM offer WHERE restaurantName = ? AND offerDescription = ?;'
+        cur.execute(query, (restaurantName, offerDescription))
+        record = cur.fetchone()
+        if record is not None:
+            print("Restaurant and description combination exists")
+            conn.close()
+            return 1
+        else:
+            print("Restaurant and description combination don't exist")
+            conn.close()
+            return 0
         
     def checkID(self, ID):
         conn, cur = openConnection()
@@ -71,10 +109,10 @@ class Offers: #offers class
     def updateOfferDescription(self, offerDescription, ID):
         if offerDescription != None:
             if self.validateOfferDescription(offerDescription):
-                if self.checkID(ID):
+                if self.checkID(ID) and self.checkRestaurantDesc(self.__restaurantName, offerDescription):
                     conn, cur = openConnection()
                     query = 'UPDATE offer SET offerDescription = ? WHERE offerID = ?;'
-                    cur.execute(query, (offerDescription,))
+                    cur.execute(query, (offerDescription,ID))
                     conn.commit()
                     conn.close()
                     return 1
@@ -85,11 +123,11 @@ class Offers: #offers class
         else:
             return 0
         
-    def createOffer(self, offerDescription):
+    def createOffer(self, offerDescription, restaurantName):
         conn, cur = openConnection()
-        if (self.validateOfferDescription(offerDescription)):
-            query = 'INSERT INTO offer (offerDescription) VALUES (?);'
-            cur.execute(query, (offerDescription,))
+        if (self.validateOfferDescription(offerDescription)) and (self.validateRestaurantName(restaurantName)):
+            query = 'INSERT INTO offer (offerDescription, restaurantName) VALUES (?, ?);'
+            cur.execute(query, (offerDescription, restaurantName))
             conn.commit()
             print("new offer created")
             conn.close()
@@ -103,7 +141,7 @@ class Offers: #offers class
             cur = conn.cursor()
             cur.execute("SELECT * FROM offer")
             rows = cur.fetchall()
-            offer_list = [(row[0], row[1]) for row in rows]
+            offer_list = [(row[0], row[1], row[2]) for row in rows]
             conn.close()
             return offer_list
         except sqlite3.Error as e:
