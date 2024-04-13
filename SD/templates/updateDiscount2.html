@@ -1,0 +1,34 @@
+{% extends "layout.html" %} 
+{% block content %} 
+
+    <div class = "StandardBox">
+
+      <h3 class="text-center pt-3 heading">Choose A Discount To Update Here</h3> <br>
+
+                <form action="/updateDiscount3/" method="post">
+                <div class="form-group">
+                    <label for="discountID">Discount ID:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
+                    <input required style="color:black" class="discountID" name="discountID" type="number" size="30" value="{{discountID}}"><br>
+                </div>
+                <div class="form-group">
+                    <label for="discountValue">Discount Value (1-100):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
+                    <input required style="color:black" id="discountValue" min="1" max="100" type="number" class="discountValue" name="discountValue" size="30" value="{{discountValue}}"><br>
+                </div>
+
+                <div class = "d-grid mb-3">
+                    <button type = "submit"  class = "btn btn-light black">submit</button>
+                  </div> <br>
+
+            </div>
+        
+        </form>     
+    
+    </div>
+    
+
+
+
+
+
+
+{% endblock content %}

@@ -180,17 +180,18 @@ class Menu: #menu class
     
     def getMenuList(self,restaurantName):
         conn, cur = openConnection()
-        query = 'SELECT food.foodName, price, allergyInfo FROM food JOIN menu ON food.foodName == menu.foodName WHERE menu.restaurantName = ? ORDER BY menu.menuID;'
+        query = 'SELECT food.foodName, price, allergyInfo, menu.menuID FROM food JOIN menu ON food.foodName == menu.foodName WHERE menu.restaurantName = ? ORDER BY menu.menuID;'
 
         cur.execute(query, (restaurantName,))
         records = cur.fetchall()
         foodList = [row[0] for row in records]
         priceList = [row[1] for row in records]
         allergyList = [row[2] for row in records]
+        idList = [row[3] for row in records]
 
         # Close the connection after fetching data
         conn.close()
-        return foodList, priceList, allergyList
+        return foodList, priceList, allergyList, idList
 
         
     def delete_menu(self, id):

@@ -7,6 +7,8 @@ class Inventory: #inventory class
         self.__ID = ""
         self.__restaurantName = ""
         self.__itemName = ""
+        self.__quantity = ""
+        self.__stockLimit = ""
 
     def setInventoryDetails(self, id):
          conn, cur = openConnection()
@@ -15,9 +17,13 @@ class Inventory: #inventory class
          record = cur.fetchone()
          restaurantName = record[1]
          itemName = record[2]
+         quantity = record[3]
+         stockLimit = record[4]
          self.setRestaurantName(restaurantName)
          self.setID(id)
          self.setItemName(itemName)
+         self.setQuantity(quantity)
+         self.setStockLimit(stockLimit)
          conn.close()
 
 
@@ -39,6 +45,19 @@ class Inventory: #inventory class
         else:
             return 0
     
+    def setQuantity(self, quantity):
+        if self.validateQuantity(quantity):
+            self.__quantity = quantity
+            return 1
+        else:
+            return 0
+        
+    def setStockLimit(self, stockLimit):
+        if self.validateStockLimit(stockLimit):
+            self.__stockLimit = stockLimit
+            return 1
+        else:
+            return 0
     #getters
     def getRestaurantName(self):
         return self.__restaurantName
@@ -48,6 +67,12 @@ class Inventory: #inventory class
     
     def getItemName(self):
         return self.__itemName
+    
+    def getQuantity(self):
+        return self.__quantity
+    
+    def getStockLimit(self):
+        return self.__stockLimit
 
     #validators
 
@@ -77,6 +102,37 @@ class Inventory: #inventory class
         else:
             print("Item does not exist")
             conn.close()
+            return 0
+    
+    def validateQuantity(self, quantity):
+        if int(quantity)>0:
+            pattern = r'[0-9]{1,2}' 
+            if re.fullmatch(pattern, str(quantity)):
+                return 1
+            else:
+                print("Incorrect Quantity syntax")
+                return 0
+        else:
+            print("Incorrect Quantity Syntax")
+            return 0
+        
+    def validateQuantity2(self, quantity, stockLimit):
+        if int(quantity) > int(stockLimit):
+            return 0
+        else:
+            print("Quantity is not above stock limit")
+            return 1
+
+    def validateStockLimit(self, stockLimit):
+        if int(stockLimit):
+            pattern = r'[0-9]{1,2}'
+            if re.fullmatch(pattern, str(stockLimit)):
+                return 1
+            else:
+                print("Invalid Stock Syntax")
+                return 0
+        else:
+            print("Invalid Stock Syntax")
             return 0
         
     def checkID(self, ID):
@@ -150,11 +206,11 @@ class Inventory: #inventory class
             return 0
 
         
-    def createInventory(self, restaurantName, itemName):
+    def createInventory(self, restaurantName, itemName, quantity, stockLimit):
         conn, cur = openConnection()
-        if (self.validateRestaurantName(restaurantName)) and (self.validateItemName(itemName)) and not (self.checkRestaurantItem(restaurantName, itemName)):
-            query = 'INSERT INTO inventory (restaurantName, itemName) VALUES (?,?);'
-            cur.execute(query, (restaurantName, itemName))
+        if (self.validateRestaurantName(restaurantName)) and (self.validateItemName(itemName)) and not (self.checkRestaurantItem(restaurantName, itemName)) and (self.validateQuantity(quantity)) and (self.validateStockLimit(stockLimit)) and (self.validateQuantity2(quantity, stockLimit)):
+            query = 'INSERT INTO inventory (restaurantName, itemName, quantity, stockLimit) VALUES (?,?,?,?);'
+            cur.execute(query, (restaurantName, itemName, quantity, stockLimit))
             conn.commit()
             print("new inventory created")
             conn.close()
@@ -165,7 +221,7 @@ class Inventory: #inventory class
     def getRestaurantNames(self, restaurantName):
         conn, cur = openConnection()
         query = 'SELECT restaurantName FROM inventory WHERE restaurantName = ? ORDER BY inventoryID;'
-        conn.execute(query, (restaurantName,))
+        cur.execute(query, (restaurantName,))
         record = cur.fetchall()
         conn.close()
         return record
@@ -173,7 +229,23 @@ class Inventory: #inventory class
     def getItemNames(self, restaurantName):
         conn, cur = openConnection()
         query = 'SELECT itemName FROM inventory WHERE restaurantName = ? ORDER BY inventoryID;'
-        conn.execute(query, (restaurantName,))
+        cur.execute(query, (restaurantName,))
+        record = cur.fetchall()
+        conn.close()
+        return record
+    
+    def getItemQuantity(self, restaurantName):
+        conn, cur = openConnection()
+        query = 'SELECT quantity FROM inventory WHERE restaurantName = ? ORDER BY inventoryID;'
+        cur.execute(query, (restaurantName,))
+        record = cur.fetchall()
+        conn.close()
+        return record
+    
+    def getItemStockLimit(self, restaurantName):
+        conn, cur = openConnection()
+        query = 'SELECT stockLimit FROM inventory WHERE restaurantName = ? ORDER BY inventoryID;'
+        cur.execute(query, (restaurantName,))
         record = cur.fetchall()
         conn.close()
         return record

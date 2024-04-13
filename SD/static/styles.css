@@ -26,7 +26,22 @@
   transform: translate(-50%, -50%);
   box-sizing: border-box;
   height: auto;
-  width: 1000px;
+  width: 650px;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  background-color: rgba(33, 37, 41); /* Adjust opacity as needed */
+  border: 3px solid white;
+}
+
+.login-form-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-sizing: border-box;
+  height: auto;
+  width: 650px;
   color: white;
   text-align: center;
   font-weight: bold;
@@ -37,36 +52,30 @@
 .AdminUserPos{
   position: absolute;
   top: 35%;
-  left: 20%;
+  left: 30%;
   transform: translate(-50%, -50%);
 }
 
-.AdminReportPos{
-  position: absolute;
-  top: 35%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
 
 
 .AdminRestaurantPos{
   position: absolute;
   top: 35%;
-  left: 80%;
+  left: 70%;
   transform: translate(-50%, -50%);
 }
 
 .AdminDiscountPos{
   position: absolute;
   top: 75%;
-  left: 35%;
+  left: 30%;
   transform: translate(-50%, -50%);
 }
 
 .AdminMenuPos{
   position: absolute;
   top: 75%;
-  left: 65%;
+  left: 70%;
   transform: translate(-50%, -50%);
 }
 
@@ -79,14 +88,17 @@
   background-color: rgba(33, 37, 41); /* Adjust opacity as needed */
   color: white;         /* Set the text Color */
   text-decoration-line: underline;
+  
 
 }
 
   .AdminBox button {
-    margin: 10px auto; /* Center the buttons horizontally */ 
+    margin: 20px auto; /* Center the buttons horizontally */ 
     display: block;
     font-size: 16px;
     color: rgba(33, 37, 41);
+    background-color: white;
+    border-color: white;
 
   }
 
@@ -100,6 +112,64 @@
   color: white;
   font-size: 50px;
   text-decoration: underline;
+}
+
+.custom-checkbox {
+
+
+  appearance: none; /* Removes default styles */
+  width: 15px;
+  height: 15px;
+  border: 2px solid #ccc; /* Border color */
+  border-radius: 4px; /* Rounded corners */
+  cursor: pointer;
+  background-color: white;
+  border-color: white;
+  
+  
+}
+
+.custom-checkbox:checked {
+  background-color: white; /* Background color when checked */
+}
+
+.custom-checkbox:checked::before {
+  content: 'X'; /* Unicode character for a tick mark */
+  display: block;
+  width: 100%;
+  height: 100%;
+  font-size: 12px; /* Adjust size of the tick mark */
+  line-height: 15px;
+  text-align: center;
+  color: black; /* Tick mark color */
+}
+
+.reservation-holder{
+
+  position: absolute;
+  top: 30%;
+  left: 40%;
+  transform: translate(-50%, -50%);
+  height: auto;
+  width: 1000px;
+
+}
+
+.reservation-holder table{
+  width: 100%;
+  
+  border: 2px solid white; /* Thick white outline */
+  color: white; /* Text color */
+  background-color: rgba(33, 37, 41);
+}
+
+
+.reservation-options{
+  
+  position: absolute;
+  top: 50%;
+  left: 85%;
+  transform: translate(-50%, -50%);
 }
 
 .menu-holder{
@@ -137,6 +207,27 @@
   
 }
 
+.StandardBox button {
+  background-color: white;
+  border-color: white;
+  color: rgba(33, 37, 41);
+}
+
+.StandardBox input {
+  background-color: white;
+  border-color: white;
+  
+}
+
+
+.StandardBox select {
+
+  background-color: white;
+  border-color: white;
+  color: rgba(33, 37, 41);
+}
+
+
 .StandardBox table {
 
   width: 600px;
@@ -154,6 +245,9 @@
 
 .StandardBox h1 {
   font-size: 60px;
+}
+.datetime-selector {
+  color: rgba(33, 37, 41);
 }
 
 .heading {
@@ -177,9 +271,12 @@
 
   .black {
 
-color: black;
+  color: rgba(33, 37, 41);
 }
 
+.white{
+  color:white;
+}
 
 body {
   /* background-image: url('mainpagebg3.jpg');
@@ -220,51 +317,186 @@ body.page2 {
   width: 100%;
 }
 
-@media only screen and (min-width: 400px) {
+@media only screen and (max-width: 768px) {
   /* For mobiles: */
-  .col-x-1 {width: 8.33%; font-size: 6px;}
-  .col-x-2 {width: 16.66%;}
-  .col-x-3 {width: 25%;}
-  .col-x-4 {width: 33.33%;}
-  .col-x-5 {width: 41.66%;}
-  .col-x-6 {width: 50%;}
-  .col-x-7 {width: 58.33%;}
-  .col-x-8 {width: 66.66%;}
-  .col-x-9 {width: 75%;}
-  .col-x-10 {width: 83.33%;}
-  .col-x-11 {width: 91.66%;}
-  .col-x-12 {width: 100%;}
+
+  .AdminBox {
+    width: 200px;
+    height: 200px;
+    border: 3px solid white;
+    background-color: rgba(33, 37, 41); /* Adjust opacity as needed */
+    color: white;         /* Set the text Color */
+    text-decoration-line: underline;
+    margin: 100px;
+  }
+
+  .AdminBox button {
+    margin: 15px auto; /* Center the buttons horizontally */ 
+    display: block;
+    font-size: 14px;
+    color: rgba(33, 37, 41);
+    background-color: white;
+    border-color: white;
+
+  }
+
+
+
+/* Default position for all elements */
+.AdminElement {
+  position: absolute;
+  transform: translate(-50%, -50%);
 }
 
-@media only screen and (min-width: 700px) {
-  /* For tablets: */
-  .col-m-1 {width: 8.33%; font-size: 13px;}
-  .col-m-2 {width: 16.66%;}
-  .col-m-3 {width: 25%;}
-  .col-m-4 {width: 33.33%;}
-  .col-m-5 {width: 41.66%;}
-  .col-m-6 {width: 50%;}
-  .col-m-7 {width: 58.33%;}
-  .col-m-8 {width: 66.66%;}
-  .col-m-9 {width: 75%;}
-  .col-m-10 {width: 83.33%;}
-  .col-m-11 {width: 91.66%;}
-  .col-m-12 {width: 100%;}
+/* Position for AdminUserPos */
+.AdminUserPos {
+  top: 100%; /* Adjusted from 35% for mobile */
+  left: 50%; /* Center horizontally */
 }
-@media only screen and (min-width: 900px) {
+
+
+/* Position for AdminRestaurantPos */
+.AdminRestaurantPos {
+  top: 150%; /* Adjusted from 35% for mobile */
+  left: 50%; /* Center horizontally */
+}
+
+/* Position for AdminDiscountPos */
+.AdminDiscountPos {
+  top: 200%; /* Adjusted from 75% for mobile */
+  left: 50%; /* Center horizontally */
+}
+
+/* Position for AdminMenuPos */
+.AdminMenuPos {
+  top: 250%; /* Adjusted from 75% for mobile */
+  left: 50%; /* Center horizontally */
+}
+
+
+
+
+  
+}
+
+@media only screen and (min-width: 769px) and (max-width: 1300px) {
+  /* For tablets: */
+
+
+
+  .AdminBox {
+    width: 200px;
+    height: 200px;
+    border: 3px solid white;
+    background-color: rgba(33, 37, 41); /* Adjust opacity as needed */
+    color: white;         /* Set the text Color */
+    text-decoration-line: underline;
+  }
+
+  .AdminBox button {
+    margin: 15px auto; /* Center the buttons horizontally */ 
+    display: block;
+    font-size: 14px;
+    color: rgba(33, 37, 41);
+    background-color: white;
+    border-color: white;
+
+  }
+
+
+  .txt-size {
+    font-size: 20px;
+  }
+
+
+
+  .reservation-holder{
+
+    position: absolute;
+    top: 30%;
+    left: 40%;
+    transform: translate(-50%, -50%);
+    height: auto;
+    width: 650px;
+  
+  }
+  
+  .reservation-holder table{
+    width: 100%;
+    
+    border: 2px solid white; /* Thick white outline */
+    color: white; /* Text color */
+    background-color: rgba(33, 37, 41);
+  }
+  
+  
+  .reservation-options{
+    
+    position: absolute;
+    top: 50%;
+    left: 85%;
+    transform: translate(-50%, -50%);
+  }
+
+  .title {
+
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 35px;
+    text-decoration: underline;
+  }
+
+
+  .menu-holder{
+
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: auto;
+    width: 700px;
+  
+  }
+  
+  .menu-holder table{
+    width: 100%;
+    
+    border: 2px solid white; /* Thick white outline */
+    color: white; /* Text color */
+    background-color: rgba(33, 37, 41);
+  }
+
+  .StandardBox {
+  
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: auto;
+    border: 3px solid white;
+    background-color: rgba(33, 37, 41); /* Adjust opacity as needed */
+    color: white;         /* Set the text Color */
+    text-align: center;
+    margin-top: 20px;
+    
+  }
+
+
+
+
+}
+@media only screen and (min-width: 1300px) {
   /* For desktop: */
-  .col-1 {width: 8.33%; font-size:20px;}
-  .col-2 {width: 16.66%;}
-  .col-3 {width: 25%;}
-  .col-4 {width: 33.33%;}
-  .col-5 {width: 41.66%;}
-  .col-6 {width: 50%;}
-  .col-7 {width: 58.33%;}
-  .col-8 {width: 66.66%;}
-  .col-9 {width: 75%;}
-  .col-10 {width: 83.33%;}
-  .col-11 {width: 91.66%;}
-  .col-12 {width: 100%;}
+
+
+
+
+
+
 }
 
 .center {
@@ -317,4 +549,42 @@ margin-right: auto;
   color: white;
   opacity: 0.9;
 
+}
+
+
+
+:root {
+  --scrollbar-track-color: #333; /* scrollbar track */
+  --scrollbar-thumb-color: #666; /* scrollbar thumb */
+  --scrollbar-corner-color: #333; /* scrollbar corner */
+}
+
+/* Style the scrollbar for WebKit (Chrome, Safari, Opera) */
+::-webkit-scrollbar {
+  width: 12px; /* Width of the scrollbar */
+}
+
+/* Style the scrollbar track */
+::-webkit-scrollbar-track {
+  background-color: var(--scrollbar-track-color);
+}
+
+/* Style the scrollbar thumb */
+::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb-color);
+}
+
+/* Style the scrollbar corner */
+::-webkit-scrollbar-corner {
+  background-color: var(--scrollbar-corner-color);
+}
+
+/* Style the scrollbar track */
+html {
+  scrollbar-color: var(--scrollbar-thumb-color) var(--scrollbar-track-color);
+}
+
+/* Style the scrollbar thumb */
+html::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb-color);
 }

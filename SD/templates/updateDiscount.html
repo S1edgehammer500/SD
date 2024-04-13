@@ -1,25 +1,36 @@
 {% extends "layout.html" %} 
-{% block content %}
+{% block content %} 
 
-<!--Create restaurant form-->
-<form action="/createDiscount/" method="post">
-    <section class="vh-100">
-    <div class="container h-100">
-        <div class="row-d-flex justify-content-center">
-        <div class="register-form-container col-11 col-m-11 col-x-11">
-            <form action="/createDiscount/" method="post">
-            <div class="form-group">
-                <label for="discountID">Discount ID:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
-                <input required style="color:black" class="discountID" name="discountID" type="number" size="30" value="{{request.form.discountID}}"><br>
+<form action="/updateDiscount2/" method="post">
+    <div class="StandardBox">
+
+        <h3 class="text-center pt-3 heading">Choose A Discount To Update Here</h3> <br>
+
+            <table border=1 style="color:rgb(255, 255, 255)" class="center">
+                    <tr>
+                        <th class = "text-center" style = "width: 30%;">Discount ID &nbsp;&nbsp;</th>
+                        <th class = "text-center" style = "width: 30%;">Discount Value &nbsp;&nbsp;</th>
+                        <th class = "text-center" style = "width: 10%;"> Select</th>
+                        {% for i in range(discountsLen): %} 
+                        <tr>
+                            <td> {{dIDs[i]}} </td>              
+                            <td> {{dValues[i]}} </td>
+                            <td> <input required type="radio" name="selected" value="{{dIDs[i]}}" checked></td>
+                        </tr>
+                    {% endfor %}
+                </table>
+                <br><br>
+
+
+                <form>
+                    
+                    <div class = "d-grid mb-3">
+                        <button type = "submit"  class = "btn btn-light black">Submit</button>
+                        </div>
+                        <br>
             </div>
-            <div class="form-group">
-                <label for="discountValue">Discount Value (1-100):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
-                <input required style="color:black" id="discountValue" min="1" max="100" type="number" class="discountValue" name="discountValue" size="30" value="{{request.form.discountValue}}"><br>
-            </div>
-            <div class=submit-button><form><input style="color:black" type="submit" value="Create Discount" size="100"></form></div><br><br>
-        </div>
-        </div>
-        <br><br><br>
-    </section>
-    </form>
+    </div>
+</form>
+
+<br>
 {% endblock content %}

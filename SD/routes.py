@@ -12,6 +12,9 @@ from Model.restaurantModel import *
 from Model.discountModel import *
 from Model.menuModel import *
 from Model.foodModel import *
+from Model.reportModel import *
+from Model.inventoryModel import *
+
 
 # User defined
 import strip
@@ -45,6 +48,19 @@ def admin_required(f):
             return render_template('login.html', title="Login")
     return wrap
 
+def chef_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'authLevel' in session:
+            if session['authLevel'] == 'chef' or session['authLevel'] == 'admin':
+                return f(*args, **kwargs)
+            else:
+                flash("You need to be logged in as an admin to access this page", "danger")
+                return redirect(url_for('home'))
+        else:
+            flash("You need to be logged in to access this page", "danger")
+            return render_template('login.html', title="Login")
+    return wrap
 
 
 # Routes
@@ -115,6 +131,56 @@ def home():
     authLevel = session['authLevel']
     
     return render_template('home.html', title="Home", logged_in=logged_in, authLevel=authLevel)
+
+
+@app.route("/viewSalesReport/")
+@login_required
+def viewSalesReport():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    return render_template('viewSalesReport.html', title="Home", logged_in=logged_in, authLevel=authLevel)
+
+
+@app.route("/viewTotalDiscountReport/")
+@login_required
+def viewTotalDiscountReport():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    return render_template('viewTotalDiscountReport.html', title="Home", logged_in=logged_in, authLevel=authLevel)
+
+@app.route("/viewAverageSalesReport/")
+@login_required
+def viewAverageSalesReport():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    return render_template('viewAverageSalesReport.html', title="Home", logged_in=logged_in, authLevel=authLevel)
+
+@app.route("/viewAverageServingReport/")
+@login_required
+def viewAverageServingReport():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    return render_template('viewAverageServingReport.html', title="Home", logged_in=logged_in, authLevel=authLevel)
+
+@app.route("/viewAverageDiscountReport/")
+@login_required
+def viewAverageDiscountReport():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    return render_template('viewAverageDiscountReport.html', title="Home", logged_in=logged_in, authLevel=authLevel)
+
+
+
 
 @app.route('/createUser/', methods=['POST', 'GET'])
 @login_required
@@ -193,6 +259,45 @@ def adminOptions():
 
     return render_template('adminOptions.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
 
+@app.route("/reservation/")
+@login_required
+def reservation():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    return render_template('reservation.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
+
+
+@app.route("/createReservation/")
+@login_required
+def createReservation():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    return render_template('createReservation.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
+
+@app.route("/updateReservation/")
+@login_required
+def updateReservation():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    return render_template('updateReservation.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
+
+@app.route("/deleteReservation/")
+@login_required
+def deleteReservation():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    return render_template('deleteReservation.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
+
+
+
 
 @app.route("/menu/", methods = ['GET', 'POST'])
 @login_required
@@ -211,7 +316,7 @@ def menu():
     currentMenu = Menu()
 
     
-    foodList, priceList, allergyList = currentMenu.getMenuList(currentRestaurant)
+    foodList, priceList, allergyList, idList = currentMenu.getMenuList(currentRestaurant)
 
 
     return render_template('menu.html', title = "Menu" , logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, allergyList = allergyList, listLen = len(foodList))
@@ -234,10 +339,61 @@ def deleteFoodMenu():
     currentMenu = Menu()
 
     
-    foodList, priceList, allergyList = currentMenu.getMenuList(currentRestaurant)
+    foodList, priceList, allergyList, idList = currentMenu.getMenuList(currentRestaurant)
 
 
-    return render_template('deleteFoodMenu.html', title = "Menu" , logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, allergyList = allergyList, listLen = len(foodList))
+    return render_template('deleteFoodMenu.html', title = "Delete Menu" , logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, listLen = len(foodList), idList = idList)
+
+
+@app.route("/deleteFoodMenu2/", methods = ['GET', 'POST'])
+@login_required
+def deleteFoodMenu2():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    error = ""
+
+    
+    currentMenu = Menu()
+
+    try:
+        if request.method == "POST":
+
+            print("method is posting")
+
+            foodID = request.form['foodID']
+
+            
+            print(foodID)
+
+            if foodID != None:
+                
+                if currentMenu.delete_menu(foodID) == 1:
+                                                           
+                    flash ("Food successfully deleted from the menu", "success")
+                    return redirect(url_for('deleteFoodMenu'))
+
+                else:
+                    flash ("Error deleting food from the menu", "danger")
+                    return render_template('deleteFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+
+
+            else:
+                flash ("Select a food to delete", "danger")
+                return render_template('deleteFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+
+
+        else:
+            return redirect(url_for('deleteFoodMenu'))
+
+
+    except Exception as e:
+        
+        return render_template('home.html', error=e, title="Restaurant Options", logged_in=logged_in, authLevel=authLevel)
+
+
+    
 
 
 
@@ -469,7 +625,7 @@ def createRestaurant():
     restaurant = Restaurant()
     restaurants = []
     tempRestaurants = restaurant.getAllRestaurants()
-
+    
     restaurants = strip.it(tempRestaurants)
 
     logged_in = session['logged_in']
@@ -515,10 +671,10 @@ def createRestaurant():
         return render_template('createRestaurant.html', error=e, title="Create Restaurant", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
 
 
-@app.route('/createFood/', methods=['POST', 'GET'])
+@app.route('/createFoodMenu/', methods=['POST', 'GET'])
 @login_required
 @admin_required
-def createFood():
+def createFoodMenu():
 
     currentUser = User()
     currentFood = Food()
@@ -576,21 +732,21 @@ def createFood():
 
                                                 else:
                                                     flash ("Failed to add item to the menu", "danger")
-                                                    return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+                                                    return render_template('createFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
 
 
                                             else:
                                                 flash ("Food item already exists in the menu table", "danger")
-                                                return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+                                                return render_template('createFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
 
                                         
                                         else:
                                             flash ("Food Item does not exist in food table", "danger")
-                                            return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+                                            return render_template('createFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
 
                                 else:
                                     flash ("Restaurant is Invalid", "danger")
-                                    return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+                                    return render_template('createFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
 
                                 
 
@@ -612,51 +768,131 @@ def createFood():
 
                                                 else:
                                                     flash ("Failed to add item to the menu", "danger")
-                                                    return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+                                                    return render_template('createFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
 
 
                                             else:
                                                 flash ("Food item already exists in the menu table", "danger")
-                                                return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+                                                return render_template('createFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
 
                                         
                                         else:
                                             flash ("Food Item does not exist in food table", "danger")
-                                            return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+                                            return render_template('createFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
 
                                     else:
                                         flash ("Restaurant is Invalid", "danger")
-                                        return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+                                        return render_template('createFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
 
                                 else:
                                     flash ("Failed to create food in food table", "danger")
-                                    return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+                                    return render_template('createFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
                         else:  
                             flash ("Food price is invalid", "danger")
-                            return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+                            return render_template('createFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
 
                     else:
                         flash ("Food allergy is invalid", "danger")
-                        return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+                        return render_template('createFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
 
                 else:
                     flash ("Food name is invalid", "danger")
-                    return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+                    return render_template('createFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
 
             else:
                 flash ("Fields cannot be empty", "danger")
-                return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+                return render_template('createFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
 
             
 
         
         else: 
-            return(render_template('createFood.html', title="Create Food", logged_in=logged_in, authLevel = authLevel))
+            return(render_template('createFoodMenu.html', title="Create Food", logged_in=logged_in, authLevel = authLevel))
     
     except Exception as e:
         print("here2")
-        return(render_template('createFood.html', title="Create Food", error = e, logged_in=logged_in, authLevel = authLevel))
+        return(render_template('createFoodMenu.html', title="Create Food", error = e, logged_in=logged_in, authLevel = authLevel))
     
+
+@app.route("/updateFoodMenu/", methods = ['GET', 'POST'])
+@login_required
+def updateFoodMenu():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+
+    currentUser = User()
+    currentUser.setLoginDetails(session['code'])
+
+    currentRestaurant = currentUser.getBaseRestaurant()
+
+
+    currentMenu = Menu()
+
+    
+    foodList, priceList, allergyList, idList = currentMenu.getMenuList(currentRestaurant)
+
+
+    return render_template('updateFoodMenu.html', title = "Update Menu" , logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, listLen = len(foodList), idList = idList)
+
+@app.route("/updateFoodMenu2/", methods = ['GET', 'POST'])
+@login_required
+def updateFoodMenu2():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+
+    currentUser = User()
+    currentUser.setLoginDetails(session['code'])
+
+    currentRestaurant = currentUser.getBaseRestaurant()
+
+
+    
+    currentFood = Food()
+
+    
+    
+
+    if request.method == "POST":
+        name = request.form['foodName']
+        currentFood.setFoodDetails(name)
+
+        price = currentFood.getPrice()
+
+        allergy = currentFood.getAllergyInfo()
+
+
+
+
+
+
+    return render_template('updateFoodMenu2.html', title = "Update Menu" , logged_in=logged_in, authLevel=authLevel, price = price, name = name, allergy = allergy)
+
+
+@app.route("/updateFoodMenu3/", methods = ['GET', 'POST'])
+@login_required
+def updateFoodMenu3():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+
+    currentUser = User()
+    currentUser.setLoginDetails(session['code'])
+
+    currentRestaurant = currentUser.getBaseRestaurant()
+
+
+    currentMenu = Menu()
+    currentFood = Food()
+
+
+    return redirect(url_for('updateFoodMenu'))
+
+
 
 
 
@@ -826,6 +1062,8 @@ def discountOptions():
 def createDiscount():
     discount = Discount()
 
+    
+
     logged_in = session['logged_in']
     authLevel = session['authLevel']
 
@@ -847,10 +1085,10 @@ def createDiscount():
 
                             if discount.createDiscount(discountID, discountValue) == 1:                      
                                 flash("Discount is now registered", "success")
-                                return redirect(url_for('discountOptions'))
+                                return redirect(url_for('home'))
                             else:
                                 flash("Unexpected Error occured", "danger")
-                                return render_template('discountOptions.html', error=error, title="Discount Options", logged_in=logged_in, authLevel=authLevel)
+                                return render_template('home.html', error=error, title="Discount Options", logged_in=logged_in, authLevel=authLevel)
                         else:
                             flash("Invalid discount value", "danger")
                             return render_template('createDiscount.html', error=error, title="Create Discount", logged_in=logged_in, authLevel=authLevel)
@@ -878,9 +1116,37 @@ def deleteDiscount():
     
     discount = Discount()
     
+    dIDs, dValues = discount.get_discounts()
 
-    return render_template('deleteDiscount.html', title = "Delete Discount", logged_in=logged_in, authLevel = authLevel)#, restaurantName=restaurantName, numberOfTables=numberOfTables, restaurantNameLen=len(restaurantName))
+    return render_template('deleteDiscount.html', title = "Delete Discount", logged_in=logged_in, authLevel = authLevel, dIDs=dIDs, dValues=dValues, discountsLen = len(dIDs))
 
+@app.route("/deleteDiscount2/", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def deleteDiscount2():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    discount = Discount()
+
+    print("delete")
+
+    try:
+        if request.method == "POST":
+            # Code that you wanna delete
+            dID = request.form['selected']
+
+   
+            if discount.deleteDiscount(dID):
+                flash(f"You have successfully deleted the discount with ID {dID}", 'info')
+                return redirect(url_for('adminOptions'))
+            else:
+                flash(f"Discount with ID \"{dID}\" does not exist", 'danger')
+                return redirect(url_for('deleteUser'))
+            
+    except Exception as e:  
+        return render_template('adminOptions.html', error=e, title="User Options", logged_in=logged_in, authLevel=authLevel)
 
 
 @app.route("/updateDiscount/", methods=['GET', 'POST'])
@@ -892,10 +1158,292 @@ def updateDiscount():
     
     discount = Discount()
 
-
+    dIDs, dValues = discount.get_discounts()
   
-    return render_template('updateDiscount.html', title = "Update Discount", logged_in=logged_in, authLevel = authLevel)#, restaurantName=restaurantName, numberOfTables=numberOfTables, restaurantNameLen=len(restaurantName))
+    return render_template('updateDiscount.html', title = "Update Discount", logged_in=logged_in, authLevel = authLevel, dIDs=dIDs, dValues=dValues, discountsLen = len(dIDs))
 
+@app.route("/updateDiscount2/", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def updateDiscount2():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    currentDiscount = Discount()
+    
+
+    if request.method == "POST":
+        dID = request.form['selected']
+        session['previousdID'] = dID
+        currentDiscount.setDiscountDetails(dID)
+
+        dValue = currentDiscount.getDiscountValue()
+
+
+        return render_template("updateDiscount2.html", title = "Update Discount", logged_in=logged_in, authLevel=authLevel, discountID=dID, discountValue=dValue)
+    
+    return render_template("updateDiscount2.html", title = "Update Discount", logged_in=logged_in, authLevel=authLevel)
+
+@app.route("/updateDiscount3/", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def updateDiscount3():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    discount = Discount()    
+
+    try:
+    
+        if request.method == "POST":
+        
+            
+            dID = request.form['discountID']
+            dValue = request.form['discountValue']
+
+            print(f"dID {dID}")
+            print(f"dValue {dValue}")
+
+            if dID != None and dValue != None:
+    
+                if discount.validateDiscountIDSyntax(dID) == 1:
+        
+                    if discount.validateDiscountValueSyntax(dValue) == 1:
+
+                        previousdID = session['previousdID']
+                        
+
+                        if discount.updateDiscountValue(previousdID, dValue):
+                            print(f"Previous dID {previousdID}")
+
+                            if dID != previousdID:
+                                discount.updateDiscountID(previousdID, dID)
+
+
+                            flash(f"You have successfully updated the discount {dID}", 'info')
+                            return redirect(url_for('adminOptions'))
+                        else:
+                            flash("Unexpected error occured")
+                            return render_template('updateDiscount2.html', error="", title = "Update Discount", logged_in=logged_in, authLevel=authLevel)
+                    else:
+                        flash("Discount value is in the wrong format")
+                        return render_template('updateDiscount2.html', error="", title = "Update Discount", logged_in=logged_in, authLevel=authLevel)
+                else:
+                    flash("Discount ID is in the wrong format")
+                    return render_template('updateDiscount2.html', error="", title = "Update Discount", logged_in=logged_in, authLevel=authLevel)
+            else:                
+                flash("Please don't leave any field empty", "danger")
+                return render_template('updateDiscount2.html', error="", title = "Update Discount", logged_in=logged_in, authLevel=authLevel)
+    except Exception as e:                
+        return render_template('updateDiscount2.html', error=e, title = "Update Discount", logged_in=logged_in, authLevel=authLevel)
+
+
+#### Reports
+
+@app.route("/salesReport/", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def salesReport():  
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    startDate = "2024-01-01"
+    endDate = "2024-01-31"
+
+
+    selected_restaurant = "Manchester"
+    
+        
+    records = sales(startDate, endDate)
+    
+
+    if records == []:
+        flash("No information for this date range")
+        return redirect(url_for('adminOptions'))
+    
+    return render_template('salesReport.html', title = "Sales Report", logged_in=logged_in, authLevel=authLevel, records=records, recordsLen=len(records))
+    
+@app.route("/averageSalesReport/", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def averageSalesReport():  
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    startDate = "2024-01-01"
+    endDate = "2024-01-31"
+
+
+    selected_restaurant = "Manchester"
+    
+        
+    records = averageSales(startDate, endDate)
+    
+
+    if records == []:
+        flash("No information for this date range")
+        return redirect(url_for('adminOptions'))
+    
+    return render_template('averageSalesReport.html', title = "Average Sales Report", logged_in=logged_in, authLevel=authLevel, records=records, recordsLen=len(records))
+    
+
+@app.route("/averageServingTimeReport/", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def averageServingTimeReport():  
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    startDate = "2024-01-01"
+    endDate = "2024-01-31"
+
+
+    selected_restaurant = "Manchester"
+    
+        
+    records = averageServingTime(startDate, endDate)
+    
+
+    if records == []:
+        flash("No information for this date range")
+        return redirect(url_for('adminOptions'))
+    
+    return render_template('averageServingTimeReport.html', title = "Average Sales Report", logged_in=logged_in, authLevel=authLevel, records=records, recordsLen=len(records))
+
+@app.route("/totalDiscountAmountReport/", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def totalDiscountAmountReport():  
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    startDate = "2024-01-01"
+    endDate = "2024-01-31"
+
+
+    selected_restaurant = "Manchester"
+    
+        
+    records = totalDiscountAmount(startDate, endDate)
+    
+
+    if records == []:
+        flash("No information for this date range")
+        return redirect(url_for('adminOptions'))
+    
+    return render_template('totalDiscountAmountReport.html', title = "Total Discount Amount Report", logged_in=logged_in, authLevel=authLevel, records=records, recordsLen=len(records))
+
+@app.route("/averageDiscountAmountReport/", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def averageDiscountAmountReport():  
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    startDate = "2024-01-01"
+    endDate = "2024-01-31"
+
+
+    selected_restaurant = "Manchester"
+    
+        
+    records = averageDiscountAmount(startDate, endDate)
+    
+
+    if records == []:
+        flash("No information for this date range")
+        return redirect(url_for('adminOptions'))
+    
+    return render_template('averageDiscountAmountReport.html', title = "Total Discount Amount Report", logged_in=logged_in, authLevel=authLevel, records=records, recordsLen=len(records))
+
+
+#Beggining of Inventory
+
+@app.route("/inventory/", methods = ['GET', 'POST'])
+@login_required
+@chef_required
+def inventory():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+
+    currentUser = User()
+    inventory = Inventory()
+    currentUser.setLoginDetails(session['code'])
+    
+    currentRestaurant = currentUser.getBaseRestaurant()
+    
+    items = []
+    tempItems = inventory.getItemNames(currentRestaurant)
+    items = strip.it(tempItems)
+    
+    quantity = []
+    tempQuantity = inventory.getItemQuantity(currentRestaurant)
+    quantity = strip.it(tempQuantity)
+    
+    stockLimit = []
+    tempStockLimit = inventory.getItemStockLimit(currentRestaurant)
+    stockLimit = strip.it(tempStockLimit)
+    
+    return render_template('inventory.html', title = "Inventory" , logged_in=logged_in, authLevel=authLevel, items = items, quantity = quantity, stockLimit=stockLimit, listLen = len(items))
+
+@app.route("/createInventory/", methods = ['GET', 'POST'])
+@login_required
+@chef_required
+def createInventory():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    currentUser = User()
+    inventory = Inventory()
+
+    currentUser.setLoginDetails(session['code'])
+    
+    error = ''
+    
+    try:
+        if request.method == "POST": 
+            #getting data from form        
+            currentRestaurant = currentUser.getBaseRestaurant()
+            itemName = request.form['itemName']
+            quantity = request.form['itemQuantity']
+            stockLimit = request.form['itemSL']                   
+            if itemName != None and quantity != None and stockLimit != None:
+                if inventory.validateItemName(itemName) == 1:
+                    if inventory.validateQuantity(quantity) == 1:
+                        if inventory.validateQuantity2(quantity, stockLimit) == 1:
+                            if inventory.validateStockLimit(stockLimit) == 1:
+                                if inventory.checkRestaurantItem(currentRestaurant, itemName) != 1:
+                                    if inventory.createInventory(currentRestaurant, itemName, quantity, stockLimit) == 1:               
+                                        flash("Item has been created", "success")
+                                        return redirect(url_for('inventory'))
+                                    else:
+                                        flash("Could not create item", "danger")
+                                        return render_template('createInventory.html', error=error, title="Create Invnentory", logged_in=logged_in, authLevel=authLevel)
+                                else:
+                                    flash("Item already exists in the restaurant", "danger")
+                                    return render_template('createInventory.html', error=error, title="Create Invnentory", logged_in=logged_in, authLevel=authLevel)
+                            else:
+                                flash("Invalid stock limit (1-99)", "danger")
+                                return render_template('createInventory.html', error=error, title="Create Invnentory", logged_in=logged_in, authLevel=authLevel)
+                        else:
+                            flash("Quantity cannot be more than stock limit", "danger")
+                            return render_template('createInventory.html', error=error, title="Create Inventory", logged_in=logged_in, authLevel=authLevel)
+                    else:
+                        flash("Invalid quantity input (1-99)", "danger")
+                        return render_template('createInventory.html', error=error, title="Create Inventory", logged_in=logged_in, authLevel=authLevel)
+                else:
+                    flash("Item not available in the warehouse", "danger")
+                    return render_template('createInventory.html', error=error, title="Create Inventory", logged_in=logged_in, authLevel=authLevel)
+            else:                
+                flash("Fields cannot be empty", "danger")
+                return render_template('createInventory.html', error=error, title="Create Inventory", logged_in=logged_in, authLevel=authLevel)
+        else:            
+            return render_template('createInventory.html', error=error, title="Create Inventory", logged_in=logged_in, authLevel=authLevel)        
+    except Exception as e:                
+        return render_template('createInventory.html', error=e, title="Create Inventory", logged_in=logged_in, authLevel=authLevel)
 
 if __name__ == "__main__":
     app.run( debug=True ,host="127.0.0.1", port=5050)

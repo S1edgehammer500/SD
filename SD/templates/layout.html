@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href = "{{ url_for('static', filename='styles.css') }}"/>
-        <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"/>
-        <meta name="viewport" content = "wclassth=device-width, intial-scale=1.0">
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+      <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
         {% if title %}
             <title>Horizon Restaurant - {{ title }}</title>
         {% else %}
@@ -24,15 +26,101 @@
                   {% if authLevel == 'admin': %} 
                     <li><a href="{{ url_for('adminOptions') }}">Admin</a></li>
 
+                    <li class="dropdown">
+                      <a class="dropdown-toggle" data-toggle="dropdown" href="#">Reports
+                          <span class="caret"></span>
+                      </a>
+                      <ul class="dropdown-menu">
+                          <li><a href="{{ url_for('viewSalesReport') }}">View Sales Report</a></li>
+                          <li><a href="{{ url_for('viewAverageSalesReport') }}">View Average Sales Report</a></li>
+                          <li><a href="{{ url_for('viewAverageServingReport') }}">View Average Serving Time Report</a></li>
+                          <li><a href="{{ url_for('viewTotalDiscountReport') }}">View Total Discount Amount Report</a></li>
+                          <li><a href="{{ url_for('viewAverageDiscountReport') }}">View Average Discount Amount Report</a></li>
+                      </ul>
+                  </li>
                     
 
                   {% endif %}
+
+                  {% if authLevel == 'chef' : %}
+                  <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Edit Menu
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ url_for('createFoodMenu') }}">Add To Menu</a></li>
+                        <li><a href="{{ url_for('updateFoodMenu') }}">Update The Menu</a></li>
+                        <li><a href="{{ url_for('deleteFoodMenu') }}">Delete From Menu</a></li>
+
+                    </ul>
+                </li>
+                  {% endif %}
+
+
+                  {% if authLevel == 'manager' : %}
+
+
+                  <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Reports
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ url_for('viewSalesReport') }}">View Sales Report</a></li>
+                        <li><a href="{{ url_for('viewAverageSalesReport') }}">View Average Sales Report</a></li>
+                        <li><a href="{{ url_for('viewAverageServingReport') }}">View Average Serving Time Report</a></li>
+                        <li><a href="{{ url_for('viewTotalDiscountReport') }}">View Total Discount Amount Report</a></li>
+                        <li><a href="{{ url_for('viewAverageDiscountReport') }}">View Average Discount Amount Report</a></li>
+                    </ul>
+                </li>
+
+
+                  <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Edit Discounts
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ url_for('createDiscount') }}">Add New Discount</a></li>
+                        <li><a href="{{ url_for('updateDiscount') }}">Update Existing Discount</a></li>
+                        <li><a href="{{ url_for('deleteDiscount') }}">Delete Discount</a></li>
+
+                    </ul>
+                </li>
+
+
+                  <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Edit Menu
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ url_for('createFoodMenu') }}">Add To Menu</a></li>
+                        <li><a href="{{ url_for('updateFoodMenu') }}">Update The Menu</a></li>
+                        <li><a href="{{ url_for('deleteFoodMenu') }}">Delete From Menu</a></li>
+
+                    </ul>
+                </li>
+                  {% endif %}
+
+
                   <li><a href="{{ url_for('menu') }}"> Menu</a></li>
-                  <li><a href="{{ url_for('account') }}"> Account</a></li>
                   <li><a href=#> Order</a></li>
-                  <li><a href=#>Inventory</a></li>
-                  <li><a href=#>Reservations</a></li>
-                  <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                  <li><a href="{{ url_for('inventory') }}">Inventory</a></li>
+                  <li><a href="{{ url_for('reservation') }}">Reservations</a></li>
+
+
+                  
+                  <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Account
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                      <li><a href="{{ url_for('account') }}">My Account</a></li>
+                      <li><a href="{{ url_for('logout') }}">Logout</a></li>
+
+                    </ul>
+                </li>
+                  
+
+
                 {% else %}
                   <li><a href="{{ url_for('login') }}"> Login</a></li>
                 {% endif %}
