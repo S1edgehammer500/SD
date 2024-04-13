@@ -9,15 +9,17 @@
 
             <table border=1 style="color:rgb(255, 255, 255)" class="center">
                 <tr>
+                    <th class="hidden">ItemID</th>
                     <th class = "text-center" style = "width: 45%;" >Item Name &nbsp;&nbsp;</th>
                     <th class = "text-center" style = "width: 45%;">Quantity &nbsp;&nbsp;</th>
                     <th class = "text-center" style = "width: 10%;">Stock Limit</th>
-                    {% for i in range(restaurantNameLen): %} 
+                    {% for i in range(listLen): %} 
                     <tr>
+                        <td class="hidden"> {{inventoryID[i]}} </td>
                         <td> {{itemName[i]}} </td>              
                         <td> {{itemQuantity[i]}} </td>
                         <td> {{itemSL[i]}} </td>
-                        <td> <input required type="radio" name="itemName" value="{{itemName[i]}}" checked></td>
+                        <td> <input required type="radio" name="inventoryID" value="{{inventoryID[i]}}" checked></td>
                     </tr>
                 {% endfor %}
             </table>
