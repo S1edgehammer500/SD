@@ -116,8 +116,54 @@ def home():
     
     return render_template('home.html', title="Home", logged_in=logged_in, authLevel=authLevel)
 
-<<<<<<< Updated upstream
-=======
+
+@app.route("/viewSalesReport/")
+@login_required
+def viewSalesReport():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    return render_template('viewSalesReport.html', title="Home", logged_in=logged_in, authLevel=authLevel)
+
+
+@app.route("/viewTotalDiscountReport/")
+@login_required
+def viewTotalDiscountReport():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    return render_template('viewTotalDiscountReport.html', title="Home", logged_in=logged_in, authLevel=authLevel)
+
+@app.route("/viewAverageSalesReport/")
+@login_required
+def viewAverageSalesReport():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    return render_template('viewAverageSalesReport.html', title="Home", logged_in=logged_in, authLevel=authLevel)
+
+@app.route("/viewAverageServingReport/")
+@login_required
+def viewAverageServingReport():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    return render_template('viewAverageServingReport.html', title="Home", logged_in=logged_in, authLevel=authLevel)
+
+@app.route("/viewAverageDiscountReport/")
+@login_required
+def viewAverageDiscountReport():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    return render_template('viewAverageDiscountReport.html', title="Home", logged_in=logged_in, authLevel=authLevel)
+
+
 
 @app.route("/inventory/")
 @login_required
@@ -140,7 +186,6 @@ def createInventory():
     return render_template('createInventory.html', title="Home", logged_in=logged_in, authLevel=authLevel)
 
 
->>>>>>> Stashed changes
 @app.route('/createUser/', methods=['POST', 'GET'])
 @login_required
 @admin_required

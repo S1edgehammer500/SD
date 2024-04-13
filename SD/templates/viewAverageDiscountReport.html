@@ -1,0 +1,50 @@
+{% extends "layout.html" %} 
+{% block content %}
+
+<script>
+    function getDateTime1() {
+      var date = document.getElementById("dateEnd").value;
+      var time = document.getElementById("timeEnd").value;
+      document.getElementById("endDT").innerText = "Selected End Date & Time: " + date + " " + time;
+    }
+
+    function getDateTime2() {
+      var date = document.getElementById("dateStart").value;
+      var time = document.getElementById("timeStart").value;
+      document.getElementById("startDT").innerText = "Selected Start Date & Time: " + date + " " + time;
+    }
+
+</script>
+
+<div class="StandardBox">
+    <!--Create restaurant form-->
+    <h3 class="text-center pt-3 heading">View Average Discount Report</h3> <br>
+            
+    <form action="#" method="post">
+
+        <div class="form-group">
+            <div class="datetime-selector">
+                <label class="white" for="startDT">Start Date and Time:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
+                <input type="date" id="dateStart" name="dateStart">
+                <input type="time" id="timeStart" name="timeStart">
+                <p id="startDT" name="startDT"></p>
+            </div>
+        </div>
+            
+        <div class="form-group">
+            <div class="datetime-selector">
+                <label class="white" for="endDT">End Date and Time:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
+                <input type="date" id="dateEnd" name="dateEnd">
+                <input type="time" id="timeEnd" name="timeEnd">
+                <p id="endDT" name="endDT"></p>
+            </div>
+        </div>
+
+        <div class="d-grid mb-3">
+            <button type="submit" class="btn btn-light black" onclick="getDateTime1(); getDateTime2();">Submit</button>
+        </div> <br>
+
+    </form>
+</div>
+
+{% endblock content %}

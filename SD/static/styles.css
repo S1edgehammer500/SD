@@ -26,7 +26,22 @@
   transform: translate(-50%, -50%);
   box-sizing: border-box;
   height: auto;
-  width: 1000px;
+  width: 650px;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  background-color: rgba(33, 37, 41); /* Adjust opacity as needed */
+  border: 3px solid white;
+}
+
+.login-form-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-sizing: border-box;
+  height: auto;
+  width: 650px;
   color: white;
   text-align: center;
   font-weight: bold;
@@ -37,36 +52,30 @@
 .AdminUserPos{
   position: absolute;
   top: 35%;
-  left: 20%;
+  left: 30%;
   transform: translate(-50%, -50%);
 }
 
-.AdminReportPos{
-  position: absolute;
-  top: 35%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
 
 
 .AdminRestaurantPos{
   position: absolute;
   top: 35%;
-  left: 80%;
+  left: 70%;
   transform: translate(-50%, -50%);
 }
 
 .AdminDiscountPos{
   position: absolute;
   top: 75%;
-  left: 35%;
+  left: 30%;
   transform: translate(-50%, -50%);
 }
 
 .AdminMenuPos{
   position: absolute;
   top: 75%;
-  left: 65%;
+  left: 70%;
   transform: translate(-50%, -50%);
 }
 
@@ -341,31 +350,26 @@ body.page2 {
 
 /* Position for AdminUserPos */
 .AdminUserPos {
-  top: 80%; /* Adjusted from 35% for mobile */
+  top: 100%; /* Adjusted from 35% for mobile */
   left: 50%; /* Center horizontally */
 }
 
-/* Position for AdminReportPos */
-.AdminReportPos {
-  top: 130%; /* Adjusted from 35% for mobile */
-  left: 50%; /* Center horizontally */
-}
 
 /* Position for AdminRestaurantPos */
 .AdminRestaurantPos {
-  top: 180%; /* Adjusted from 35% for mobile */
+  top: 150%; /* Adjusted from 35% for mobile */
   left: 50%; /* Center horizontally */
 }
 
 /* Position for AdminDiscountPos */
 .AdminDiscountPos {
-  top: 230%; /* Adjusted from 75% for mobile */
+  top: 200%; /* Adjusted from 75% for mobile */
   left: 50%; /* Center horizontally */
 }
 
 /* Position for AdminMenuPos */
 .AdminMenuPos {
-  top: 280%; /* Adjusted from 75% for mobile */
+  top: 250%; /* Adjusted from 75% for mobile */
   left: 50%; /* Center horizontally */
 }
 
