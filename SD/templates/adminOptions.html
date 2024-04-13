@@ -57,14 +57,20 @@
 <div class="AdminBox">
     <h3 class="text-center pt-3">Reports</h3> <br>
 
-    <a href="#">
-        <button type="button">View Report</button>
+    <a href="{{ url_for('salesReport') }}">
+        <button type="button">View Sales Report</button>
     </a>
-    <a href="#">
-        <button type="button">Update Report</button>
+    <a href="{{ url_for('averageSalesReport') }}">
+        <button type="button">View Average Sales Report</button>
     </a>
-    <a href="#">
-        <button type="button">Delete Report</button>
+    <a href="{{ url_for('averageServingTimeReport') }}">
+        <button type="button">View Average Serving Time Report</button>
+    </a>
+    <a href="{{ url_for('totalDiscountAmountReport') }}">
+        <button type="button">View Total Discount Amount Report</button>
+    </a>
+    <a href="{{ url_for('averageDiscountAmountReport') }}">
+        <button type="button">View Average Discount Amount Report</button>
     </a>
 
 </div>

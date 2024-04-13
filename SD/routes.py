@@ -12,6 +12,7 @@ from Model.restaurantModel import *
 from Model.discountModel import *
 from Model.menuModel import *
 from Model.foodModel import *
+from Model.reportModel import *
 
 # User defined
 import strip
@@ -1163,7 +1164,6 @@ def updateDiscount3():
                             if dID != previousdID:
                                 discount.updateDiscountID(previousdID, dID)
 
-                            print("hello")
 
                             flash(f"You have successfully updated the discount {dID}", 'info')
                             return redirect(url_for('adminOptions'))
@@ -1181,6 +1181,125 @@ def updateDiscount3():
                 return render_template('updateDiscount2.html', error="", title = "Update Discount", logged_in=logged_in, authLevel=authLevel)
     except Exception as e:                
         return render_template('updateDiscount2.html', error=e, title = "Update Discount", logged_in=logged_in, authLevel=authLevel)
+
+#### Reports
+
+@app.route("/salesReport/", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def salesReport():  
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    startDate = "2024-01-01"
+    endDate = "2024-01-31"
+
+
+    selected_restaurant = "Manchester"
+    
+        
+    records = sales(startDate, endDate)
+    
+
+    if records == []:
+        flash("No information for this date range")
+        return redirect(url_for('adminOptions'))
+    
+    return render_template('salesReport.html', title = "Sales Report", logged_in=logged_in, authLevel=authLevel, records=records, recordsLen=len(records))
+    
+@app.route("/averageSalesReport/", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def averageSalesReport():  
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    startDate = "2024-01-01"
+    endDate = "2024-01-31"
+
+
+    selected_restaurant = "Manchester"
+    
+        
+    records = averageSales(startDate, endDate)
+    
+
+    if records == []:
+        flash("No information for this date range")
+        return redirect(url_for('adminOptions'))
+    
+    return render_template('averageSalesReport.html', title = "Average Sales Report", logged_in=logged_in, authLevel=authLevel, records=records, recordsLen=len(records))
+    
+
+@app.route("/averageServingTimeReport/", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def averageServingTimeReport():  
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    startDate = "2024-01-01"
+    endDate = "2024-01-31"
+
+
+    selected_restaurant = "Manchester"
+    
+        
+    records = averageServingTime(startDate, endDate)
+    
+
+    if records == []:
+        flash("No information for this date range")
+        return redirect(url_for('adminOptions'))
+    
+    return render_template('averageServingTimeReport.html', title = "Average Sales Report", logged_in=logged_in, authLevel=authLevel, records=records, recordsLen=len(records))
+
+@app.route("/totalDiscountAmountReport/", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def totalDiscountAmountReport():  
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    startDate = "2024-01-01"
+    endDate = "2024-01-31"
+
+
+    selected_restaurant = "Manchester"
+    
+        
+    records = totalDiscountAmount(startDate, endDate)
+    
+
+    if records == []:
+        flash("No information for this date range")
+        return redirect(url_for('adminOptions'))
+    
+    return render_template('totalDiscountAmountReport.html', title = "Total Discount Amount Report", logged_in=logged_in, authLevel=authLevel, records=records, recordsLen=len(records))
+
+@app.route("/averageDiscountAmountReport/", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def averageDiscountAmountReport():  
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    startDate = "2024-01-01"
+    endDate = "2024-01-31"
+
+
+    selected_restaurant = "Manchester"
+    
+        
+    records = averageDiscountAmount(startDate, endDate)
+    
+
+    if records == []:
+        flash("No information for this date range")
+        return redirect(url_for('adminOptions'))
+    
+    return render_template('averageDiscountAmountReport.html', title = "Total Discount Amount Report", logged_in=logged_in, authLevel=authLevel, records=records, recordsLen=len(records))
+
 
 
 if __name__ == "__main__":
