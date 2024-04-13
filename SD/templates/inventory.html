@@ -10,13 +10,18 @@
     <table>
 
         <tr>
-            <th class = "text-center" style = "width: 20%;">ID</th>
             <th class = "text-center" style = "width: 30%;">Item Name</th>
             <th class = "text-center" style = "width: 25%;">Quantity</th>
             <th class = "text-center" style = "width: 25%;">Stock Limit</th>
         </tr>
 
-        <!-- LOOK IN MENU.HTML TO HELP PUT IN DATA -->
+            {% for i in range(listLen): %} 
+                <tr>
+                    <td> {{items[i]}} </td>              
+                    <td> {{quantity[i]}} </td>
+                    <td> {{stockLimit[i]}} </td>
+                </tr>
+            {% endfor %}
     
     </table>
 
@@ -28,7 +33,7 @@
 
     <h3 class="text-center pt-3">Inventory Options</h3> <br>
 
-    <a href="#">
+    <a href="{{ url_for('createInventory') }}">
         <button type="button">Add To Inventory</button>
     </a>
     <a href="#">

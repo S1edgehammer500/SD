@@ -13,6 +13,8 @@ from Model.discountModel import *
 from Model.menuModel import *
 from Model.foodModel import *
 from Model.reportModel import *
+from Model.inventoryModel import *
+
 
 # User defined
 import strip
@@ -46,6 +48,19 @@ def admin_required(f):
             return render_template('login.html', title="Login")
     return wrap
 
+def chef_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'authLevel' in session:
+            if session['authLevel'] == 'chef' or session['authLevel'] == 'admin':
+                return f(*args, **kwargs)
+            else:
+                flash("You need to be logged in as an admin to access this page", "danger")
+                return redirect(url_for('home'))
+        else:
+            flash("You need to be logged in to access this page", "danger")
+            return render_template('login.html', title="Login")
+    return wrap
 
 
 # Routes
@@ -117,15 +132,6 @@ def home():
     
     return render_template('home.html', title="Home", logged_in=logged_in, authLevel=authLevel)
 
-
-@app.route("/inventory/")
-@login_required
-def inventory():
-    # check to see what navbar to display
-    logged_in = session['logged_in']
-    authLevel = session['authLevel']
-    
-    return render_template('inventory.html', title="Home", logged_in=logged_in, authLevel=authLevel)
 
 @app.route('/createUser/', methods=['POST', 'GET'])
 @login_required
@@ -570,7 +576,7 @@ def createRestaurant():
     restaurant = Restaurant()
     restaurants = []
     tempRestaurants = restaurant.getAllRestaurants()
-
+    
     restaurants = strip.it(tempRestaurants)
 
     logged_in = session['logged_in']
@@ -1182,6 +1188,7 @@ def updateDiscount3():
     except Exception as e:                
         return render_template('updateDiscount2.html', error=e, title = "Update Discount", logged_in=logged_in, authLevel=authLevel)
 
+
 #### Reports
 
 @app.route("/salesReport/", methods=['GET', 'POST'])
@@ -1301,6 +1308,98 @@ def averageDiscountAmountReport():
     return render_template('averageDiscountAmountReport.html', title = "Total Discount Amount Report", logged_in=logged_in, authLevel=authLevel, records=records, recordsLen=len(records))
 
 
+#Beggining of Inventory
+
+@app.route("/inventory/", methods = ['GET', 'POST'])
+@login_required
+@chef_required
+def inventory():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+
+    currentUser = User()
+    inventory = Inventory()
+    currentUser.setLoginDetails(session['code'])
+    
+    currentRestaurant = currentUser.getBaseRestaurant()
+    
+    items = []
+    tempItems = inventory.getItemNames(currentRestaurant)
+    items = strip.it(tempItems)
+    
+    quantity = []
+    tempQuantity = inventory.getItemQuantity(currentRestaurant)
+    quantity = strip.it(tempQuantity)
+    
+    stockLimit = []
+    tempStockLimit = inventory.getItemStockLimit(currentRestaurant)
+    stockLimit = strip.it(tempStockLimit)
+
+    print(currentRestaurant)
+    print(items)
+    print(quantity)
+    print(stockLimit)
+    
+    return render_template('inventory.html', title = "Inventory" , logged_in=logged_in, authLevel=authLevel, items = items, quantity = quantity, stockLimit=stockLimit, listLen = len(items))
+
+@app.route("/createInventory/", methods = ['GET', 'POST'])
+@login_required
+@chef_required
+def createInventory():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    currentUser = User()
+    inventory = Inventory()
+
+    currentUser.setLoginDetails(session['code'])
+    
+    error = ''
+    
+    try:
+        if request.method == "POST": 
+            #getting data from form        
+            currentRestaurant = currentUser.getBaseRestaurant()
+            itemName = request.form['itemName']
+            quantity = request.form['itemQuantity']
+            stockLimit = request.form['itemSL']                   
+            if itemName != None and quantity != None and stockLimit != None:
+                if inventory.validateItemName(itemName) == 1:
+                    if inventory.validateQuantity(quantity) == 1:
+                        if inventory.validateQuantity2(quantity, stockLimit) == 1:
+                            if inventory.validateStockLimit(stockLimit) == 1:
+                                if inventory.checkRestaurantItem(currentRestaurant, itemName) != 1:
+                                    if inventory.createInventory(currentRestaurant, itemName, quantity, stockLimit) == 1:               
+                                        flash("Item has been created", "success")
+                                        return redirect(url_for('inventory'))
+                                    else:
+                                        flash("Invalid stock limit syntax", "danger")
+                                        return render_template('createInventory.html', error=error, title="Create Invnentory", logged_in=logged_in, authLevel=authLevel)
+                                else:
+                                    flash("Item already exists in the restaurant", "danger")
+                                    return render_template('createInventory.html', error=error, title="Create Invnentory", logged_in=logged_in, authLevel=authLevel)
+                            else:
+                                flash("Invalid stock limit syntax", "danger")
+                                return render_template('createInventory.html', error=error, title="Create Invnentory", logged_in=logged_in, authLevel=authLevel)
+                        else:
+                            flash("Quantity cannot be more than stock limit", "danger")
+                            return render_template('createInventory.html', error=error, title="Create Inventory", logged_in=logged_in, authLevel=authLevel)
+                    else:
+                        flash("Invalid quantity input", "danger")
+                        return render_template('createInventory.html', error=error, title="Create Inventory", logged_in=logged_in, authLevel=authLevel)
+                else:
+                    flash("Item not available in the warehouse", "danger")
+                    return render_template('createInventory.html', error=error, title="Create Inventory", logged_in=logged_in, authLevel=authLevel)
+            else:                
+                flash("Fields cannot be empty", "danger")
+                return render_template('createInventory.html', error=error, title="Create Inventory", logged_in=logged_in, authLevel=authLevel)
+        else:            
+            return render_template('createInventory.html', error=error, title="Create Inventory", logged_in=logged_in, authLevel=authLevel)        
+    except Exception as e:                
+        return render_template('createInventory.html', error=e, title="Create Inventory", logged_in=logged_in, authLevel=authLevel)
 
 if __name__ == "__main__":
     app.run( debug=True ,host="127.0.0.1", port=5050)
