@@ -181,26 +181,6 @@ def viewAverageDiscountReport():
 
 
 
-@app.route("/inventory/")
-@login_required
-def inventory():
-    # check to see what navbar to display
-    logged_in = session['logged_in']
-    authLevel = session['authLevel']
-    
-    return render_template('inventory.html', title="Home", logged_in=logged_in, authLevel=authLevel)
-
-
-
-@app.route("/createInventory/")
-@login_required
-def createInventory():
-    # check to see what navbar to display
-    logged_in = session['logged_in']
-    authLevel = session['authLevel']
-    
-    return render_template('createInventory.html', title="Home", logged_in=logged_in, authLevel=authLevel)
-
 
 @app.route('/createUser/', methods=['POST', 'GET'])
 @login_required
