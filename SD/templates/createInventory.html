@@ -1,0 +1,36 @@
+{% extends "layout.html" %} 
+{% block content %}
+
+<div class = "StandardBox">
+
+    <h3 class="text-center pt-3 heading">Add A New Item To The Inventory Here</h3> <br>
+  
+    <form action="/createInventory/" method="post">
+  
+    <div class="form-group">
+        <label for="itemName">Item Name: &nbsp; &nbsp;<br></label>
+        <input required style="color:black" class="itemName" name="itemName" size="30" value="{{request.form.itemName}}"><br>
+    </div>
+
+    <div class="form-group">
+        <label for="itemQuantity">Quantity (1-99): &nbsp; &nbsp;<br></label>
+        <input required style="color:black" id="itemQuantity" min="1" step='1' value='0' placeholder='0' type="number" class="itemQuantity" name="itemQuantity" size="30" value="{{request.form.itemQuantity}}"><br>
+    </div>
+
+    <div class="form-group">
+        <label for="itemSL">StockLimit (1-99): &nbsp; &nbsp;<br></label>
+        <input required style="color:black" id="itemSL" min="1" step='0' value='0' placeholder='0' type="number" class="itemSL" name="itemSL" size="30" value="{{request.form.itemSL}}"><br>
+    </div>
+  
+          <div class = "d-grid mb-3">
+            <button type = "submit"  class = "btn btn-light black">submit</button>
+            </div> <br>
+  
+  </div>
+  
+  </div>
+  
+  </div>
+
+
+{% endblock content %}
