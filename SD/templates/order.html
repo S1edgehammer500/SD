@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% block content %}
+
+
+<h1 class = "title">Orders</h1>
+
+
+<div class = "reservation-holder">
+
+    <table>
+
+        <tr>
+            <th class = "text-center" style = "width: 15%;">ID</th>
+            <th class = "text-center" style = "width: 15%;">Table Number</th>
+            <th class = "text-center" style = "width: 20%;">Status</th>
+            <th class = "text-center" style = "width: 20%;">Price</th>
+            <th class = "text-center" style = "width: 15%;">Start Time</th>
+            <th class = "text-center" style = "width: 15%;">Ready Time</th>
+        </tr>
+
+        <!-- LOOK IN MENU.HTML TO HELP PUT IN DATA -->
+    
+    </table>
+
+</div>
+
+<div class = "reservation-options">
+
+    <div class = "AdminBox">
+
+    <h3 class="txt-size text-center pt-3">Order Options</h3>
+
+    <a href="{{ url_for('createOrder') }}">
+        <button type="button">Create A Order</button>
+    </a>
+    <a href="{{ url_for('updateOrder') }}">
+        <button type="button">Update A Order</button>
+    </a>
+    <a href="{{ url_for('deleteOrder') }}">
+        <button type="button">Delete A Order</button>
+    </a>
+    </div>
+</div>
+
+
+</div>
+
+
+
+{% endblock content %}

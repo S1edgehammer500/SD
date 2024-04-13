@@ -1,0 +1,46 @@
+{% extends "layout.html" %} 
+{% block content %}
+
+
+<div class="StandardBox">
+    <!--Create restaurant form-->
+    <h3 class="text-center pt-3 heading">Remove From Order Here</h3> <br>
+            
+    <form action="#" method="post">
+
+
+
+
+        <table border=1 style="color:rgb(255, 255, 255)" class="center">
+            <tr>
+
+                <th class = "text-center" style = "width: 30%;">Name</th>
+                <th class = "text-center" style = "width: 30%;">Price</th>
+                <th class = "text-center" style = "width: 30%;">Select</th>
+                
+        </table>
+
+        <br>
+        <div class="d-grid mb-3">
+            <button type="submit" class="btn btn-light black">Confirm</button>
+        </div> <br>
+
+    </form>
+</div>
+
+
+
+<div class = "reservation-options">
+
+    <div class = "AdminBox">
+
+    <h3 class="txt-size text-center pt-3">Order Options</h3> <br><br>
+
+    <a href="{{ url_for('removeFromOrder') }}">
+        <button type="button">Back</button>
+    </a>
+
+</div>
+</div>
+
+{% endblock content %}

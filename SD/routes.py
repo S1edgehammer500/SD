@@ -140,7 +140,7 @@ def viewSalesReport():
     logged_in = session['logged_in']
     authLevel = session['authLevel']
     
-    return render_template('viewSalesReport.html', title="Home", logged_in=logged_in, authLevel=authLevel)
+    return render_template('viewSalesReport.html', title="Report", logged_in=logged_in, authLevel=authLevel)
 
 
 @app.route("/viewTotalDiscountReport/")
@@ -150,7 +150,7 @@ def viewTotalDiscountReport():
     logged_in = session['logged_in']
     authLevel = session['authLevel']
     
-    return render_template('viewTotalDiscountReport.html', title="Home", logged_in=logged_in, authLevel=authLevel)
+    return render_template('viewTotalDiscountReport.html', title="Report", logged_in=logged_in, authLevel=authLevel)
 
 @app.route("/viewAverageSalesReport/")
 @login_required
@@ -159,7 +159,7 @@ def viewAverageSalesReport():
     logged_in = session['logged_in']
     authLevel = session['authLevel']
     
-    return render_template('viewAverageSalesReport.html', title="Home", logged_in=logged_in, authLevel=authLevel)
+    return render_template('viewAverageSalesReport.html', title="Report", logged_in=logged_in, authLevel=authLevel)
 
 @app.route("/viewAverageServingReport/")
 @login_required
@@ -168,7 +168,7 @@ def viewAverageServingReport():
     logged_in = session['logged_in']
     authLevel = session['authLevel']
     
-    return render_template('viewAverageServingReport.html', title="Home", logged_in=logged_in, authLevel=authLevel)
+    return render_template('viewAverageServingReport.html', title="Report", logged_in=logged_in, authLevel=authLevel)
 
 @app.route("/viewAverageDiscountReport/")
 @login_required
@@ -177,7 +177,7 @@ def viewAverageDiscountReport():
     logged_in = session['logged_in']
     authLevel = session['authLevel']
     
-    return render_template('viewAverageDiscountReport.html', title="Home", logged_in=logged_in, authLevel=authLevel)
+    return render_template('viewAverageDiscountReport.html', title="Report", logged_in=logged_in, authLevel=authLevel)
 
 
 
@@ -1449,6 +1449,119 @@ def createInventory():
             return render_template('createInventory.html', error=error, title="Create Inventory", logged_in=logged_in, authLevel=authLevel)        
     except Exception as e:                
         return render_template('createInventory.html', error=e, title="Create Inventory", logged_in=logged_in, authLevel=authLevel)
+
+
+
+
+
+
+
+
+
+
+
+
+@app.route("/order/")
+@login_required
+def order():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    return render_template('order.html', title="order", logged_in=logged_in, authLevel=authLevel)
+
+@app.route("/createOrder/")
+@login_required
+def createOrder():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    currentUser = User()
+    currentUser.setLoginDetails(session['code'])
+
+    currentRestaurant = currentUser.getBaseRestaurant()
+
+
+    currentMenu = Menu()
+
+    
+    foodList, priceList, allergyList, idList = currentMenu.getMenuList(currentRestaurant)
+    
+    return render_template('createOrder.html', title="order", logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, allergyList = allergyList, idList = idList, listLen = len(foodList))
+
+
+
+
+
+@app.route("/createOrder2/")
+@login_required
+def createOrder2():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    currentUser = User()
+    currentUser.setLoginDetails(session['code'])
+
+    currentRestaurant = currentUser.getBaseRestaurant()
+
+
+    currentMenu = Menu()
+
+    
+    foodList, priceList, allergyList, idList = currentMenu.getMenuList(currentRestaurant)
+    
+    return render_template('createOrder2.html', title="order", logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, allergyList = allergyList, idList = idList, listLen = len(foodList))
+
+
+@app.route("/deleteOrder/")
+@login_required
+def deleteOrder():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    return render_template('deleteOrder.html', title="order", logged_in=logged_in, authLevel=authLevel)
+
+@app.route("/updateOrder/")
+@login_required
+def updateOrder():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    return render_template('updateOrder.html', title="order", logged_in=logged_in, authLevel=authLevel)
+
+
+@app.route("/removeFromOrder/")
+@login_required
+def removeFromOrder():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    return render_template('removeFromOrder.html', title="order", logged_in=logged_in, authLevel=authLevel)
+
+
+
+@app.route("/applyDiscountOrder/")
+@login_required
+def applyDiscountOrder():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    discount = Discount()
+
+    dIDs, dValues = discount.get_discounts()
+  
+    return render_template('applyDiscountOrder.html', title = "Update Discount", logged_in=logged_in, authLevel = authLevel, dIDs=dIDs, dValues=dValues, discountsLen = len(dIDs))
+
+
 
 if __name__ == "__main__":
     app.run( debug=True ,host="127.0.0.1", port=5050)
