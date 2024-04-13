@@ -21,6 +21,7 @@ def sales(startDate, endDate, restaurantName = None):
                 GROUP by orders.restaurantName;"""
         cur.execute(query, (startDate, endDate, restaurantName))
 
+
     else:
         values = [startDate, endDate, restaurantName[0]]
 

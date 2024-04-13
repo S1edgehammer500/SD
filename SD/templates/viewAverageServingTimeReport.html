@@ -3,9 +3,9 @@
 
 <div class="StandardBox">
     <!--Create restaurant form-->
-    <h3 class="text-center pt-3 heading">View Average Discount Report</h3> <br>
+    <h3 class="text-center pt-3 heading">View Average Serving Time Report</h3> <br>
             
-    <form action="/averageDiscountAmountReport2/" method="post">
+    <form action="/averageServingTimeReport2/" method="post">
 
         <div class="form-group">
             <div class="datetime-selector">
@@ -22,7 +22,7 @@
                 <p id="endDT" name="endDT"></p>
             </div>
         </div>
-        
+
         {% if authLevel == 'admin': %}
         <div class="form-group">
             <select style="color:black" name="res" id="res">
@@ -38,5 +38,6 @@
         </div> <br>
 
     </form>
+
 </div>
 {% endblock content %}
