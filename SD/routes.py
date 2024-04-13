@@ -146,58 +146,6 @@ def home():
     return render_template('home.html', title="Home", logged_in=logged_in, authLevel=authLevel)
 
 
-@app.route("/viewSalesReport/")
-@login_required
-@manager_required
-def viewSalesReport():
-    # check to see what navbar to display
-    logged_in = session['logged_in']
-    authLevel = session['authLevel']
-    
-    return render_template('viewSalesReport.html', title="Report", logged_in=logged_in, authLevel=authLevel)
-
-
-@app.route("/viewTotalDiscountReport/")
-@login_required
-@manager_required
-def viewTotalDiscountReport():
-    # check to see what navbar to display
-    logged_in = session['logged_in']
-    authLevel = session['authLevel']
-    
-    return render_template('viewTotalDiscountReport.html', title="Report", logged_in=logged_in, authLevel=authLevel)
-
-@app.route("/viewAverageSalesReport/")
-@login_required
-@manager_required
-def viewAverageSalesReport():
-    # check to see what navbar to display
-    logged_in = session['logged_in']
-    authLevel = session['authLevel']
-    
-    return render_template('viewAverageSalesReport.html', title="Report", logged_in=logged_in, authLevel=authLevel)
-
-@app.route("/viewAverageServingReport/")
-@login_required
-@manager_required
-def viewAverageServingReport():
-    # check to see what navbar to display
-    logged_in = session['logged_in']
-    authLevel = session['authLevel']
-    
-    return render_template('viewAverageServingReport.html', title="Report", logged_in=logged_in, authLevel=authLevel)
-
-@app.route("/viewAverageDiscountReport/")
-@login_required
-@manager_required
-def viewAverageDiscountReport():
-    # check to see what navbar to display
-    logged_in = session['logged_in']
-    authLevel = session['authLevel']
-    
-    return render_template('viewAverageDiscountReport.html', title="Report", logged_in=logged_in, authLevel=authLevel)
-
-
 
 
 @app.route('/createUser/', methods=['POST', 'GET'])
@@ -1089,20 +1037,45 @@ def updateDiscount3():
 
 @app.route("/salesReport/", methods=['GET', 'POST'])
 @login_required
-@admin_required
+@manager_required
 def salesReport():  
     logged_in = session['logged_in']
     authLevel = session['authLevel']
 
-    startDate = "2024-01-01"
-    endDate = "2024-01-31"
+    # Put some restaurant thing in here
+    restaurant = Restaurant()
+    restaurants = []
+    tempRestaurants = restaurant.getAllRestaurants()
 
-
-    selected_restaurant = "Manchester"
+    restaurants = strip.it(tempRestaurants)
     
+    return render_template('viewSalesReport.html', title = "Sales Report", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
+
+
+@app.route("/salesReport2/", methods=['GET', 'POST'])
+@login_required
+@manager_required
+def salesReport2():  
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    startDate = request.form['dateStart']
+    endDate = request.form['dateEnd']
+
+    currentUser = User()
+    code = session['code']
+    currentUser.setLoginDetails(code)
+
+    
+    if authLevel == "manager":
+        selected_restaurant = currentUser.getBaseRestaurant()
         
-    records = sales(startDate, endDate)
-    
+        records = sales(startDate, endDate, selected_restaurant)
+
+    if authLevel == "admin":
+        selected_restaurant = request.form['res']
+        
+        records = sales(startDate, endDate, selected_restaurant)
 
     if records == []:
         flash("No information for this date range")
@@ -1112,97 +1085,196 @@ def salesReport():
     
 @app.route("/averageSalesReport/", methods=['GET', 'POST'])
 @login_required
-@admin_required
+@manager_required
 def averageSalesReport():  
     logged_in = session['logged_in']
     authLevel = session['authLevel']
 
-    startDate = "2024-01-01"
-    endDate = "2024-01-31"
+    # Put some restaurant thing in here
+    restaurant = Restaurant()
+    restaurants = []
+    tempRestaurants = restaurant.getAllRestaurants()
 
-
-    selected_restaurant = "Manchester"
+    restaurants = strip.it(tempRestaurants)
     
+    
+    return render_template('viewAverageSalesReport.html', title = "Average Sales Report", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
+    
+@app.route("/averageSalesReport2/", methods=['GET', 'POST'])
+@login_required
+@manager_required
+def averageSalesReport2():  
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    startDate = request.form['dateStart']
+    endDate = request.form['dateEnd']
+
+    currentUser = User()
+    code = session['code']
+    currentUser.setLoginDetails(code)
+
+    
+    if authLevel == "manager":
+        selected_restaurant = currentUser.getBaseRestaurant()
         
-    records = averageSales(startDate, endDate)
-    
+        records = averageSales(startDate, endDate, selected_restaurant)
+
+    if authLevel == "admin":
+        selected_restaurant = request.form['res']
+        
+        records = averageSales(startDate, endDate, selected_restaurant)
 
     if records == []:
         flash("No information for this date range")
         return redirect(url_for('adminOptions'))
     
-    return render_template('averageSalesReport.html', title = "Average Sales Report", logged_in=logged_in, authLevel=authLevel, records=records, recordsLen=len(records))
-    
+    return render_template('averageSalesReport.html', title = "Average Sales Report", logged_in=logged_in, authLevel=authLevel, records=records, recordsLen=len(records))    
 
 @app.route("/averageServingTimeReport/", methods=['GET', 'POST'])
 @login_required
-@admin_required
+@manager_required
 def averageServingTimeReport():  
     logged_in = session['logged_in']
     authLevel = session['authLevel']
 
-    startDate = "2024-01-01"
-    endDate = "2024-01-31"
+    # Put some restaurant thing in here
+    restaurant = Restaurant()
+    restaurants = []
+    tempRestaurants = restaurant.getAllRestaurants()
 
-
-    selected_restaurant = "Manchester"
+    restaurants = strip.it(tempRestaurants)
     
+    return render_template('viewAverageServingTimeReport.html', title = "Average Serving Time Report", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
+
+@app.route("/averageServingTimeReport2/", methods=['GET', 'POST'])
+@login_required
+@manager_required
+def averageServingTimeReport2():  
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    startDate = request.form['dateStart']
+    endDate = request.form['dateEnd']
+
+    currentUser = User()
+    code = session['code']
+    currentUser.setLoginDetails(code)
+
+    
+    if authLevel == "manager":
+        selected_restaurant = currentUser.getBaseRestaurant()
         
-    records = averageServingTime(startDate, endDate)
-    
+        records = averageServingTime(startDate, endDate, selected_restaurant)
+
+    if authLevel == "admin":
+        selected_restaurant = request.form['res']
+        
+        records = averageServingTime(startDate, endDate, selected_restaurant)
 
     if records == []:
         flash("No information for this date range")
         return redirect(url_for('adminOptions'))
     
-    return render_template('averageServingTimeReport.html', title = "Average Sales Report", logged_in=logged_in, authLevel=authLevel, records=records, recordsLen=len(records))
+    return render_template('averageServingTimeReport.html', title = "Average Serving Time Report", logged_in=logged_in, authLevel=authLevel, records=records, recordsLen=len(records)) 
+
 
 @app.route("/totalDiscountAmountReport/", methods=['GET', 'POST'])
 @login_required
-@admin_required
+@manager_required
 def totalDiscountAmountReport():  
     logged_in = session['logged_in']
     authLevel = session['authLevel']
 
-    startDate = "2024-01-01"
-    endDate = "2024-01-31"
+    # Put some restaurant thing in here
+    restaurant = Restaurant()
+    restaurants = []
+    tempRestaurants = restaurant.getAllRestaurants()
 
-
-    selected_restaurant = "Manchester"
+    restaurants = strip.it(tempRestaurants)
     
+    
+    return render_template('viewTotalDiscountReport.html', title = "Total Discount Amount Report", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
+
+@app.route("/totalDiscountAmountReport2/", methods=['GET', 'POST'])
+@login_required
+@manager_required
+def totalDiscountAmountReport2():  
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    startDate = request.form['dateStart']
+    endDate = request.form['dateEnd']
+
+    currentUser = User()
+    code = session['code']
+    currentUser.setLoginDetails(code)
+
+    
+    if authLevel == "manager":
+        selected_restaurant = currentUser.getBaseRestaurant()
         
-    records = totalDiscountAmount(startDate, endDate)
-    
+        records = totalDiscountAmount(startDate, endDate, selected_restaurant)
+
+    if authLevel == "admin":
+        selected_restaurant = request.form['res']
+        
+        records = totalDiscountAmount(startDate, endDate, selected_restaurant)
 
     if records == []:
         flash("No information for this date range")
         return redirect(url_for('adminOptions'))
     
-    return render_template('totalDiscountAmountReport.html', title = "Total Discount Amount Report", logged_in=logged_in, authLevel=authLevel, records=records, recordsLen=len(records))
+    return render_template('totalDiscountReport.html', title = "Total Discount Amount Report", logged_in=logged_in, authLevel=authLevel, records=records, recordsLen=len(records))
 
 @app.route("/averageDiscountAmountReport/", methods=['GET', 'POST'])
 @login_required
-@admin_required
+@manager_required
 def averageDiscountAmountReport():  
     logged_in = session['logged_in']
     authLevel = session['authLevel']
 
-    startDate = "2024-01-01"
-    endDate = "2024-01-31"
+    # Put some restaurant thing in here
+    restaurant = Restaurant()
+    restaurants = []
+    tempRestaurants = restaurant.getAllRestaurants()
 
-
-    selected_restaurant = "Manchester"
+    restaurants = strip.it(tempRestaurants)
     
+    
+    return render_template('viewAverageDiscountReport.html', title = "Average Discount Amount Report", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
+
+
+@app.route("/averageDiscountAmountReport2/", methods=['GET', 'POST'])
+@login_required
+@manager_required
+def averageDiscountAmountReport2():  
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    startDate = request.form['dateStart']
+    endDate = request.form['dateEnd']
+
+    currentUser = User()
+    code = session['code']
+    currentUser.setLoginDetails(code)
+
+    
+    if authLevel == "manager":
+        selected_restaurant = currentUser.getBaseRestaurant()
         
-    records = averageDiscountAmount(startDate, endDate)
-    
+        records = averageDiscountAmount(startDate, endDate, selected_restaurant)
+
+    if authLevel == "admin":
+        selected_restaurant = request.form['res']
+        
+        records = averageDiscountAmount(startDate, endDate, selected_restaurant)
 
     if records == []:
         flash("No information for this date range")
         return redirect(url_for('adminOptions'))
     
-    return render_template('averageDiscountAmountReport.html', title = "Total Discount Amount Report", logged_in=logged_in, authLevel=authLevel, records=records, recordsLen=len(records))
-
+    return render_template('averageDiscountReport.html', title = "Average Discount Amount Report", logged_in=logged_in, authLevel=authLevel, records=records, recordsLen=len(records))
 
 #Beggining of Inventory
 

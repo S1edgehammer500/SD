@@ -1,32 +1,16 @@
 {% extends "layout.html" %} 
 {% block content %}
 
-<script>
-    function getDateTime1() {
-      var date = document.getElementById("dateEnd").value;
-      var time = document.getElementById("timeEnd").value;
-      document.getElementById("endDT").innerText = "Selected End Date & Time: " + date + " " + time;
-    }
-
-    function getDateTime2() {
-      var date = document.getElementById("dateStart").value;
-      var time = document.getElementById("timeStart").value;
-      document.getElementById("startDT").innerText = "Selected Start Date & Time: " + date + " " + time;
-    }
-
-</script>
-
 <div class="StandardBox">
     <!--Create restaurant form-->
     <h3 class="text-center pt-3 heading">View Average Discount Report</h3> <br>
             
-    <form action="#" method="post">
+    <form action="/averageDiscountAmountReport2/" method="post">
 
         <div class="form-group">
             <div class="datetime-selector">
                 <label class="white" for="startDT">Start Date and Time:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
-                <input type="date" id="dateStart" name="dateStart">
-                <input type="time" id="timeStart" name="timeStart">
+                <input type="date" id="dateStart" name="dateStart" required>
                 <p id="startDT" name="startDT"></p>
             </div>
         </div>
@@ -34,14 +18,23 @@
         <div class="form-group">
             <div class="datetime-selector">
                 <label class="white" for="endDT">End Date and Time:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
-                <input type="date" id="dateEnd" name="dateEnd">
-                <input type="time" id="timeEnd" name="timeEnd">
+                <input type="date" id="dateEnd" name="dateEnd" required>
                 <p id="endDT" name="endDT"></p>
             </div>
         </div>
+        
+        {% if authLevel == 'admin': %}
+        <div class="form-group">
+            <select style="color:black" name="res" id="res">
+                {% for restaurant in restaurants %}
+                <option value='{{restaurant}}'>{{ restaurant }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% endif %}
 
         <div class="d-grid mb-3">
-            <button type="submit" class="btn btn-light black" onclick="getDateTime1(); getDateTime2();">Submit</button>
+            <button type="submit" class="btn btn-light black">Submit</button>
         </div> <br>
 
     </form>
