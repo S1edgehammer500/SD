@@ -4,14 +4,12 @@
 <script>
     function getDateTime1() {
       var date = document.getElementById("dateEnd").value;
-      var time = document.getElementById("timeEnd").value;
-      document.getElementById("endDT").innerText = "Selected End Date & Time: " + date + " " + time;
+      document.getElementById("endDT").innerText = "Selected End Date & Time: " + date;
     }
 
     function getDateTime2() {
       var date = document.getElementById("dateStart").value;
-      var time = document.getElementById("timeStart").value;
-      document.getElementById("startDT").innerText = "Selected Start Date & Time: " + date + " " + time;
+      document.getElementById("startDT").innerText = "Selected Start Date & Time: " + date;
     }
 
 </script>
@@ -24,18 +22,16 @@
 
         <div class="form-group">
             <div class="datetime-selector">
-                <label class="white" for="startDT">Start Date and Time:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
+                <label class="white" for="startDT">Start Date:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
                 <input type="date" id="dateStart" name="dateStart">
-                <input type="time" id="timeStart" name="timeStart">
                 <p id="startDT" name="startDT"></p>
             </div>
         </div>
             
         <div class="form-group">
             <div class="datetime-selector">
-                <label class="white" for="endDT">End Date and Time:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
+                <label class="white" for="endDT">End Date:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
                 <input type="date" id="dateEnd" name="dateEnd">
-                <input type="time" id="timeEnd" name="timeEnd">
                 <p id="endDT" name="endDT"></p>
             </div>
         </div>
@@ -45,6 +41,5 @@
         </div> <br>
 
     </form>
-
 </div>
 {% endblock content %}
