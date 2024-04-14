@@ -102,6 +102,12 @@ class Order: #order class
     
     def getReadyTime(self):
         return self.__readyTime
+    
+    def getLastInsertedRow(self):
+        conn, cur = openConnection()
+        orderID = cur.lastrowid
+        conn.close()
+        return orderID
 
     #validators
 
@@ -142,6 +148,7 @@ class Order: #order class
         
     def validateTableNumber(self, tableNumber, restaurantName):
         if not isinstance(tableNumber, int):
+            print("Table number is not int")
             return 0  # Returning error message for non-integer input
 
         if 1 <= tableNumber <= 99:  # Checking if tableNumber is within the range
@@ -152,13 +159,14 @@ class Order: #order class
 
             if record2 is not None and tableNumber <= record2[0]:
                 conn.close()
-                print("Invalid table number")
+                print("Valid table number")
                 return 1  # Valid table number within the restaurant's table count
             else:
                 conn.close()
                 print("Invalid table number")
                 return 0  # Indicates invalid table number or table number too large
         else:
+            print("Table number out of range")
             return 0  # Indicates table number out of range
         
     def validateStartTime(self, startTime):

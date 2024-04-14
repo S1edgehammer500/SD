@@ -1501,6 +1501,41 @@ def order():
     
     return render_template('order.html', title="order", logged_in=logged_in, authLevel=authLevel)
 
+@app.route("/createTableNumber/", methods = ["GET", "POST"])
+@login_required
+def createTableNumber():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    currentUser = User()
+    currentUser.setLoginDetails(session['code'])
+
+    currentRestaurant = currentUser.getBaseRestaurant()
+    restaurant = Restaurant()
+    restaurant.setRestaurantDetails(currentRestaurant)
+    numOfTables = restaurant.getNumberOfTables()
+
+    try:
+        if request.method == "POST":
+            status = "Order Created"
+            order = Order()
+            tableNumber = request.form['tableNumber']
+            startTime = None
+            readyTime = None
+            if order.createOrder(currentRestaurant, status, int(tableNumber), startTime, readyTime):
+                orderID = order.getLastInsertedRow()
+                session['orderID'] = orderID
+                flash("Order has been created, you may now add items to it", "success")
+                return redirect(url_for("createOrder"))
+            else:
+                flash("Table Number does not exist in your restaurant", "danger")
+                return render_template('createTableNumber.html', title = "Create Order" , logged_in=logged_in, authLevel=authLevel, numOfTables=numOfTables)
+    except Exception as e:                
+        return render_template('createTableNumber.html', title = "Create Order" , logged_in=logged_in, authLevel=authLevel, error=e, numOfTables=numOfTables)
+    return render_template('createTableNumber.html', title="Create Order", logged_in=logged_in, authLevel=authLevel, numOfTables=numOfTables)
+
+    
+
 @app.route("/createOrder/")
 @login_required
 def createOrder():
@@ -1513,13 +1548,21 @@ def createOrder():
 
     currentRestaurant = currentUser.getBaseRestaurant()
 
-
     currentMenu = Menu()
 
     
     foodList, priceList, allergyList, idList = currentMenu.getMenuList(currentRestaurant)
-    
-    return render_template('createOrder.html', title="order", logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, allergyList = allergyList, idList = idList, listLen = len(foodList))
+
+    try:
+
+        if request.method == 'POST':
+            foodName = request.form['foodName']
+            order = Order()
+            order.addFoodToOrder(session['orderID'], foodName)
+            return redirect(url_for('createOrder'))
+        return render_template('createOrder.html', title="Create Order", logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, allergyList = allergyList, idList = idList, listLen = len(foodList))
+    except Exception as e:                
+        return render_template('createOrder.html', title="order", logged_in=logged_in, authLevel=authLevel, error=e, foodList = foodList, priceList = priceList, allergyList = allergyList, idList = idList, listLen = len(foodList))
 
 
 
@@ -2482,31 +2525,6 @@ def orderItem3():
 
 
     return render_template('orderItem2.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
-
-#Needs to be made - before createOrder page
-@app.route("/tableNumber/", methods = ['GET', 'POST'])
-
-#order CRUD
-@app.route("/createorder/", methods = ['GET', 'POST'])
-@login_required
-def createOrder():
-    logged_in = session['logged_in']
-    authLevel = session['authLevel']
-
-    try:
-        if request.method == 'POST':
-            currentUser = User()
-            currentUser.setLoginDetails(session['code'])
-            restaurantName = currentUser.getBaseRestaurant()
-
-            order = Order()
-            status = "Order Created"
-            order.createOrder(restaurantName, status, )
-
-        return render_template('createOrder.html', title = "Create Order", logged_in=logged_in, authLevel=authLevel)
-
-    except Exception as e:                
-        return render_template('createOrder.html', error=e, title = "Create Order", logged_in=logged_in, authLevel=authLevel)
 
 
 @app.route("/payment/", methods = ['GET', 'POST'])
