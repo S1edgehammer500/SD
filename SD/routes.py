@@ -2531,54 +2531,6 @@ def updateItem3():
     return render_template('updateItem2.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
 
 
-@app.route("/orderItem/", methods = ['GET', 'POST'])
-@login_required
-
-
-def orderItem():
-    # check to see what navbar to display
-    logged_in = session['logged_in']
-    authLevel = session['authLevel']
-    
-    
-
-
-
-    return render_template('orderItem.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
-
-
-
-@app.route("/orderItem2/", methods = ['GET', 'POST'])
-@login_required
-
-
-def orderItem2():
-    # check to see what navbar to display
-    logged_in = session['logged_in']
-    authLevel = session['authLevel']
-    
-    
-
-
-
-    return render_template('orderItem2.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
-
-
-@app.route("/orderItem3/", methods = ['GET', 'POST'])
-@login_required
-
-
-def orderItem3():
-    # check to see what navbar to display
-    logged_in = session['logged_in']
-    authLevel = session['authLevel']
-    
-    
-
-
-
-    return render_template('orderItem2.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
-
 
 @app.route("/payment/", methods = ['GET', 'POST'])
 
