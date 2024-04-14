@@ -482,7 +482,7 @@ def createRestaurant():
 
 @app.route('/createMenu/', methods=['POST', 'GET'])
 @login_required
-@admin_required
+
 def createMenu():
 
     currentUser = User()
@@ -795,6 +795,8 @@ def updateRestaurant3():
 
 @app.route("/discountOptions/")
 @login_required
+@manager_required
+
 def discountOptions():
     # check to see what navbar to display
     logged_in = session['logged_in']
@@ -804,6 +806,8 @@ def discountOptions():
 
 @app.route('/createDiscount/', methods=['POST', 'GET'])
 @login_required
+@manager_required
+
 def createDiscount():
     discount = Discount()
 
@@ -855,6 +859,8 @@ def createDiscount():
 
 @app.route("/deleteDiscount/", methods=['GET', 'POST'])
 @login_required
+@manager_required
+
 def deleteDiscount():
     logged_in = session['logged_in']
     authLevel = session['authLevel']
@@ -867,7 +873,9 @@ def deleteDiscount():
 
 @app.route("/deleteDiscount2/", methods=['GET', 'POST'])
 @login_required
-@admin_required
+@manager_required
+
+
 def deleteDiscount2():
     # check to see what navbar to display
     logged_in = session['logged_in']
@@ -896,6 +904,8 @@ def deleteDiscount2():
 
 @app.route("/updateDiscount/", methods=['GET', 'POST'])
 @login_required
+@manager_required
+
 def updateDiscount():
     
     logged_in = session['logged_in']
@@ -909,7 +919,8 @@ def updateDiscount():
 
 @app.route("/updateDiscount2/", methods=['GET', 'POST'])
 @login_required
-@admin_required
+@manager_required
+
 def updateDiscount2():
     logged_in = session['logged_in']
     authLevel = session['authLevel']
@@ -931,7 +942,8 @@ def updateDiscount2():
 
 @app.route("/updateDiscount3/", methods=['GET', 'POST'])
 @login_required
-@admin_required
+@manager_required
+
 def updateDiscount3():
     logged_in = session['logged_in']
     authLevel = session['authLevel']
@@ -1191,9 +1203,65 @@ def createInventory():
         return render_template('createInventory.html', error=e, title="Create Inventory", logged_in=logged_in, authLevel=authLevel)
 
 
+@app.route("/deleteInventory/", methods=['GET', 'POST'])
+@login_required
+@chef_required
+def deleteInventory():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    currentUser = User()
+    inventory = Inventory()
+    currentUser.setLoginDetails(session['code'])
+    
+    currentRestaurant = currentUser.getBaseRestaurant()
+    
+    inventoryID = []
+    tempInventoryID = inventory.getInventoryID(currentRestaurant)
+    inventoryID = strip.it(tempInventoryID)
+    
+    itemName = []
+    tempItemName = inventory.getItemNames(currentRestaurant)
+    itemName = strip.it(tempItemName)
+    
+    itemQuantity = []
+    tempItemQuantity = inventory.getItemQuantity(currentRestaurant)
+    itemQuantity = strip.it(tempItemQuantity)
+    
+    itemSL = []
+    tempItemSL = inventory.getItemStockLimit(currentRestaurant)
+    itemSL = strip.it(tempItemSL)
+    
+    return render_template('deleteInventory.html', title = "Delete Inventory" , logged_in=logged_in, authLevel=authLevel, inventoryID = inventoryID, itemName = itemName, itemQuantity = itemQuantity, itemSL=itemSL, listLen = len(itemName))
 
+@app.route("/deleteInventory2/", methods=['GET', 'POST'])
+@login_required
+@chef_required
+def deleteInventory2():
+    inventory = Inventory()
 
-app.route("/updateInventory/", methods=['GET', 'POST'])
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    try:
+        if request.method == "POST":
+            # Item name that you wanna delete
+            inventoryID = request.form['inventoryID']
+            inventory.setInventoryDetails(inventoryID)
+            
+            itemName = inventory.getItemName()
+  
+            if inventory.delete_inventory(inventoryID):
+                flash(f"You have successfully deleted the item {itemName}", 'info')
+                return redirect(url_for('inventory'))
+            else:
+                flash(f"Item \"{itemName}\" does not exist", 'danger')
+                return redirect(url_for('deleteInventory'))
+                
+    except Exception as e:  
+        return render_template('deleteInventory.html', error=e, title="Delete Inventory", logged_in=logged_in, authLevel=authLevel)
+
+@app.route("/updateInventory/", methods=['GET', 'POST'])
 @login_required
 @chef_required
 def updateInventory():
@@ -1222,7 +1290,7 @@ def updateInventory():
     tempItemSL = inventory.getItemStockLimit(currentRestaurant)
     itemSL = strip.it(tempItemSL)
     
-    return render_template('updateInventory.html', title = "update Inventory" , logged_in=logged_in, authLevel=authLevel, inventoryID = inventoryID, itemName = itemName, itemQuantity = itemQuantity, itemSL=itemSL, listLen = len(itemName))
+    return render_template('updateInventory.html', title = "Update Inventory" , logged_in=logged_in, authLevel=authLevel, inventoryID = inventoryID, itemName = itemName, itemQuantity = itemQuantity, itemSL=itemSL, listLen = len(itemName))
 
 @app.route("/updateInventory2/", methods=['GET', 'POST'])
 @login_required
@@ -1824,6 +1892,7 @@ def deleteFood():
 
 @app.route("/deleteFood2/", methods = ['GET', 'POST'])
 @login_required
+
 def deleteFood2():
     # check to see what navbar to display
     logged_in = session['logged_in']
@@ -1868,6 +1937,255 @@ def deleteFood2():
     except Exception as e:
         
         return render_template('home.html', error=e, title="Restaurant Options", logged_in=logged_in, authLevel=authLevel)
+
+
+
+#STAFF / USER CRUD FOR MANAGER
+
+@app.route('/createStaff/', methods=['POST', 'GET'])
+@login_required
+@manager_required
+
+def createStaff():
+
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+
+
+    currentUser = User()
+    currentUser.setLoginDetails(session['code'])
+
+    currentRestaurant = currentUser.getBaseRestaurant()
+
+
+
+
+    error = ''
+
+    try:
+        if request.method == "POST": 
+            #getting data from form        
+            code = request.form['code']
+            BR = currentRestaurant
+            print(str(BR)) 
+            AL = request.form['auth']
+            password = request.form['password']
+            confirmPassword = request.form['confirmPassword']                    
+            if code != None and BR != None and password != None and confirmPassword != None and confirmPassword == password:
+                if currentUser.validateUserpasswordSyntax(password) == 1:
+                    if currentUser.validateCodeSyntax(code) == 1:
+                        print(str(BR))
+                        if currentUser.saveUserDetails(code, password, AL, BR) == 1:                      
+                            flash("Account is now registered", "success")
+                            return redirect(url_for('admin'))
+                        else:
+                            flash("Invalid username syntax", "danger")
+                            return render_template('createStaff.html', error=error, title="Create User", logged_in=logged_in, authLevel=authLevel)
+                    else:
+                        flash("Invalid password syntax", "danger")
+                        return render_template('createStaff.html', error=error, title="Create User", logged_in=logged_in, authLevel=authLevel)
+                else:
+                    flash("Invalid username syntax", "danger")
+                    return render_template('createStaff.html', error=error, title="Create User", logged_in=logged_in, authLevel=authLevel)
+            else:                
+                flash("Password and Confirm Password fields need to match", "danger")
+                print("Passwords don't match")
+                return render_template('createStaff.html', error=error, title="Create User", logged_in=logged_in, authLevel=authLevel)
+        else:            
+            return render_template('createStaff.html', error=error, title="Create User", logged_in=logged_in, authLevel=authLevel)        
+    except Exception as e:                
+        return render_template('createStaff.html', error=e, title="Create User", logged_in=logged_in, authLevel=authLevel)
+
+
+
+@app.route("/deleteStaff/", methods=['GET', 'POST'])
+@login_required
+@manager_required
+
+def deleteStaff():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    currentUser = User()
+    currentUser.setLoginDetails(session['code'])
+
+    employeeCode = []
+    tempEmployeeCode = currentUser.getEmployeeCodes()
+    employeeCode = strip.it(tempEmployeeCode)
+
+
+    baseRestaurant = []
+    tempBaseRestaurant = currentUser.getBaseRestaurants()
+    baseRestaurant = strip.it(tempBaseRestaurant)
+
+    authorisationLevel = []
+    tempAuthorisationLevel = currentUser.getAuthorisationLevels()
+    authorisationLevel = strip.it(tempAuthorisationLevel)
+
+    try:
+        if request.method == "POST":
+            # Code that you wanna delete
+            code = request.form['code']
+
+            # Users code. DON'T DELETE
+            usercode = session['code']
+
+            if code != usercode:
+                if currentUser.deleteUser(code):
+                    flash(f"You have successfully deleted the user {code}", 'info')
+                    return redirect(url_for('deleteStaff'))
+                else:
+                    flash(f"Account \"{code}\" does not exist", 'danger')
+                    return redirect(url_for('deleteStaff'))
+            else:
+                flash("You cannot delete your own user", "danger")
+                return redirect(url_for('deleteStaff'))
+    except Exception as e:  
+        return render_template('deleteStaff.html', error=e, title="Delete Staff", logged_in=logged_in, authLevel=authLevel)
+
+
+
+    return render_template('deleteStaff.html', title = "Delete Staff", logged_in=logged_in, authLevel=authLevel, baseRestaurant=baseRestaurant, authorisationLevel=authorisationLevel, employeeCode=employeeCode, codeLen=len(employeeCode))
+
+
+
+@app.route("/updateStaff/", methods=['GET', 'POST'])
+@login_required
+@manager_required
+
+def updateStaff():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    currentUser = User()
+    currentUser.setLoginDetails(session['code'])
+
+    BR = currentUser.getBaseRestaurant()
+    AL = currentUser.getAuthorisation()
+
+    employeeCode = []
+    tempEmployeeCode = currentUser.getEmployeeCodes()
+    employeeCode = strip.it(tempEmployeeCode)
+    print(employeeCode)
+    employeeCode.append(session['code'])
+
+
+    baseRestaurant = []
+    tempBaseRestaurant = currentUser.getBaseRestaurants()
+    baseRestaurant = strip.it(tempBaseRestaurant)
+    baseRestaurant.append(BR)
+    print(baseRestaurant)
+
+    authorisationLevel = []
+    tempAuthorisationLevel = currentUser.getAuthorisationLevels()
+    authorisationLevel = strip.it(tempAuthorisationLevel)
+    authorisationLevel.append(AL)
+    print(authorisationLevel)
+    print(AL)
+
+    return render_template('updateStaff.html', title = "Update Staff", logged_in=logged_in, authLevel=authLevel, baseRestaurant=baseRestaurant, authorisationLevel=authorisationLevel, employeeCode=employeeCode, codeLen=len(employeeCode))
+
+
+
+
+@app.route("/updateStaff2/", methods=['GET', 'POST'])
+@login_required
+@manager_required
+def updateStaff2():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    currentUser = User()
+    currentUser.setLoginDetails(session['code'])
+
+    currentRestaurant = currentUser.getBaseRestaurant()
+
+
+
+
+    if request.method == "POST":
+        code = request.form['code']
+        session['previousCode'] = code
+        currentUser.setLoginDetails(session['previousCode'])
+
+        AL = currentUser.getAuthorisation()
+
+        BR = currentRestaurant
+
+        print(BR)
+        print(AL)
+
+
+        return render_template("updateStaff2.html", title = "Update Staff", logged_in=logged_in, authLevel=authLevel, AL=AL, BR=BR, code=code)
+    
+    return render_template("updateStaff2.html", title = "Update Staff", logged_in=logged_in, authLevel=authLevel)
+
+
+
+
+@app.route("/updateStaff3/", methods=['GET', 'POST'])
+@login_required
+@manager_required
+
+def updateStaff3():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    currentUser = User()
+
+    currentUser.setLoginDetails(session['code'])
+
+    currentRestaurant = currentUser.getBaseRestaurant()
+
+    
+
+    try:
+        if request.method == "POST":
+            
+            code = request.form['code']
+            base = currentRestaurant
+            auth = request.form['auth']
+            print(base)
+
+
+
+            if code != None and base != None and auth != None:
+    
+                if currentUser.validateCodeSyntax(code) == 1:
+        
+                    if currentUser.validateAuthorisationSyntax(auth) == 1:
+            
+                        if currentUser.validateBaseRestaurantSyntax(base) == 1:
+                
+
+                            previousCode = session['previousCode']
+                            
+                            currentUser.updateBaseRestaurant(previousCode, base)
+                            currentUser.updateAuthorisation(previousCode, auth)
+                            print(code)
+                            print(previousCode)
+                            if code != previousCode:
+                                currentUser.updateCode(previousCode, code)
+                                if previousCode == session['code']:
+                                    session['code'] = code
+
+                            flash(f"You have successfully updated the user {code}", 'info')
+                            return redirect(url_for('adminOptions'))
+                        else:
+                            flash("There's something wrong", "error")
+                            return render_template('updateStaff2.html', error="", title = "Update User", logged_in=logged_in, authLevel=authLevel)
+                    else:
+                        return render_template('updateStaff2.html', error="", title = "Update User", logged_in=logged_in, authLevel=authLevel)
+                else:
+                    return render_template('updateStaff2.html', error="", title = "Update User", logged_in=logged_in, authLevel=authLevel)
+            else:                
+                flash("Please don't leave any field empty", "danger")
+                return render_template('updateStaff2.html', error="", title = "Update User", logged_in=logged_in, authLevel=authLevel)
+    except Exception as e:                
+        return render_template('updateStaff2.html', error=e, title = "Update User", logged_in=logged_in, authLevel=authLevel)
+
+
 
 
 if __name__ == "__main__":

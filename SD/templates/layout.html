@@ -38,6 +38,17 @@
                           <li><a href="{{ url_for('averageDiscountAmountReport') }}">View Average Discount Amount Report</a></li>
                       </ul>
                   </li>
+
+                  <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Edit Menu
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ url_for('createMenu') }}">Add To Menu</a></li>
+                        <li><a href="{{ url_for('deleteMenu') }}">Delete From Menu</a></li>
+
+                    </ul>
+                </li>
                     
 
                   {% endif %}
@@ -49,7 +60,6 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a href="{{ url_for('createMenu') }}">Add To Menu</a></li>
-                        <li><a href="{{ url_for('updateMenu') }}">Update The Menu</a></li>
                         <li><a href="{{ url_for('deleteMenu') }}">Delete From Menu</a></li>
 
                     </ul>
@@ -58,7 +68,18 @@
 
 
                   {% if authLevel == 'manager' : %}
-                  <li><a href="{{ url_for('adminOptions') }}">Admin</a></li>
+                  <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Staff
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                      <li><a href="{{ url_for('createStaff') }}">Add Staff</a></li>
+                      <li><a href="{{ url_for('updateStaff') }}">Edit Staff</a></li>
+                      <li><a href="{{ url_for('deleteStaff') }}">Delete Staff</a></li>
+
+                  </ul>
+                </li>
+
 
                   <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">Reports
