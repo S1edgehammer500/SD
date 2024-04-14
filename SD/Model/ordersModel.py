@@ -345,7 +345,7 @@ class Order: #menu class
         else:
             return 0
         
-    def addFoodToOrder(self, orderID, foodName):
+    def addFoodToOrder(self, orderID, foodName, foodListID):
         conn, cur = openConnection()
         if (self.validateFoodName(foodName) and self.checkID(orderID)):
             query = 'INSERT INTO foodList (orderID, foodName) VALUES (?,?);'
@@ -361,6 +361,9 @@ class Order: #menu class
             query4 = 'UPDATE orders SET price = ? WHERE orderID = ?;'
             newPrice = int(orderPrice)+int(foodPrice)
             cur.execute(query4, (newPrice, orderID))
+            conn.commit()
+            query5 = 'DELETE FROM foodList WHERE foodListID = ?;'
+            cur.execute(query5, (foodListID,))
             conn.commit()
             conn.close()
             return 1
@@ -419,6 +422,9 @@ class Order: #menu class
             newPrice = int(orderPrice) / (1-(int(discountValue)/100))
             cur.execute(query3, (newPrice, orderID))
             conn.commit()
+            query4 = 'DELETE FROM discountList WHERE orderID = ?;'
+            cur.execute(query4, (orderID,))
+            conn.commit()
             conn.close()
             return 1
         else:
@@ -437,7 +443,36 @@ class Order: #menu class
         except sqlite3.Error as e:
             print("Error fetching orders:", e)
             return []
-
+        
+    def get_foodList(self, orderID):
+        try:
+            conn, cur = openConnection()
+            cur = conn.cursor()
+            query = "SELECT * FROM foodList WHERE orderID = ?;"
+            cur.execute(query, (orderID,))
+            rows = cur.fetchall()
+            orders = [(row[0], row[1], row[2]) for row in rows]
+            # Close the connection after fetching data
+            conn.close()
+            return orders
+        except sqlite3.Error as e:
+            print("Error fetching food list:", e)
+            return []
+        
+    def get_discountList(self, orderID):
+        try:
+            conn, cur = openConnection()
+            cur = conn.cursor()
+            query = "SELECT * FROM discountList WHERE orderID = ?;"
+            cur.execute(query, (orderID,))
+            rows = cur.fetchall()
+            orders = [(row[0], row[1], row[2]) for row in rows]
+            # Close the connection after fetching data
+            conn.close()
+            return orders
+        except sqlite3.Error as e:
+            print("Error fetching discount list:", e)
+            return []
         
     def delete_order(self, id):
         try:

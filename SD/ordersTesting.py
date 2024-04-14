@@ -30,6 +30,20 @@ def run_tests():
         def test3_add_to_food_list(self):
             orderID = 1
             foodName = "Burger"
+            foodName2 = "Pizza"
+            result = self.model.addFoodToOrder(orderID, foodName)
+            self.assertEqual(result,1)
+            self.model.addFoodToOrder(orderID, foodName2)
+
+        def test4_add_nonexistant_food(self):
+            orderID = 1
+            foodName = "Nothing"
+            result = self.model.addFoodToOrder(orderID, foodName)
+            self.assertEqual(result, 0)
+
+        def test5_remove_food_from_list(self):
+            orderID = 1
+            foodName = "Pizza"
 
     class TestUpdateOffer(unittest.TestCase):
         def setUp(self):
