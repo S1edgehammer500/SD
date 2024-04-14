@@ -41,9 +41,74 @@ def run_tests():
             result = self.model.addFoodToOrder(orderID, foodName)
             self.assertEqual(result, 0)
 
-        def test5_remove_food_from_list(self):
+        def test5_add_food_to_nonexistant_ID(self):
+            orderID = 30
+            foodName = "Burger"
+            result = self.model.addFoodToOrder(orderID, foodName)
+            self.assertEqual(result, 0)
+
+        def test6_remove_food_from_list(self):
             orderID = 1
             foodName = "Pizza"
+            result = self.model.removeFoodFromOrder(orderID, foodName)
+            self.assertEqual(result, 1)
+
+        def test7_remove_nonexistant_foodList(self):
+            orderID = 1
+            foodName = "Burger"
+            foodListID = 20
+            result = self.model.removeFoodFromOrder(orderID, foodName, foodListID)
+            self.assertEqual(result, 0)
+
+        def test8_remove_food_not_in_list(self):
+            orderID = 2
+            foodName = "Burger"
+            foodListID = 1
+            result = self.model.removeFoodFromOrder(orderID, foodName, foodListID)
+            self.assertEqual(result, 0)
+
+        def test9_add_to_food_list(self):
+            orderID = 1
+            foodName = "Burger"
+            foodName2 = "Pizza"
+            result = self.model.addFoodToOrder(orderID, foodName)
+            self.assertEqual(result,1)
+            self.model.addFoodToOrder(orderID, foodName2)
+
+        def test4_add_nonexistant_food(self):
+            orderID = 1
+            foodName = "Nothing"
+            result = self.model.addFoodToOrder(orderID, foodName)
+            self.assertEqual(result, 0)
+
+        def test5_add_food_to_nonexistant_ID(self):
+            orderID = 30
+            foodName = "Burger"
+            result = self.model.addFoodToOrder(orderID, foodName)
+            self.assertEqual(result, 0)
+
+        def test6_remove_food_from_list(self):
+            orderID = 1
+            foodName = "Pizza"
+            result = self.model.removeFoodFromOrder(orderID, foodName)
+            self.assertEqual(result, 1)
+
+        def test7_remove_nonexistant_foodList(self):
+            orderID = 1
+            foodName = "Burger"
+            foodListID = 20
+            result = self.model.removeFoodFromOrder(orderID, foodName, foodListID)
+            self.assertEqual(result, 0)
+
+        def test8_remove_food_not_in_list(self):
+            orderID = 2
+            foodName = "Burger"
+            foodListID = 1
+            result = self.model.removeFoodFromOrder(orderID, foodName, foodListID)
+            self.assertEqual(result, 0)
+
+        
+
 
     class TestUpdateOffer(unittest.TestCase):
         def setUp(self):

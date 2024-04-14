@@ -229,7 +229,63 @@ class Order: #menu class
             print("discount does not exist")
             conn.close()  # Close the connection
             return 0
-            
+        
+    def checkFoodListID(self, ID):
+        conn, cur = openConnection()
+        query = 'SELECT * FROM foodList WHERE foodListID = ?;'
+        cur.execute(query, (ID,))
+        record = cur.fetchone()
+        if record is not None:
+            print("foodList exists")
+            conn.close()  # Close the connection
+            return 1
+        else:
+            print("foodList does not exist")
+            conn.close()  # Close the connection
+            return 0
+        
+    def checkDiscountListID(self, ID):
+        conn, cur = openConnection()
+        query = 'SELECT * FROM discountList WHERE discountListID = ?;'
+        cur.execute(query, (ID,))
+        record = cur.fetchone()
+        if record is not None:
+            print("discount list exists")
+            conn.close()  # Close the connection
+            return 1
+        else:
+            print("discount list does not exist")
+            conn.close()  # Close the connection
+            return 0
+        
+    def checkFoodInOrder(self, orderID, foodName):
+        conn, cur = openConnection()
+        query = 'SELECT * FROM foodList WHERE orderID = ? AND foodName = ?;'
+        cur.execute(query, (orderID, foodName))
+        record = cur.fetchone()
+        if record is not None:
+            print("Food is in order")
+            conn.close()
+            return 1
+        else:
+            print("Food is not in order")
+            conn.close()
+            return 0
+        
+    def checkDiscountInOrder(self, orderID, discountID):
+        conn, cur = openConnection()
+        query = 'SELECT * FROM discountList WHERE orderID = ? AND discountID = ?;'
+        cur.execute(query, (orderID, discountID))
+        record = cur.fetchone()
+        if record is not None:
+            print("Discount is in order")
+            conn.close()
+            return 1
+        else:
+            print("Discount is not in order")
+            conn.close()
+            return 0
+
     def updateRestaurantName(self, restaurantName, id):
         if restaurantName != None:
             if self.checkID(id):
@@ -345,7 +401,7 @@ class Order: #menu class
         else:
             return 0
         
-    def addFoodToOrder(self, orderID, foodName, foodListID):
+    def addFoodToOrder(self, orderID, foodName):
         conn, cur = openConnection()
         if (self.validateFoodName(foodName) and self.checkID(orderID)):
             query = 'INSERT INTO foodList (orderID, foodName) VALUES (?,?);'
@@ -362,17 +418,14 @@ class Order: #menu class
             newPrice = int(orderPrice)+int(foodPrice)
             cur.execute(query4, (newPrice, orderID))
             conn.commit()
-            query5 = 'DELETE FROM foodList WHERE foodListID = ?;'
-            cur.execute(query5, (foodListID,))
-            conn.commit()
             conn.close()
             return 1
         else:
             return 0
         
-    def removeFoodFromOrder(self, orderID, foodName):
+    def removeFoodFromOrder(self, orderID, foodName, foodListID):
         conn, cur = openConnection()
-        if (self.validateFoodName(foodName) and self.checkID(orderID)):
+        if (self.validateFoodName(foodName) and self.checkID(orderID) and self.checkFoodListID(foodListID) and self.checkFoodInOrder(orderID, foodName)):
             query = 'SELECT price FROM food WHERE foodName = ?;'
             cur.execute(query, (foodName, ))
             foodPrice = cur.fetchone()
@@ -382,6 +435,9 @@ class Order: #menu class
             query3 = 'UPDATE orders SET price = ? WHERE orderID = ?;'
             newPrice = int(orderPrice) - int(foodPrice)
             cur.execute(query3, (newPrice, orderID))
+            conn.commit()
+            query4 = 'DELETE FROM foodList WHERE foodListID = ?;'
+            cur.execute(query4, (foodListID,))
             conn.commit()
             conn.close()
             return 1
@@ -409,9 +465,9 @@ class Order: #menu class
         else:
             return 0
         
-    def removeDiscountFromOrder(self, orderID, discountID):
+    def removeDiscountFromOrder(self, orderID, discountID, discountListID):
         conn, cur = openConnection()
-        if (self.checkDiscountID(discountID) and self.checkID(orderID)):
+        if (self.checkDiscountID(discountID) and self.checkID(orderID) and self.checkDiscountListID(discountListID) and self.checkDiscountInOrder(orderID, discountID)):
             query = 'SELECT discountValue FROM discounts WHERE discountID = ?;'
             cur.execute(query, (discountID, ))
             discountValue = cur.fetchone()
@@ -422,8 +478,8 @@ class Order: #menu class
             newPrice = int(orderPrice) / (1-(int(discountValue)/100))
             cur.execute(query3, (newPrice, orderID))
             conn.commit()
-            query4 = 'DELETE FROM discountList WHERE orderID = ?;'
-            cur.execute(query4, (orderID,))
+            query4 = 'DELETE FROM discountList WHERE discountListID = ?;'
+            cur.execute(query4, (discountListID,))
             conn.commit()
             conn.close()
             return 1
