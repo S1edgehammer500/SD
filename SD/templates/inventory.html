@@ -10,9 +10,10 @@
     <table>
 
         <tr>
-            <th class = "text-center" style = "width: 30%;">Item Name</th>
-            <th class = "text-center" style = "width: 25%;">Quantity</th>
-            <th class = "text-center" style = "width: 25%;">Stock Limit</th>
+            <th class = "text-center" style = "width: 40%;">Item Name</th>
+            <th class = "text-center" style = "width: 30%;">Quantity</th>
+            <th class = "text-center" style = "width: 30%;">Stock Limit</th>
+            
         </tr>
 
             {% for i in range(listLen): %} 
@@ -42,7 +43,7 @@
     <a href="{{ url_for('deleteInventory') }}">
         <button type="button">Delete From Inventory</button>
     </a>
-    <a href="#">
+    <a href="{{ url_for('orderItem') }}">
         <button type="button">Order Items</button>
     </a>
     </div>

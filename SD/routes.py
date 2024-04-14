@@ -1524,7 +1524,7 @@ def createOrder():
 
 
 
-@app.route("/createOrder2/")
+@app.route("/createOrder2/", methods=['POST', 'GET'])
 @login_required
 def createOrder2():
     # check to see what navbar to display
@@ -1545,7 +1545,7 @@ def createOrder2():
     return render_template('createOrder2.html', title="order", logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, allergyList = allergyList, idList = idList, listLen = len(foodList))
 
 
-@app.route("/deleteOrder/")
+@app.route("/deleteOrder/", methods=['POST', 'GET'])
 @login_required
 def deleteOrder():
     # check to see what navbar to display
@@ -1554,7 +1554,7 @@ def deleteOrder():
     
     return render_template('deleteOrder.html', title="order", logged_in=logged_in, authLevel=authLevel)
 
-@app.route("/updateOrder/")
+@app.route("/updateOrder/", methods=['POST', 'GET'])
 @login_required
 def updateOrder():
     # check to see what navbar to display
@@ -1563,8 +1563,17 @@ def updateOrder():
     
     return render_template('updateOrder.html', title="order", logged_in=logged_in, authLevel=authLevel)
 
+@app.route("/updateOrder2/", methods=['POST', 'GET'])
+@login_required
+def updateOrder2():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    return render_template('updateOrder2.html', title="order", logged_in=logged_in, authLevel=authLevel)
 
-@app.route("/removeFromOrder/")
+
+@app.route("/removeFromOrder/", methods=['POST', 'GET'])
 @login_required
 def removeFromOrder():
     # check to see what navbar to display
@@ -1575,7 +1584,7 @@ def removeFromOrder():
 
 
 
-@app.route("/applyDiscountOrder/")
+@app.route("/applyDiscountOrder/", methods=['POST', 'GET'])
 @login_required
 def applyDiscountOrder():
     # check to see what navbar to display
@@ -1592,7 +1601,7 @@ def applyDiscountOrder():
     return render_template('applyDiscountOrder.html', title = "Update Discount", logged_in=logged_in, authLevel = authLevel, dIDs=dIDs, dValues=dValues, discountsLen = len(dIDs))
 
 
-@app.route("/reservation/")
+@app.route("/reservation/", methods=['POST', 'GET'])
 @login_required
 def reservation():
     # check to see what navbar to display
@@ -1602,7 +1611,7 @@ def reservation():
     return render_template('reservation.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
 
 
-@app.route("/createReservation/")
+@app.route("/createReservation/", methods=['POST', 'GET'])
 @login_required
 def createReservation():
     # check to see what navbar to display
@@ -1611,7 +1620,7 @@ def createReservation():
 
     return render_template('createReservation.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
 
-@app.route("/updateReservation/")
+@app.route("/updateReservation/", methods=['POST', 'GET'])
 @login_required
 def updateReservation():
     # check to see what navbar to display
@@ -1619,6 +1628,18 @@ def updateReservation():
     authLevel = session['authLevel']
 
     return render_template('updateReservation.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
+
+
+@app.route("/updateReservation2/", methods=['POST', 'GET'])
+@login_required
+def updateReservation2():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    return render_template('updateReservation2.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
+
+
 
 @app.route("/deleteReservation/")
 @login_required
@@ -2415,7 +2436,7 @@ def updateItem3():
 
 @app.route("/orderItem/", methods = ['GET', 'POST'])
 @login_required
-@admin_required
+
 
 def orderItem():
     # check to see what navbar to display
@@ -2432,7 +2453,7 @@ def orderItem():
 
 @app.route("/orderItem2/", methods = ['GET', 'POST'])
 @login_required
-@admin_required
+
 
 def orderItem2():
     # check to see what navbar to display
@@ -2448,7 +2469,7 @@ def orderItem2():
 
 @app.route("/orderItem3/", methods = ['GET', 'POST'])
 @login_required
-@admin_required
+
 
 def orderItem3():
     # check to see what navbar to display
@@ -2462,7 +2483,36 @@ def orderItem3():
     return render_template('orderItem2.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
 
 
+@app.route("/payment/", methods = ['GET', 'POST'])
 
+
+
+def payment():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    
+
+
+
+    return render_template('payment.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
+
+
+
+@app.route("/receipt/", methods = ['GET', 'POST'])
+
+
+def receipt():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    
+
+
+
+    return render_template('receipt.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
 
 
 if __name__ == "__main__":
