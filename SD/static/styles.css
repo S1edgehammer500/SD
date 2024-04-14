@@ -56,7 +56,12 @@
   transform: translate(-50%, -50%);
 }
 
-
+.AdmiFoodPos{
+  position: absolute;
+  top: 35%;
+  left: 30%;
+  transform: translate(-50%, -50%);
+}
 
 .AdminRestaurantPos{
   position: absolute;

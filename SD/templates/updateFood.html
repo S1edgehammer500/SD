@@ -1,24 +1,23 @@
 {% extends "layout.html" %} 
 {% block content %}
 
-<form action="/updateFoodMenu2/" method="post">
+<form action="/updateFood2/" method="post">
     <div class="StandardBox">
 
-        <h3 class="text-center pt-3 heading">Choose Item To Update From Menu Here</h3> <br>
+        <h3 class="text-center pt-3 heading">Update Item From Food Here</h3> <br>
 
             <table border=1 style="color:rgb(255, 255, 255)" class="center">
                     <tr>
-                        <th class = "text-center" style = "width: 30%;">ID</th>
+                        <th class = "hidden text-center" style = "width: 30%;">ID</th>
                         <th class = "text-center" style = "width: 30%;">Name</th>
                         <th class = "text-center" style = "width: 30%;">Price</th>
                         <th class = "text-center" style = "width: 10%;"> Select</th>
                         
                         {% for i in range(listLen): %} 
                         <tr>
-                            <td> {{idList[i]}} </td>
-                            <td> {{foodList[i]}} </td>              
-                            <td> £{{priceList[i]}} </td>
-                            <td> <input required type="radio" name="foodName" value="{{foodList[i]}}" checked></td>
+                            <td> {{foodName[i]}} </td>
+                            <td> {{foodPrice[i]}} </td>              
+                            <td> <input required type="radio" name="foodName" value="{{foodName[i]}}" checked></td>
                         </tr>
                     {% endfor %}
         

@@ -1,0 +1,30 @@
+{% extends "layout.html" %} 
+{% block content %}
+
+<div class = "StandardBox">
+
+    <h3 class="text-center pt-3 heading">Add To Menu Here</h3> <br>
+  
+    <form action="/createMenu/" method="post">
+  
+        <div class="form-group">
+            <label for="foodName">Food:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
+            <select style="color:black" name="foodName" id="foodName">
+                {% for i in range(listLen): %} 
+                <option value='{{foods[i]}}'>{{foods[i]}}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class = "d-grid mb-3">
+            <button type = "submit"  class = "btn btn-light black">submit</button>
+            </div> <br>
+  
+  </div>
+  
+  </div>
+  
+  </div>
+
+
+{% endblock content %}

@@ -671,10 +671,10 @@ def createRestaurant():
         return render_template('createRestaurant.html', error=e, title="Create Restaurant", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
 
 
-@app.route('/createFoodMenu/', methods=['POST', 'GET'])
+@app.route('/createMenu/', methods=['POST', 'GET'])
 @login_required
 @admin_required
-def createFoodMenu():
+def createMenu():
 
     currentUser = User()
     currentFood = Food()
@@ -688,9 +688,19 @@ def createFoodMenu():
 
     currentRestaurant = currentUser.getBaseRestaurant()
 
-    print ("The restaurant is: ", currentRestaurant)
-
     error = ''
+
+
+    foodList = currentFood.get_food_list()
+
+    #gets all foods in the food database
+    allfoods = [item[0] for item in foodList]
+
+    #gets all the foods currently in the restaurants menu
+    foods_in_menu = currentMenu.getfoodNames(currentRestaurant)
+
+    #gets all the foods that are not in the restaurants menu but are in the food database
+    foods = [food for food in allfoods if food not in [item[0] for item in foods_in_menu]]
 
     try: 
         if request.method == "POST":
@@ -698,125 +708,51 @@ def createFoodMenu():
             print("here3")
 
             foodName = request.form['foodName']
-            print(foodName)
-            foodAllergy = request.form['foodAllergy']
-            print(foodAllergy)
-            foodPrice = request.form['priceOfFood']
-
-            
-            
-    
-            print(foodPrice)
+            print("The food is: " ,foodName)
+            print ("The restaurant is: ", currentRestaurant)
 
 
-            if foodName != None and foodAllergy != None and foodPrice != None:
+            if currentMenu.validateRestaurantName(currentRestaurant) == 1:
 
-                if  currentFood.validateName(foodName) == 1:
+                if currentMenu.validateFoodName(foodName) == 1:
                     
-                    if currentFood.validateAllergyInfo(foodAllergy) == 1:
-
-                        if currentFood.validatePrice(foodPrice) == 1:
+                    if currentMenu.checkRestaurantFood(currentRestaurant, foodName) != 1:
+                        
+                        if currentMenu.createMenu(currentRestaurant, foodName) == 1:
                             
-                            if currentFood.checkName(foodName) == 1: #if food exists in table food
+                            flash("Item added to the menu", "success")
+                            return redirect(url_for('createMenu'))
 
-                                if currentMenu.validateRestaurantName(currentRestaurant) == 1: 
-                                    
-                                        if currentMenu.validateFoodName(foodName) == 1:
-                                            
-                                            if currentMenu.checkRestaurantFood(currentRestaurant,foodName) != 1:
-
-                                                if currentMenu.createMenu(currentRestaurant, foodName) == 1:
-
-                                                    flash("Item has successfully been added to the menu", "success")
-                                                    return redirect(url_for('menu'))
-
-                                                else:
-                                                    flash ("Failed to add item to the menu", "danger")
-                                                    return render_template('createFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
-
-
-                                            else:
-                                                flash ("Food item already exists in the menu table", "danger")
-                                                return render_template('createFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
-
-                                        
-                                        else:
-                                            flash ("Food Item does not exist in food table", "danger")
-                                            return render_template('createFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
-
-                                else:
-                                    flash ("Restaurant is Invalid", "danger")
-                                    return render_template('createFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
-
-                                
-
-                            
-                            else:   #if food doesnt exist in food
-                                
-                                if currentFood.createFood(foodName, foodPrice, foodAllergy) == 1:   #creates food in food table
-                                    
-                                    if currentMenu.validateRestaurantName(currentRestaurant) == 1: 
-                                        
-                                        if currentMenu.validateFoodName(foodName) == 1:
-                                            
-                                            if currentMenu.checkRestaurantFood(currentRestaurant,foodName) != 1:
-
-                                                if currentMenu.createMenu(currentRestaurant, foodName) == 1:
-
-                                                    flash("Item has successfully been added to the menu", "success")
-                                                    return redirect(url_for('menu'))
-
-                                                else:
-                                                    flash ("Failed to add item to the menu", "danger")
-                                                    return render_template('createFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
-
-
-                                            else:
-                                                flash ("Food item already exists in the menu table", "danger")
-                                                return render_template('createFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
-
-                                        
-                                        else:
-                                            flash ("Food Item does not exist in food table", "danger")
-                                            return render_template('createFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
-
-                                    else:
-                                        flash ("Restaurant is Invalid", "danger")
-                                        return render_template('createFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
-
-                                else:
-                                    flash ("Failed to create food in food table", "danger")
-                                    return render_template('createFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
-                        else:  
-                            flash ("Food price is invalid", "danger")
-                            return render_template('createFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+                        else:
+                            flash("Failed to add item to the menu", "danger")
+                            return render_template('createMenu.html', title="Create Menu", error = e, logged_in=logged_in, authLevel = authLevel, foods = foods, listLen = len(foods))                      
 
                     else:
-                        flash ("Food allergy is invalid", "danger")
-                        return render_template('createFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
-
+                        flash("Food is already in this restaurants Menu", "danger")
+                        return render_template('createMenu.html', title="Create Menu", error = e, logged_in=logged_in, authLevel = authLevel, foods = foods, listLen = len(foods))
+                    
                 else:
-                    flash ("Food name is invalid", "danger")
-                    return render_template('createFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+                    flash("Food name is invalid", "danger")
+                    return render_template('createMenu.html', title="Create Menu", error = e, logged_in=logged_in, authLevel = authLevel, foods = foods, listLen = len(foods))               
 
             else:
-                flash ("Fields cannot be empty", "danger")
-                return render_template('createFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+                flash("Restaurant name is invalid", "danger")
+                return render_template('createMenu.html', title="Create Menu", error = e, logged_in=logged_in, authLevel = authLevel, foods = foods, listLen = len(foods))
 
             
 
         
         else: 
-            return(render_template('createFoodMenu.html', title="Create Food", logged_in=logged_in, authLevel = authLevel))
+            return render_template('createMenu.html', title="Create Menu", error = e, logged_in=logged_in, authLevel = authLevel, foods = foods, listLen = len(foods))
     
     except Exception as e:
-        print("here2")
-        return(render_template('createFoodMenu.html', title="Create Food", error = e, logged_in=logged_in, authLevel = authLevel))
+        print("exception")
+        return render_template('createMenu.html', title="Create Menu", error = e, logged_in=logged_in, authLevel = authLevel, foods = foods, listLen = len(foods))
     
 
-@app.route("/updateFoodMenu/", methods = ['GET', 'POST'])
+@app.route("/updateMenu/", methods = ['GET', 'POST'])
 @login_required
-def updateFoodMenu():
+def updateMenu():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
@@ -834,11 +770,11 @@ def updateFoodMenu():
     foodList, priceList, allergyList, idList = currentMenu.getMenuList(currentRestaurant)
 
 
-    return render_template('updateFoodMenu.html', title = "Update Menu" , logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, listLen = len(foodList), idList = idList)
+    return render_template('updateMenu.html', title = "Update Menu" , logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, listLen = len(foodList), idList = idList)
 
-@app.route("/updateFoodMenu2/", methods = ['GET', 'POST'])
+@app.route("/updateMenu2/", methods = ['GET', 'POST'])
 @login_required
-def updateFoodMenu2():
+def updateMenu2():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
@@ -869,12 +805,12 @@ def updateFoodMenu2():
 
 
 
-    return render_template('updateFoodMenu2.html', title = "Update Menu" , logged_in=logged_in, authLevel=authLevel, price = price, name = name, allergy = allergy)
+    return render_template('updateMenu2.html', title = "Update Menu" , logged_in=logged_in, authLevel=authLevel, price = price, name = name, allergy = allergy)
 
 
-@app.route("/updateFoodMenu3/", methods = ['GET', 'POST'])
+@app.route("/updateMenu3/", methods = ['GET', 'POST'])
 @login_required
-def updateFoodMenu3():
+def updateMenu3():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
@@ -890,7 +826,7 @@ def updateFoodMenu3():
     currentFood = Food()
 
 
-    return redirect(url_for('updateFoodMenu'))
+    return redirect(url_for('updateMenu'))
 
 
 
@@ -1556,6 +1492,503 @@ def applyDiscountOrder():
   
     return render_template('applyDiscountOrder.html', title = "Update Discount", logged_in=logged_in, authLevel = authLevel, dIDs=dIDs, dValues=dValues, discountsLen = len(dIDs))
 
+<<<<<<< Updated upstream
+=======
+@app.route("/adminOptions/")
+@login_required
+def adminOptions():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    return render_template('adminOptions.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
+
+@app.route("/reservation/")
+@login_required
+def reservation():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    return render_template('reservation.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
+
+
+@app.route("/createReservation/")
+@login_required
+def createReservation():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    return render_template('createReservation.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
+
+@app.route("/updateReservation/")
+@login_required
+def updateReservation():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    return render_template('updateReservation.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
+
+@app.route("/deleteReservation/")
+@login_required
+def deleteReservation():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    return render_template('deleteReservation.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
+
+
+
+
+@app.route("/menu/", methods = ['GET', 'POST'])
+@login_required
+def menu():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+
+    currentUser = User()
+    currentUser.setLoginDetails(session['code'])
+
+    currentRestaurant = currentUser.getBaseRestaurant()
+
+
+    currentMenu = Menu()
+
+    
+    foodList, priceList, allergyList, idList = currentMenu.getMenuList(currentRestaurant)
+
+
+    return render_template('menu.html', title = "Menu" , logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, allergyList = allergyList, listLen = len(foodList))
+
+
+@app.route("/deleteMenu/", methods = ['GET', 'POST'])
+@login_required
+def deleteMenu():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+
+    currentMenu = Menu()
+    
+    currentUser = User()
+    currentUser.setLoginDetails(session['code'])
+
+    currentRestaurant = currentUser.getBaseRestaurant()
+
+    foodList, priceList, allergyList, idList = currentMenu.getMenuList(currentRestaurant)
+
+
+    error = ""
+
+    try:
+        if request.method == "POST":
+
+            foodID = request.form['foodID']
+
+            print(foodID)
+
+            if foodID != None:
+                
+                if currentMenu.delete_menu(foodID) == 1:
+                                                           
+                    flash ("Food successfully deleted from the menu", "success")
+                    return redirect(url_for('deleteMenu'))
+
+                else:
+                    flash ("Error deleting food from the menu", "danger")
+                    return render_template('deleteMenu.html',error = e ,title="Delete Menu", logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, allergyList = allergyList, idList = idList, listLen = len(priceList))
+
+
+            else:
+                flash ("Select a food to delete from the menu", "danger")
+                return render_template('deleteMenu.html',error = e ,title="Delete Menu", logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, allergyList = allergyList, idList = idList, listLen = len(priceList))
+            
+        else:
+            return render_template('deleteMenu.html',error = e ,title="Delete Menu", logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, allergyList = allergyList, idList = idList, listLen = len(priceList))
+
+    
+
+    except Exception as e:
+        return render_template('deleteMenu.html',error = e ,title="Delete Menu", logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, allergyList = allergyList, idList = idList, listLen = len(priceList))
+    
+
+
+@app.route("/account/", methods = ['GET'])
+@login_required
+def account():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+
+    currentUser = User()
+    currentUser.setLoginDetails(session['code'])
+
+    currentRestaurant = currentUser.getBaseRestaurant()
+
+    print(currentRestaurant)
+
+    currentCode = currentUser.getCode()
+
+    currentLevel = currentUser.getAuthorisation()
+
+
+
+    return render_template('account.html', title = "Account" , logged_in=logged_in, authLevel=authLevel, currentLevel = currentLevel, currentCode = currentCode, currentRestaurant = currentRestaurant )
+>>>>>>> Stashed changes
+
+
+
+
+
+
+
+
+@app.route('/createFood/', methods=['POST', 'GET'])
+@login_required
+@admin_required
+def createFood():
+
+    currentUser = User()
+    currentFood = Food()
+    currentMenu = Menu()
+
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    
+    currentUser.setLoginDetails(session['code'])
+
+    currentRestaurant = currentUser.getBaseRestaurant()
+
+    print ("The restaurant is: ", currentRestaurant)
+    
+    error = ''
+
+    try: 
+        if request.method == "POST":
+
+            print("here3")
+
+            foodName = request.form['foodName']
+            print(foodName)
+            foodAllergy = request.form['foodAllergy']
+            print(foodAllergy)
+            foodPrice = request.form['priceOfFood']
+        
+            print(foodPrice)
+
+            if foodName != None and foodAllergy != None and foodPrice != None:
+
+                if  currentFood.validateName(foodName) == 1:
+                    
+                    if currentFood.validateAllergyInfo(foodAllergy) == 1:
+
+                        if currentFood.validatePrice(foodPrice) == 1:
+                            
+                            if currentFood.checkName(foodName) != 1: #if food exists in table food
+
+                            
+                                if currentFood.createFood(foodName, foodPrice, foodAllergy) == 1:   #creates food in food table
+                                    
+                                    flash("Item has successfully been added to the Food Database", "success")
+                                    return redirect(url_for('createFood'))
+                                
+                                else:
+                                    flash("Item Failed to be added to the Food Database", "error")
+                                    return redirect(url_for('createFood'))
+
+
+                            else:
+                                flash ("Restaurant is Invalid", "danger")
+                                return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+
+                        else:
+                            flash ("Failed to create food in food table", "danger")
+                            return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+                    else:  
+                        flash ("Food price is invalid", "danger")
+                        return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+
+                else:
+                    flash ("Food allergy is invalid", "danger")
+                    return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+
+            else:
+                flash ("Food name is invalid", "danger")
+                return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+
+        else:
+            flash ("Fields cannot be empty", "danger")
+            return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+
+        
+    except Exception as e:
+        return render_template('createFood.html', title="Create Food", error=e, logged_in=logged_in, authLevel=authLevel)
+
+
+
+@app.route("/updateFood/", methods = ['GET', 'POST'])
+@login_required
+def updateFood():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+
+
+    currentFood = Food()
+
+    foodList = currentFood.get_food_list()
+
+    foodName = [item[0] for item in foodList]
+    foodPrice = [item[1] for item in foodList]
+    
+
+
+    return render_template('updateFood.html', title = "Update Food" , logged_in=logged_in, authLevel=authLevel, foodName = foodName, foodPrice = foodPrice, listLen = len(foodName))
+
+
+
+@app.route("/updateFood2/", methods = ['GET', 'POST'])
+@login_required
+def updateFood2():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+
+    currentFood = Food()
+
+    try:
+        if request.method == "POST":
+
+
+            foodName = request.form['foodName']
+
+            session['foodName'] = foodName
+
+            currentFood.setFoodDetails(foodName)
+
+            foodPrice = currentFood.getPrice()
+
+            print(foodPrice)
+            print(foodName)
+
+            return render_template('updateFood2.html', title = "Update Food" , logged_in=logged_in, authLevel=authLevel, foodName = foodName, foodPrice = foodPrice)
+            
+
+
+    except Exception as e:
+        
+        return render_template('adminOptions.html', error=e, title="Restaurant Options", logged_in=logged_in, authLevel=authLevel)
+
+
+
+@app.route("/updateFood3/", methods = ['GET', 'POST'])
+@login_required
+def updateFood3():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    currentFoodName = session['foodName']
+    
+
+    currentFood = Food()
+
+    try:
+        if request.method == "POST":
+
+            print("method is posting at upd food 3")
+
+            foodName = request.form['foodName']
+            foodAllergy = request.form['foodAllergy']
+            foodPrice = request.form['foodPrice']
+            foodAvailable = request.form['foodAvailable']
+            
+            
+            if foodName != None and foodAllergy != None and foodPrice != None and foodAvailable !=None:
+
+                if currentFood.validateName(foodName) == 1:
+
+                    if currentFood.validateAllergyInfo(foodAllergy) == 1:
+                        
+                        if currentFood.validatePrice(foodPrice) == 1:
+
+                            if currentFood.validateAvailability(foodAvailable) == 1:
+                                
+
+                                if session['foodName'] == foodName:
+
+                                    if currentFood.updatePrice(foodPrice, foodName) ==1:
+
+                                        if currentFood.updateAllergyInfo(foodAllergy, foodName) == 1:
+                                            
+                                            if currentFood.updateAvailability(foodAvailable, foodName) == 1:
+                                                
+                                                flash("Food updated successfully", "success")
+                                                return redirect(url_for('updateFood'))
+
+                                            else:
+                                                flash("Food availability should either be 1 or 0", "danger")
+                                                return redirect(url_for('updateFood'))
+
+                                        else:
+                                            flash("Error updating food allergy information", "danger")
+                                            return redirect(url_for('updateFood'))
+
+                                    else:
+                                        flash("Error updating food price", "danger")
+                                        return redirect(url_for('updateFood'))
+
+
+                                
+                                
+                                
+                                else:
+
+                                    if currentFood.checkName(foodName) != 1:
+
+                                        if currentFood.updateFoodName(session['foodName'], foodName) == 1:
+
+                                            if currentFood.updatePrice(foodPrice, foodName) ==1:
+
+                                                if currentFood.updateAllergyInfo(foodAllergy, foodName) == 1:
+                                            
+                                                    if currentFood.updateAvailability(foodAvailable, foodName) == 1:
+                                                
+                                                        flash("Food updated successfully", "success")
+                                                        return redirect(url_for('updateFood'))
+
+                                                    else:
+                                                        flash("Food availability should either be 1 or 0", "danger")
+                                                        return redirect(url_for('updateFood'))
+
+                                                else:
+                                                    flash("Error updating food allergy information", "danger")
+                                                    return redirect(url_for('updateFood'))
+
+                                            else:
+                                                flash("Error updating food price", "danger")
+                                                return redirect(url_for('updateFood'))
+
+                                        else:
+                                            flash("Food availability should either be 1 or 0", "danger")
+                                            return redirect(url_for('updateFood'))
+
+                                    else:
+                                        flash("This food already exist in the database", "danger")
+                                        return redirect(url_for('updateFood'))
+
+                                
+
+                            else:
+                                flash("Food availability should either be 1 or 0", "danger")
+                                return redirect(url_for('updateFood'))
+
+                        else:
+                            flash("Food price is invalid (greater than 0)", "danger")
+                            return redirect(url_for('updateFood'))
+
+
+
+                    else:
+                        flash("Food allergy is not valid (over 3 characters)", "danger")
+                        return redirect(url_for('updateFood'))       
+
+                else:
+                    flash("Food name not valid (over 3 characters)", "danger")
+                    return redirect(url_for('updateFood'))
+
+
+            else:
+                flash("Please fill in all forms", "danger")
+                return redirect(url_for('updateFood'))
+
+            
+
+
+    except Exception as e:
+        
+        return render_template('adminOptions.html', error=e, title="Restaurant Options", logged_in=logged_in, authLevel=authLevel)
+
+
+
+
+@app.route("/deleteFood/", methods = ['GET', 'POST'])
+@login_required
+def deleteFood():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    currentFood = Food()
+
+    foodList = currentFood.get_food_list()
+
+    foodName = [item[0] for item in foodList]
+    foodPrice = [item[1] for item in foodList]
+    foodAvailable = [item[2] for item in foodList]
+    foodAllergy = [item[3] for item in foodList]
+
+    
+
+
+    return render_template('deleteFood.html', title = "Delete Food" , logged_in=logged_in, authLevel=authLevel, foodName = foodName, foodPrice = foodPrice, listLen = len(foodName))
+
+
+@app.route("/deleteFood2/", methods = ['GET', 'POST'])
+@login_required
+def deleteFood2():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    error = ""
+
+    
+    currentFood = Food()
+
+    try:
+        if request.method == "POST":
+
+            print("method is posting")
+
+            foodName = request.form['foodName']
+
+            
+            print(foodName)
+
+            if foodName != None:
+                
+                if currentFood.delete_food(foodName) == 1:
+                                                           
+                    flash ("Food successfully deleted from the Food database", "success")
+                    return redirect(url_for('deleteFood'))
+
+                else:
+                    flash ("Error deleting food from the menu", "danger")
+                    return render_template('deleteFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+
+
+            else:
+                flash ("Select a food to delete", "danger")
+                return render_template('deleteFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
+
+
+        else:
+            return redirect(url_for('deleteFood'))
+
+
+    except Exception as e:
+        
+        return render_template('home.html', error=e, title="Restaurant Options", logged_in=logged_in, authLevel=authLevel)
 
 
 if __name__ == "__main__":
