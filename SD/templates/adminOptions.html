@@ -36,18 +36,19 @@
 
 
 
-<div class = "AdminDiscountPos">
+<div class = "AdminWarehousePos">
 <div class="AdminBox">
-    <h3 class="txt-size text-center pt-3">Edit Discounts</h3>
+    <h3 class="txt-size text-center pt-3">Warehouse Options</h3>
 
-    <a href="{{ url_for('createDiscount') }}">
-        <button type="button">Add New Discount</button>
+    <a href="{{ url_for('createItem') }}">
+        <button type="button">Add New Item</button>
     </a>
-    <a href="{{ url_for('updateDiscount') }}">
-        <button type="button">Update Existing Discount</button>
+    <a href="{{ url_for('updateItem') }}">
+        <button type="button">Update Existing Item</button>
     </a>
-    <a href="{{ url_for('deleteDiscount') }}">
-        <button type="button">Delete Discount</button>
+
+    <a href="{{ url_for('deleteItem') }}">
+        <button type="button">Delete Item</button>
     </a>
 
 </div>
@@ -56,9 +57,9 @@
 
 
 
-<div class = "AdminMenuPos">
+<div class = "AdminFoodPos">
     <div class="AdminBox">
-        <h3 class="txt-size text-center pt-3">Food Menu</h3>
+        <h3 class="txt-size text-center pt-3">Food Database</h3>
     
         <a href="{{ url_for('createFood') }}">
             <button type="button">Add New Food</button>

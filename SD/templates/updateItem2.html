@@ -1,0 +1,32 @@
+{% extends "layout.html" %} 
+{% block content %} 
+<div class = "StandardBox">
+
+    <h3 class="text-center pt-3 heading">Update The Item Here</h3> <br>
+  
+    <form action="/updateItem3/" method="post">
+
+        <div class="form-group">
+            <label for="itemName">Item Name: &nbsp; &nbsp;<br></label>
+            <input required style="color:black" class="itemName" name="itemName" size="30" value="{{request.form.itemName}}"><br>
+        </div>
+        
+        <div class="form-group">
+            <label for="itemSL">Item Stock Limit:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
+            <input required style="color:black" id="itemSL" min="1" type="number" class="itemSL" name="itemSL" size="30" value="{{request.form.itemSL}}"><br>
+        </div>
+        
+  
+          <div class = "d-grid mb-3">
+            <button type = "submit"  class = "btn btn-light black">submit</button>
+            </div> <br>
+  
+  </div>
+  
+  </div>
+  
+  </div>
+
+
+
+{% endblock content %}

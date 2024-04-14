@@ -40,6 +40,20 @@
                   </li>
 
                   <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Edit Discounts
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ url_for('createDiscount') }}">Add New Discount</a></li>
+                        <li><a href="{{ url_for('updateDiscount') }}">Update Existing Discount</a></li>
+                        <li><a href="{{ url_for('deleteDiscount') }}">Delete Discount</a></li>
+
+                    </ul>
+                </li>
+
+
+
+                  <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">Edit Menu
                         <span class="caret"></span>
                     </a>

@@ -14,6 +14,7 @@ from Model.menuModel import *
 from Model.foodModel import *
 from Model.reportModel import *
 from Model.inventoryModel import *
+from Model.itemModel import *
 
 
 # User defined
@@ -1155,9 +1156,24 @@ def createInventory():
     
     currentUser = User()
     inventory = Inventory()
+    currentItem = Item()
 
     currentUser.setLoginDetails(session['code'])
     
+    currentRestaurant = currentUser.getBaseRestaurant()
+
+    itemsList = currentItem.get_item_list()
+
+    #gets all foods in the food database
+    allItems = [item[0] for item in itemsList]
+
+    items_in_inventory = inventory.getItemNames(currentRestaurant)
+
+    #gets all the foods that are not in the restaurants menu but are in the food database
+    items = [item for item in allItems if item not in [inventoryItem[0] for inventoryItem in items_in_inventory]]
+
+
+
     error = ''
     
     try:
@@ -1178,29 +1194,29 @@ def createInventory():
                                         return redirect(url_for('inventory'))
                                     else:
                                         flash("Could not create item", "danger")
-                                        return render_template('createInventory.html', error=error, title="Create Invnentory", logged_in=logged_in, authLevel=authLevel)
+                                        return render_template('createInventory.html', error=error, title="Create Invnentory", logged_in=logged_in, authLevel=authLevel, items = items, listLen = len(items))
                                 else:
                                     flash("Item already exists in the restaurant", "danger")
-                                    return render_template('createInventory.html', error=error, title="Create Invnentory", logged_in=logged_in, authLevel=authLevel)
+                                    return render_template('createInventory.html', error=error, title="Create Invnentory", logged_in=logged_in, authLevel=authLevel, items = items, listLen = len(items))
                             else:
                                 flash("Invalid stock limit (1-99)", "danger")
-                                return render_template('createInventory.html', error=error, title="Create Invnentory", logged_in=logged_in, authLevel=authLevel)
+                                return render_template('createInventory.html', error=error, title="Create Invnentory", logged_in=logged_in, authLevel=authLevel, items = items, listLen = len(items))
                         else:
                             flash("Quantity cannot be more than stock limit", "danger")
-                            return render_template('createInventory.html', error=error, title="Create Inventory", logged_in=logged_in, authLevel=authLevel)
+                            return render_template('createInventory.html', error=error, title="Create Inventory", logged_in=logged_in, authLevel=authLevel, items = items, listLen = len(items))
                     else:
                         flash("Invalid quantity input (1-99)", "danger")
-                        return render_template('createInventory.html', error=error, title="Create Inventory", logged_in=logged_in, authLevel=authLevel)
+                        return render_template('createInventory.html', error=error, title="Create Inventory", logged_in=logged_in, authLevel=authLevel, items = items, listLen = len(items))
                 else:
                     flash("Item not available in the warehouse", "danger")
-                    return render_template('createInventory.html', error=error, title="Create Inventory", logged_in=logged_in, authLevel=authLevel)
+                    return render_template('createInventory.html', error=error, title="Create Inventory", logged_in=logged_in, authLevel=authLevel, items = items, listLen = len(items))
             else:                
                 flash("Fields cannot be empty", "danger")
-                return render_template('createInventory.html', error=error, title="Create Inventory", logged_in=logged_in, authLevel=authLevel)
+                return render_template('createInventory.html', error=error, title="Create Inventory", logged_in=logged_in, authLevel=authLevel, items = items, listLen = len(items))
         else:            
-            return render_template('createInventory.html', error=error, title="Create Inventory", logged_in=logged_in, authLevel=authLevel)        
+            return render_template('createInventory.html', error=error, title="Create Inventory", logged_in=logged_in, authLevel=authLevel, items = items, listLen = len(items))        
     except Exception as e:                
-        return render_template('createInventory.html', error=e, title="Create Inventory", logged_in=logged_in, authLevel=authLevel)
+        return render_template('createInventory.html', error=e, title="Create Inventory", logged_in=logged_in, authLevel=authLevel, items = items, listLen = len(items))
 
 
 @app.route("/deleteInventory/", methods=['GET', 'POST'])
@@ -1672,7 +1688,7 @@ def createFood():
                 return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
 
         else:
-            flash ("Fields cannot be empty", "danger")
+            
             return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
 
         
@@ -2184,6 +2200,142 @@ def updateStaff3():
                 return render_template('updateStaff2.html', error="", title = "Update User", logged_in=logged_in, authLevel=authLevel)
     except Exception as e:                
         return render_template('updateStaff2.html', error=e, title = "Update User", logged_in=logged_in, authLevel=authLevel)
+
+
+
+@app.route("/createItem/", methods = ['GET', 'POST'])
+@login_required
+@admin_required
+
+def createItem():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    
+
+
+
+    return render_template('createItem.html', title = "Create Item" , logged_in=logged_in, authLevel=authLevel)
+
+
+
+@app.route("/deleteItem/", methods = ['GET', 'POST'])
+@login_required
+@admin_required
+
+def deleteItem():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    
+
+
+
+    return render_template('deleteItem.html', title = "Delete Item" , logged_in=logged_in, authLevel=authLevel)
+
+
+
+
+@app.route("/updateItem/", methods = ['GET', 'POST'])
+@login_required
+@admin_required
+
+def updateItem():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    
+
+
+
+    return render_template('updateItem.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
+
+
+
+
+@app.route("/updateItem2/", methods = ['GET', 'POST'])
+@login_required
+@admin_required
+
+def updateItem2():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    
+
+
+
+    return render_template('updateItem2.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
+
+
+@app.route("/updateItem3/", methods = ['GET', 'POST'])
+@login_required
+@admin_required
+
+def updateItem3():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    
+
+
+
+    return render_template('updateItem2.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
+
+
+@app.route("/orderItem/", methods = ['GET', 'POST'])
+@login_required
+@admin_required
+
+def orderItem():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    
+
+
+
+    return render_template('orderItem.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
+
+
+
+@app.route("/orderItem2/", methods = ['GET', 'POST'])
+@login_required
+@admin_required
+
+def orderItem2():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    
+
+
+
+    return render_template('orderItem2.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
+
+
+@app.route("/orderItem3/", methods = ['GET', 'POST'])
+@login_required
+@admin_required
+
+def orderItem3():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    
+
+
+
+    return render_template('orderItem2.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
+
 
 
 
