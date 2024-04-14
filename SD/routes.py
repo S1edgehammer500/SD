@@ -259,167 +259,6 @@ def adminOptions():
 
     return render_template('adminOptions.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
 
-@app.route("/reservation/")
-@login_required
-def reservation():
-    # check to see what navbar to display
-    logged_in = session['logged_in']
-    authLevel = session['authLevel']
-
-    return render_template('reservation.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
-
-
-@app.route("/createReservation/")
-@login_required
-def createReservation():
-    # check to see what navbar to display
-    logged_in = session['logged_in']
-    authLevel = session['authLevel']
-
-    return render_template('createReservation.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
-
-@app.route("/updateReservation/")
-@login_required
-def updateReservation():
-    # check to see what navbar to display
-    logged_in = session['logged_in']
-    authLevel = session['authLevel']
-
-    return render_template('updateReservation.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
-
-@app.route("/deleteReservation/")
-@login_required
-def deleteReservation():
-    # check to see what navbar to display
-    logged_in = session['logged_in']
-    authLevel = session['authLevel']
-
-    return render_template('deleteReservation.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
-
-
-
-
-@app.route("/menu/", methods = ['GET', 'POST'])
-@login_required
-def menu():
-    # check to see what navbar to display
-    logged_in = session['logged_in']
-    authLevel = session['authLevel']
-    
-
-    currentUser = User()
-    currentUser.setLoginDetails(session['code'])
-
-    currentRestaurant = currentUser.getBaseRestaurant()
-
-
-    currentMenu = Menu()
-
-    
-    foodList, priceList, allergyList, idList = currentMenu.getMenuList(currentRestaurant)
-
-
-    return render_template('menu.html', title = "Menu" , logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, allergyList = allergyList, listLen = len(foodList))
-
-
-@app.route("/deleteFoodMenu/", methods = ['GET', 'POST'])
-@login_required
-def deleteFoodMenu():
-    # check to see what navbar to display
-    logged_in = session['logged_in']
-    authLevel = session['authLevel']
-    
-
-    currentUser = User()
-    currentUser.setLoginDetails(session['code'])
-
-    currentRestaurant = currentUser.getBaseRestaurant()
-
-
-    currentMenu = Menu()
-
-    
-    foodList, priceList, allergyList, idList = currentMenu.getMenuList(currentRestaurant)
-
-
-    return render_template('deleteFoodMenu.html', title = "Delete Menu" , logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, listLen = len(foodList), idList = idList)
-
-
-@app.route("/deleteFoodMenu2/", methods = ['GET', 'POST'])
-@login_required
-def deleteFoodMenu2():
-    # check to see what navbar to display
-    logged_in = session['logged_in']
-    authLevel = session['authLevel']
-    
-    error = ""
-
-    
-    currentMenu = Menu()
-
-    try:
-        if request.method == "POST":
-
-            print("method is posting")
-
-            foodID = request.form['foodID']
-
-            
-            print(foodID)
-
-            if foodID != None:
-                
-                if currentMenu.delete_menu(foodID) == 1:
-                                                           
-                    flash ("Food successfully deleted from the menu", "success")
-                    return redirect(url_for('deleteFoodMenu'))
-
-                else:
-                    flash ("Error deleting food from the menu", "danger")
-                    return render_template('deleteFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
-
-
-            else:
-                flash ("Select a food to delete", "danger")
-                return render_template('deleteFoodMenu.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
-
-
-        else:
-            return redirect(url_for('deleteFoodMenu'))
-
-
-    except Exception as e:
-        
-        return render_template('home.html', error=e, title="Restaurant Options", logged_in=logged_in, authLevel=authLevel)
-
-
-    
-
-
-
-@app.route("/account/", methods = ['GET'])
-@login_required
-def account():
-    # check to see what navbar to display
-    logged_in = session['logged_in']
-    authLevel = session['authLevel']
-    
-
-    currentUser = User()
-    currentUser.setLoginDetails(session['code'])
-
-    currentRestaurant = currentUser.getBaseRestaurant()
-
-    print(currentRestaurant)
-
-    currentCode = currentUser.getCode()
-
-    currentLevel = currentUser.getAuthorisation()
-
-
-
-    return render_template('account.html', title = "Account" , logged_in=logged_in, authLevel=authLevel, currentLevel = currentLevel, currentCode = currentCode, currentRestaurant = currentRestaurant )
-
 
 
 @app.route("/deleteUser/", methods=['GET', 'POST'])
@@ -1492,16 +1331,6 @@ def applyDiscountOrder():
   
     return render_template('applyDiscountOrder.html', title = "Update Discount", logged_in=logged_in, authLevel = authLevel, dIDs=dIDs, dValues=dValues, discountsLen = len(dIDs))
 
-<<<<<<< Updated upstream
-=======
-@app.route("/adminOptions/")
-@login_required
-def adminOptions():
-    # check to see what navbar to display
-    logged_in = session['logged_in']
-    authLevel = session['authLevel']
-
-    return render_template('adminOptions.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
 
 @app.route("/reservation/")
 @login_required
@@ -1641,7 +1470,6 @@ def account():
 
 
     return render_template('account.html', title = "Account" , logged_in=logged_in, authLevel=authLevel, currentLevel = currentLevel, currentCode = currentCode, currentRestaurant = currentRestaurant )
->>>>>>> Stashed changes
 
 
 
