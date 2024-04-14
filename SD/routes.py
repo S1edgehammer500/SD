@@ -15,6 +15,7 @@ from Model.foodModel import *
 from Model.reportModel import *
 from Model.inventoryModel import *
 from Model.itemModel import *
+from Model.ordersModel import *
 
 
 # User defined
@@ -2460,6 +2461,31 @@ def orderItem3():
 
 
     return render_template('orderItem2.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
+
+#Needs to be made - before createOrder page
+@app.route("/tableNumber/", methods = ['GET', 'POST'])
+
+#order CRUD
+@app.route("/createorder/", methods = ['GET', 'POST'])
+@login_required
+def createOrder():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    try:
+        if request.method == 'POST':
+            currentUser = User()
+            currentUser.setLoginDetails(session['code'])
+            restaurantName = currentUser.getBaseRestaurant()
+
+            order = Order()
+            status = "Order Created"
+            order.createOrder(restaurantName, status, )
+
+        return render_template('createOrder.html', title = "Create Order", logged_in=logged_in, authLevel=authLevel)
+
+    except Exception as e:                
+        return render_template('createOrder.html', error=e, title = "Create Order", logged_in=logged_in, authLevel=authLevel)
 
 
 
