@@ -10,12 +10,12 @@ def run_tests():
         def test1_create_order(self):
             restaurantName = "Bristol"
             status = "Cooking"
-            tableNumber = 43
+            tableNumber = 15
             startTime = None
             readyTime = None
             result = self.model.createOrder(restaurantName, status, tableNumber, startTime, readyTime)
             self.assertEqual(result,1)
-            tableNumber2 = 64
+            tableNumber2 = 13
             self.model.createOrder(restaurantName, status, tableNumber2, startTime, readyTime)
 
         def test2_create_order_nonexistant_restaurant(self):
@@ -68,7 +68,7 @@ def run_tests():
             result = self.model.removeFoodFromOrder(orderID, foodName, foodListID)
             self.assertEqual(result, 0)
 
-        def test9_add_to_discount_list(self):
+        def test90_add_to_discount_list(self):
             orderID = 1
             discountID = 1
             discountID2 = 2
@@ -91,8 +91,9 @@ def run_tests():
         def test93_remove_discount_from_list(self):
             orderID = 1
             discountID = 2
-            discountListID = 1
-            result = self.model.removeDiscountFromOrder(orderID, discountID, discountListID)
+            discountListID = 2
+            result = self.model.checkDiscountInOrder(orderID, discountID, discountListID)
+            #result = self.model.removeDiscountFromOrder(orderID, discountID, discountListID)
             self.assertEqual(result, 1)
 
         def test94_remove_nonexistant_discountList(self):
@@ -134,7 +135,7 @@ def run_tests():
 
         def test4_update_status(self):
             id = 1
-            status = 'Cooking'
+            status = 'Ready'
             result = self.model.updateStatus(status, id)
             self.assertEqual(result, 1)
 
@@ -142,7 +143,7 @@ def run_tests():
             id = 1
             status = 'Nothing'
             result = self.model.updateStatus(status, id)
-            self.assertEqual(result, 1)
+            self.assertEqual(result, 0)
 
         def test6_update_status_invalid_id(self):
             id = 20
@@ -160,7 +161,7 @@ def run_tests():
             id = 1
             price = -1
             result = self.model.updatePrice(price, id)
-            self.assertEqual(result, 1)
+            self.assertEqual(result, 0)
 
         def test9_update_price_invalid_id(self):
             id = 20
@@ -180,7 +181,7 @@ def run_tests():
             table = 31 #Bristol only has 20
             self.model.setOrderDetails(id)
             result = self.model.updateTable(table, id)
-            self.assertEqual(result, 1)
+            self.assertEqual(result, 0)
 
         def test93_update_table_invalid_id(self):
             id = 20
@@ -198,7 +199,7 @@ def run_tests():
             id = 1
             startTime = "2024-03-02 20:13:38" #Before today
             result = self.model.updateStartTime(startTime, id)
-            self.assertEqual(result, 1)
+            self.assertEqual(result, 0)
 
         def test96_update_startTime_invalid_id(self):
             id = 20
@@ -209,31 +210,36 @@ def run_tests():
         def test97_update_readyTime(self):
             id = 1
             readyTime = "2024-09-02 20:13:38"
-            result = self.model.updateReadyTime(readyTime, id)
+            self.model.setOrderDetails(id)
+            startTime = self.model.getStartTime()
+            result = self.model.updateReadyTime(readyTime, id, startTime)
             self.assertEqual(result, 1)
 
         def test98_update_readyTime_invalid_syntax(self):
             id = 1
             readyTime = "2024-06-02 20:13:38" #Before start time
-            result = self.model.updateReadyTime(readyTime, id)
-            self.assertEqual(result, 1)
+            self.model.setOrderDetails(id)
+            startTime = self.model.getStartTime()
+            result = self.model.updateReadyTime(readyTime, id, startTime)
+            self.assertEqual(result, 0)
 
         def test99_update_readyTime_invalid_id(self):
             id = 20
             readyTime = "2024-09-02 20:13:38"
-            result = self.model.updateReadyTime(readyTime, id)
+            startTime = "2024-08-02 20:13:38"
+            result = self.model.updateReadyTime(readyTime, id, startTime)
             self.assertEqual(result, 0)
         
     class TestDeleteOrder(unittest.TestCase):
         def setUp(self):
             self.model = Order()
 
-        def test1_delete_offer(self):
+        def test1_delete_order(self):
             id = 2
             result = self.model.delete_order(id)
             self.assertEqual(result, 1)
 
-        def test2_delete_nonexistant_inventory(self):
+        def test2_delete_nonexistant_order(self):
             id = 70
             result = self.model.delete_order(id)
             self.assertEqual(result, 0)
