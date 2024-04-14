@@ -2,7 +2,7 @@ from Model.Database import *
 import re
 import datetime
 
-class Order: #menu class
+class Order: #order class
 
     def __init__(self):
         self.__restaurantName = ""
@@ -18,7 +18,7 @@ class Order: #menu class
          query = "SELECT * FROM orders WHERE orderID = ?;"
          cur.execute(query,(id,))
          record = cur.fetchone()
-         restaurantName = record[0]
+         restaurantName = record[1]
          status = record[2]
          price = record[3]
          tableNumber = record[4]
@@ -60,7 +60,7 @@ class Order: #menu class
             return 0
         
     def setTableNumber(self, tableNumber):
-        if self.validateTableNumber(tableNumber):
+        if self.validateTableNumber(tableNumber, self.__restaurantName):
             self.__table = tableNumber
             return 1
         else:
@@ -258,29 +258,35 @@ class Order: #menu class
             conn.close()  # Close the connection
             return 0
         
-    def checkFoodInOrder(self, orderID, foodName):
+    def checkFoodInOrder(self, orderID, foodName, foodListID):
         conn, cur = openConnection()
         query = 'SELECT * FROM foodList WHERE orderID = ? AND foodName = ?;'
         cur.execute(query, (orderID, foodName))
         record = cur.fetchone()
         if record is not None:
-            print("Food is in order")
-            conn.close()
-            return 1
+            if record[0] != foodListID:
+                return 0
+            else:
+                print("Food is in order")
+                conn.close()
+                return 1
         else:
             print("Food is not in order")
             conn.close()
             return 0
         
-    def checkDiscountInOrder(self, orderID, discountID):
+    def checkDiscountInOrder(self, orderID, discountID, discountListID):
         conn, cur = openConnection()
         query = 'SELECT * FROM discountList WHERE orderID = ? AND discountID = ?;'
         cur.execute(query, (orderID, discountID))
         record = cur.fetchone()
         if record is not None:
-            print("Discount is in order")
-            conn.close()
-            return 1
+            if record[0] != discountListID:
+                return 0
+            else:
+                print("Discount is in order")
+                conn.close()
+                return 1
         else:
             print("Discount is not in order")
             conn.close()
@@ -340,7 +346,7 @@ class Order: #menu class
     def updateTable(self, table, id):
         if table != None:
             if self.checkID(id):
-                if self.validateTableNumber(table):
+                if self.validateTableNumber(table, self.__restaurantName):
                     conn, cur = openConnection()
                     query = 'UPDATE orders SET tableNumber = ? WHERE orderID = ?;'
                     cur.execute(query, (table, id))
@@ -382,8 +388,10 @@ class Order: #menu class
                     conn.close()
                     return 1
                 else:
+                    print("Invalid ready time")
                     return 0
             else:
+                print("Invalid ID")
                 return 0
         else:
             return 1
@@ -391,7 +399,7 @@ class Order: #menu class
         
     def createOrder(self, restaurantName, status, tableNumber, startTime, readyTime):
         conn, cur = openConnection()
-        if (self.validateRestaurantName(restaurantName)) and (self.validateStatus(status)) and (self.validateTableNumber(tableNumber) and (self.validateStartTime(startTime) and (self.validateReadyTime(readyTime)))):
+        if (self.validateRestaurantName(restaurantName)) and (self.validateStatus(status)) and (self.validateTableNumber(tableNumber, restaurantName) and (self.validateStartTime(startTime) and (self.validateReadyTime(readyTime)))):
             query = 'INSERT INTO orders (restaurantName, status, price, tableNumber, startTime, readyTime) VALUES (?,?,?,?,?,?);'
             cur.execute(query, (restaurantName, status, 0, tableNumber, startTime, readyTime))
             conn.commit()
@@ -425,7 +433,7 @@ class Order: #menu class
         
     def removeFoodFromOrder(self, orderID, foodName, foodListID):
         conn, cur = openConnection()
-        if (self.validateFoodName(foodName) and self.checkID(orderID) and self.checkFoodListID(foodListID) and self.checkFoodInOrder(orderID, foodName)):
+        if (self.validateFoodName(foodName) and self.checkID(orderID) and self.checkFoodListID(foodListID) and self.checkFoodInOrder(orderID, foodName, foodListID)):
             query = 'SELECT price FROM food WHERE foodName = ?;'
             cur.execute(query, (foodName, ))
             foodPrice = cur.fetchone()
@@ -467,7 +475,7 @@ class Order: #menu class
         
     def removeDiscountFromOrder(self, orderID, discountID, discountListID):
         conn, cur = openConnection()
-        if (self.checkDiscountID(discountID) and self.checkID(orderID) and self.checkDiscountListID(discountListID) and self.checkDiscountInOrder(orderID, discountID)):
+        if (self.checkDiscountID(discountID) and self.checkID(orderID) and self.checkDiscountListID(discountListID) and self.checkDiscountInOrder(orderID, discountID, discountListID)):
             query = 'SELECT discountValue FROM discounts WHERE discountID = ?;'
             cur.execute(query, (discountID, ))
             discountValue = cur.fetchone()
