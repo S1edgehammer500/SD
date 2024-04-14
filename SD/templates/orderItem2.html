@@ -1,0 +1,27 @@
+{% extends "layout.html" %} 
+{% block content %} 
+<div class = "StandardBox">
+
+    <h3 class="text-center pt-3 heading">Enter How Much To Order Here</h3> <br>
+  
+    <form action="/orderItem3/" method="post">
+
+        <div class="form-group">
+            <label for="quantity">Amount:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
+            <input required style="color:black" id="quantity" min="1" type="number" class="quantity" name="quantity" size="30" value="{{request.form.quantity}}"><br>
+        </div>
+        
+  
+          <div class = "d-grid mb-3">
+            <button type = "submit"  class = "btn btn-light black">submit</button>
+            </div> <br>
+  
+  </div>
+  
+  </div>
+  
+  </div>
+
+
+
+{% endblock content %}

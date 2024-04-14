@@ -1,0 +1,100 @@
+{% extends "layout.html" %} 
+{% block content %}
+
+<script>
+    function getDateTime1() {
+      var date = document.getElementById("dateEnd").value;
+      var time = document.getElementById("timeEnd").value;
+      document.getElementById("endDT").innerText = "Selected End Date & Time: " + date + " " + time;
+    }
+
+    function getDateTime2() {
+      var date = document.getElementById("dateStart").value;
+      var time = document.getElementById("timeStart").value;
+      document.getElementById("startDT").innerText = "Selected Start Date & Time: " + date + " " + time;
+    }
+
+    function setMinimumDateTime() {
+        var today = new Date();
+        var hh = today.getHours();
+        var mm = today.getMinutes();
+        var minTime = hh + ":" + mm + ":";
+        document.getElementById("timeStart").setAttribute("min", minTime);
+        document.getElementById("timeEnd").setAttribute("min", minTime);
+    }
+
+    function setMinimumDate() {
+        var today = new Date().toISOString().split('T')[0];
+        document.getElementById("dateStart").setAttribute("min", today);
+        document.getElementById("dateEnd").setAttribute("min", today);
+    }
+
+    window.onload = function() {
+        setMinimumDate();
+        setMinimumDateTime()
+    };
+
+</script>
+
+<div class="StandardBox">
+    <!--Create restaurant form-->
+    <h3 class="text-center pt-3 heading">View Order</h3> <br>
+            
+    <form action="#" method="post">
+
+
+
+
+        <table border=1 style="color:rgb(255, 255, 255)" class="center">
+            <tr>
+
+                <th class = "text-center" style = "width: 30%;">Name</th>
+                <th class = "text-center" style = "width: 30%;">Price</th>
+                
+        </table>
+
+
+        <br>
+        <div class="form-group">
+            <label for="tableNumber">Table Number:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
+            <input required style="color:black" id="tableNumber" min="1" max="100" type="number" class="tableNumber" name="tableNumber" size="30" value="#"><br>
+        </div>
+
+        <br>
+        <h4> Discount Applied: </h4>
+
+        <h4> Total: </h4>
+
+        <br>
+        <div class="d-grid mb-3">
+            <button type="submit" class="btn btn-light black">Confirm</button>
+        </div> <br>
+
+    </form>
+</div>
+
+
+<div class = "reservation-options">
+
+    <div class = "AdminBox">
+
+    <h3 class="txt-size text-center pt-3">Order Options</h3>
+
+    <a href="{{ url_for('removeFromOrder') }}">
+        <button type="button">Remove Item From Order</button>
+    </a>
+
+    <a href="{{ url_for('applyDiscountOrder') }}">
+        <button type="button">Apply Discount</button>
+    </a>
+
+    <a href="{{ url_for('removeFromOrder') }}">
+        <button type="button">Apply Offer</button>
+    </a>
+
+</div>
+
+
+</div>
+
+{% endblock content %}

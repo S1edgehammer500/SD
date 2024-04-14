@@ -36,40 +36,42 @@
 
 
 
-<div class = "AdminDiscountPos">
+<div class = "AdminWarehousePos">
 <div class="AdminBox">
-    <h3 class="txt-size text-center pt-3">Edit Discounts</h3>
+    <h3 class="txt-size text-center pt-3">Warehouse Options</h3>
 
-    <a href="{{ url_for('createDiscount') }}">
-        <button type="button">Add New Discount</button>
-    </a>
-    <a href="{{ url_for('updateDiscount') }}">
-        <button type="button">Update Existing Discount</button>
-    </a>
-    <a href="{{ url_for('deleteDiscount') }}">
-        <button type="button">Delete Discount</button>
-    </a>
-
-</div>
-</div>
-
-
-
-<div class = "AdminMenuPos">
-<div class="AdminBox">
-    <h3 class="txt-size text-center pt-3">Edit Menu</h3>
-
-    <a href="{{ url_for('createFoodMenu') }}">
+    <a href="{{ url_for('createItem') }}">
         <button type="button">Add New Item</button>
     </a>
-    <a href="{{url_for('updateFoodMenu')}}">
+    <a href="{{ url_for('updateItem') }}">
         <button type="button">Update Existing Item</button>
     </a>
-    <a href="{{ url_for('deleteFoodMenu') }}">
+
+    <a href="{{ url_for('deleteItem') }}">
         <button type="button">Delete Item</button>
     </a>
 
 </div>
+</div>
+
+
+
+
+<div class = "AdminFoodPos">
+    <div class="AdminBox">
+        <h3 class="txt-size text-center pt-3">Food Database</h3>
+    
+        <a href="{{ url_for('createFood') }}">
+            <button type="button">Add New Food</button>
+        </a>
+        <a href="{{url_for('updateFood')}}">
+            <button type="button">Update Existing Food</button>
+        </a>
+        <a href="{{ url_for('deleteFood') }}">
+            <button type="button">Delete Food</button>
+        </a>
+    
+    </div>
 </div>
 
 

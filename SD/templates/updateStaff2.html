@@ -1,0 +1,40 @@
+{% extends "layout.html" %} 
+{% block content %} 
+
+
+    <div class = "StandardBox">
+
+      <h3 class="text-center pt-3 heading">Update The User Here</h3> <br>
+    
+      <form action="/updateStaff3/" method="post">
+    
+        <div class="form-group">
+          <label for="code">Employee Code:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
+          <input required style="color:black" class="code" name="code" size="30" value="{{request.form.code}}"><br>
+      </div>
+
+        <div class="form-group">
+          <label for="auth">Authorisation Level:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
+          <select style="color:black" name="auth" id="auth">
+            <option style="color:black" value="staff">Staff</option>
+            <option style="color:black" value="chef">Chef</option>
+            <option style="color:black" value="manager">Manager</option>
+            <option style="color:black" value="admin">Admin</option>
+          </select>
+        </div>
+    
+            <div class = "d-grid mb-3">
+              <button type = "submit"  class = "btn btn-light black">submit</button>
+              </div> <br>
+    
+    </div>
+    
+    </div>
+    
+    </div>
+
+
+
+
+
+{% endblock content %}

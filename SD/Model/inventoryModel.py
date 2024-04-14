@@ -205,6 +205,22 @@ class Inventory: #inventory class
         else:
             return 0
 
+    def updateStockLimit(self, stockLimit, id):
+        if stockLimit != None:
+            if self.checkID(id):
+                if self.validateStockLimit(stockLimit):
+                    conn, cur = openConnection()
+                    query = 'UPDATE inventory SET stockLimit = ? WHERE inventoryID = ?;'
+                    cur.execute(query, (stockLimit, id))
+                    conn.commit()
+                    conn.close()
+                    return 1
+                else:
+                    return 0
+            else:
+                return 0
+        else:
+            return 0
         
     def createInventory(self, restaurantName, itemName, quantity, stockLimit):
         conn, cur = openConnection()
@@ -263,6 +279,14 @@ class Inventory: #inventory class
         # Close the connection after fetching data
         conn.close()
         return itemList, quantityList, stockLimitList
+    
+    def getInventoryID(self, restaurantName):
+        conn, cur = openConnection()
+        query = 'SELECT inventoryID FROM inventory WHERE restaurantName = ? ORDER BY inventoryID;'
+        cur.execute(query, (restaurantName,))
+        record = cur.fetchall()
+        conn.close()
+        return record
         
     def delete_inventory(self, id):
         try:

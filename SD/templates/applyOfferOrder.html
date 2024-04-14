@@ -1,0 +1,44 @@
+{% extends "layout.html" %} 
+{% block content %}
+
+
+<div class="StandardBox">
+    <!--Create restaurant form-->
+    <h3 class="text-center pt-3 heading">Apply Offer To Order Here</h3> <br>
+            
+    <form action="#" method="post">
+
+
+
+
+        <table border=1 style="color:rgb(255, 255, 255)" class="center">
+            <tr>
+                <th class = "text-center" style = "width: 30%;">Discount ID &nbsp;&nbsp;</th>
+                <th class = "text-center" style = "width: 30%;">Discount Value &nbsp;&nbsp;</th>
+                <th class = "text-center" style = "width: 10%;"> Select</th>
+                {% for i in range(discountsLen): %} 
+                <tr>
+                    <td> {{dIDs[i]}} </td>              
+                    <td> {{dValues[i]}} </td>
+                    <td> <input required type="radio" name="selected" value="{{dIDs[i]}}" checked></td>
+                </tr>
+            {% endfor %}
+        </table>
+        <br><br>
+
+
+        <form>
+
+        <br>
+        <div class="d-grid mb-3">
+            <button type="submit" class="btn btn-light black">Confirm</button>
+        </div> <br>
+
+    </form>
+</div>
+
+
+
+
+
+{% endblock content %}

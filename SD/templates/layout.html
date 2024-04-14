@@ -31,13 +31,38 @@
                           <span class="caret"></span>
                       </a>
                       <ul class="dropdown-menu">
-                          <li><a href="{{ url_for('viewSalesReport') }}">View Sales Report</a></li>
-                          <li><a href="{{ url_for('viewAverageSalesReport') }}">View Average Sales Report</a></li>
-                          <li><a href="{{ url_for('viewAverageServingReport') }}">View Average Serving Time Report</a></li>
-                          <li><a href="{{ url_for('viewTotalDiscountReport') }}">View Total Discount Amount Report</a></li>
-                          <li><a href="{{ url_for('viewAverageDiscountReport') }}">View Average Discount Amount Report</a></li>
+                          <li><a href="{{ url_for('salesReport') }}">View Sales Report</a></li>
+                          <li><a href="{{ url_for('averageSalesReport') }}">View Average Sales Report</a></li>
+                          <li><a href="{{ url_for('averageServingTimeReport') }}">View Average Serving Time Report</a></li>
+                          <li><a href="{{ url_for('totalDiscountAmountReport') }}">View Total Discount Amount Report</a></li>
+                          <li><a href="{{ url_for('averageDiscountAmountReport') }}">View Average Discount Amount Report</a></li>
                       </ul>
                   </li>
+
+                  <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Edit Discounts
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ url_for('createDiscount') }}">Add New Discount</a></li>
+                        <li><a href="{{ url_for('updateDiscount') }}">Update Existing Discount</a></li>
+                        <li><a href="{{ url_for('deleteDiscount') }}">Delete Discount</a></li>
+
+                    </ul>
+                </li>
+
+
+
+                  <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Edit Menu
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ url_for('createMenu') }}">Add To Menu</a></li>
+                        <li><a href="{{ url_for('deleteMenu') }}">Delete From Menu</a></li>
+
+                    </ul>
+                </li>
                     
 
                   {% endif %}
@@ -48,9 +73,8 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="{{ url_for('createFoodMenu') }}">Add To Menu</a></li>
-                        <li><a href="{{ url_for('updateFoodMenu') }}">Update The Menu</a></li>
-                        <li><a href="{{ url_for('deleteFoodMenu') }}">Delete From Menu</a></li>
+                        <li><a href="{{ url_for('createMenu') }}">Add To Menu</a></li>
+                        <li><a href="{{ url_for('deleteMenu') }}">Delete From Menu</a></li>
 
                     </ul>
                 </li>
@@ -58,6 +82,17 @@
 
 
                   {% if authLevel == 'manager' : %}
+                  <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Staff
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                      <li><a href="{{ url_for('createStaff') }}">Add Staff</a></li>
+                      <li><a href="{{ url_for('updateStaff') }}">Edit Staff</a></li>
+                      <li><a href="{{ url_for('deleteStaff') }}">Delete Staff</a></li>
+
+                  </ul>
+                </li>
 
 
                   <li class="dropdown">
@@ -65,12 +100,12 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="{{ url_for('viewSalesReport') }}">View Sales Report</a></li>
-                        <li><a href="{{ url_for('viewAverageSalesReport') }}">View Average Sales Report</a></li>
-                        <li><a href="{{ url_for('viewAverageServingReport') }}">View Average Serving Time Report</a></li>
-                        <li><a href="{{ url_for('viewTotalDiscountReport') }}">View Total Discount Amount Report</a></li>
-                        <li><a href="{{ url_for('viewAverageDiscountReport') }}">View Average Discount Amount Report</a></li>
-                    </ul>
+                      <li><a href="{{ url_for('salesReport') }}">View Sales Report</a></li>
+                      <li><a href="{{ url_for('averageSalesReport') }}">View Average Sales Report</a></li>
+                      <li><a href="{{ url_for('averageServingTimeReport') }}">View Average Serving Time Report</a></li>
+                      <li><a href="{{ url_for('totalDiscountAmountReport') }}">View Total Discount Amount Report</a></li>
+                      <li><a href="{{ url_for('averageDiscountAmountReport') }}">View Average Discount Amount Report</a></li>
+                  </ul>
                 </li>
 
 
@@ -92,9 +127,9 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="{{ url_for('createFoodMenu') }}">Add To Menu</a></li>
-                        <li><a href="{{ url_for('updateFoodMenu') }}">Update The Menu</a></li>
-                        <li><a href="{{ url_for('deleteFoodMenu') }}">Delete From Menu</a></li>
+                        <li><a href="{{ url_for('createMenu') }}">Add To Menu</a></li>
+                        <li><a href="{{ url_for('updateMenu') }}">Update The Menu</a></li>
+                        <li><a href="{{ url_for('deleteMenu') }}">Delete From Menu</a></li>
 
                     </ul>
                 </li>
@@ -102,7 +137,7 @@
 
 
                   <li><a href="{{ url_for('menu') }}"> Menu</a></li>
-                  <li><a href=#> Order</a></li>
+                  <li><a href="{{ url_for('order') }}"> Order</a></li>
                   <li><a href="{{ url_for('inventory') }}">Inventory</a></li>
                   <li><a href="{{ url_for('reservation') }}">Reservations</a></li>
 

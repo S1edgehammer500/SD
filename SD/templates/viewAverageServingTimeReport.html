@@ -3,14 +3,15 @@
 
 <div class="StandardBox">
     <!--Create restaurant form-->
-    <h3 class="text-center pt-3 heading">View Sales Report</h3> <br>
+    <h3 class="text-center pt-3 heading">View Average Serving Time Report</h3> <br>
             
-    <form action="/salesReport2/" method="post">
+    <form action="/averageServingTimeReport2/" method="post">
 
         <div class="form-group">
             <div class="datetime-selector">
                 <label class="white" for="startDT">Start Date:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
                 <input type="date" id="dateStart" name="dateStart" required>
+                <p id="startDT" name="startDT"></p>
             </div>
         </div>
             
@@ -18,6 +19,7 @@
             <div class="datetime-selector">
                 <label class="white" for="endDT">End Date:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
                 <input type="date" id="dateEnd" name="dateEnd" required>
+                <p id="endDT" name="endDT"></p>
             </div>
         </div>
 
@@ -36,5 +38,6 @@
         </div> <br>
 
     </form>
+
 </div>
 {% endblock content %}

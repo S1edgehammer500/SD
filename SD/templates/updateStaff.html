@@ -1,0 +1,42 @@
+{% extends "layout.html" %} 
+{% block content %} 
+
+<form action="/updateStaff2/" method="post">
+    <div class="StandardBox">
+
+        <h3 class="text-center pt-3 heading">Choose Staff Details To Update Here</h3> <br>
+
+            <table border=1 style="color:rgb(255, 255, 255)" class="center">
+                    <tr>
+                        <th class = "text-center" style = "width: 30%;">Employee Code &nbsp;&nbsp;</th>
+                        <th class = "text-center" style = "width: 30%;">Authorisation Level &nbsp;&nbsp;</th>
+                        <th class = "text-center" style = "width: 30%;">Base Restaurant &nbsp;&nbsp;</th>
+                        <th class = "text-center" style = "width: 10%;"> Select</th>
+                    {% for i in range(codeLen): %} 
+                        <tr>
+                            <td> {{employeeCode[i]}} </td>              
+                            <td> {{authorisationLevel[i]}} </td>
+                            <td> {{baseRestaurant[i]}} </td>
+                            <td> <input required type="radio" name="code" value="{{employeeCode[i]}}" checked></td>
+                        </tr>
+                    {% endfor %}
+                </table>
+                <br><br>
+
+
+                <form>
+                    
+                    <div class = "d-grid mb-3">
+                        <button type = "submit"  class = "btn btn-light black">Submit</button>
+                        </div>
+                        <br>
+            </div>
+    </div>
+</form>
+
+<br>
+
+
+
+
+{% endblock content %}

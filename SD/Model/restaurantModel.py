@@ -143,6 +143,7 @@ class Restaurant: #restaurant class
         query = 'SELECT restaurantName FROM restaurant;'
         cur.execute(query)
         records = cur.fetchall()
+        print(records)
         conn.close()
         return records
         
