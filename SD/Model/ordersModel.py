@@ -2,7 +2,7 @@ from Model.Database import *
 import re
 import datetime
 
-class Menu: #menu class
+class Order: #menu class
 
     def __init__(self):
         self.__restaurantName = ""
@@ -367,6 +367,24 @@ class Menu: #menu class
         else:
             return 0
         
+    def removeFoodFromOrder(self, orderID, foodName):
+        conn, cur = openConnection()
+        if (self.validateFoodName(foodName) and self.checkID(orderID)):
+            query = 'SELECT price FROM food WHERE foodName = ?;'
+            cur.execute(query, (foodName, ))
+            foodPrice = cur.fetchone()
+            query2 = 'SELECT price FROM orders WHERE orderID = ?;'
+            cur.execute(query2, (orderID,))
+            orderPrice = cur.fetchone()
+            query3 = 'UPDATE orders SET price = ? WHERE orderID = ?;'
+            newPrice = int(orderPrice) - int(foodPrice)
+            cur.execute(query3, (newPrice, orderID))
+            conn.commit()
+            conn.close()
+            return 1
+        else:
+            return 0
+        
     def addDiscountToOrder(self, orderID, discountID):
         conn, cur = openConnection()
         if (self.checkDiscountID(discountID) and self.checkID(orderID)):
@@ -380,8 +398,26 @@ class Menu: #menu class
             cur.execute(query3, (orderID,))
             orderPrice = cur.fetchone()
             query4 = 'UPDATE orders SET price = ? WHERE orderID = ?;'
-            newPrice = int(orderPrice) * (1-(int(discountValue)/10))
+            newPrice = int(orderPrice) * (1-(int(discountValue)/100))
             cur.execute(query4, (newPrice, orderID))
+            conn.commit()
+            conn.close()
+            return 1
+        else:
+            return 0
+        
+    def removeDiscountFromOrder(self, orderID, discountID):
+        conn, cur = openConnection()
+        if (self.checkDiscountID(discountID) and self.checkID(orderID)):
+            query = 'SELECT discountValue FROM discounts WHERE discountID = ?;'
+            cur.execute(query, (discountID, ))
+            discountValue = cur.fetchone()
+            query2 = 'SELECT price FROM orders WHERE orderID = ?;'
+            cur.execute(query2, (orderID,))
+            orderPrice = cur.fetchone()
+            query3 = 'UPDATE orders SET price = ? WHERE orderID = ?;'
+            newPrice = int(orderPrice) / (1-(int(discountValue)/100))
+            cur.execute(query3, (newPrice, orderID))
             conn.commit()
             conn.close()
             return 1
