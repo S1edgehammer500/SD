@@ -1288,7 +1288,7 @@ def createInventory():
     currentRestaurant = currentUser.getBaseRestaurant()
 
     itemsList = currentItem.get_item_list()
-
+    
     #gets all foods in the food database
     allItems = [item[0] for item in itemsList]
 
@@ -1296,8 +1296,6 @@ def createInventory():
 
     #gets all the foods that are not in the restaurants menu but are in the food database
     items = [item for item in allItems if item not in [inventoryItem[0] for inventoryItem in items_in_inventory]]
-
-
 
     error = ''
     
@@ -1485,9 +1483,108 @@ def updateInventory3():
         return render_template('updateInventory2.html', title = "Update Inventory" , logged_in=logged_in, authLevel=authLevel)
 
 
+@app.route("/manualOrder/", methods=['GET', 'POST'])
+@login_required
+@chef_required
+def manualOrder():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    currentUser = User()
+    invent = Inventory()
+
+    currentUser.setLoginDetails(session['code'])
+    
+    currentRestaurant = currentUser.getBaseRestaurant()
+    session['currentRestaurant'] = currentRestaurant
+    
+    inventoryID = []
+    tempInventoryID = invent.getInventoryID(currentRestaurant)
+    inventoryID = strip.it(tempInventoryID)
+    
+    itemName = []
+    tempItemName = invent.getItemNames(currentRestaurant)
+    itemName = strip.it(tempItemName)
+    
+    itemQuantity = []
+    tempItemQuantity = invent.getItemQuantity(currentRestaurant)
+    itemQuantity = strip.it(tempItemQuantity)
+    
+    itemSL = []
+    tempItemSL = invent.getItemStockLimit(currentRestaurant)
+    itemSL = strip.it(tempItemSL)
+
+    
+    
+    return render_template('manualOrder.html', title = "Manual Order" , logged_in=logged_in, authLevel=authLevel, inventoryID = inventoryID, itemName = itemName, itemQuantity = itemQuantity, itemSL=itemSL, listLen = len(itemName))
 
 
+@app.route("/manualOrder2/", methods=['GET', 'POST'])
+@login_required
+@chef_required
+def manualOrder2():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
 
+    invent = Inventory()
+    
+    if request.method == "POST":
+        
+        inventoryID = request.form['inventoryID']
+        session['inventoryID'] = inventoryID
+
+        invent.setInventoryDetails(inventoryID)
+
+        itemQuant = invent.getQuantity()
+
+        itemSL = invent.getStockLimit()
+
+    
+    return render_template('manualOrder2.html', title = "Manual Order" , logged_in=logged_in, authLevel=authLevel, itemQuant=itemQuant, itemSL=itemSL)
+
+
+@app.route("/manualOrder3/", methods=['GET', 'POST'])
+@login_required
+@chef_required
+def manualOrder3():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    inventoryID = session['inventoryID']
+    
+    invent = Inventory()
+    
+    invent.setInventoryDetails(inventoryID)
+    
+    itemName = invent.getItemName()
+    try:
+        
+        if request.method == "POST":
+            
+            
+            quantToAdd = int(request.form['itemQuant'])
+            
+            
+            if quantToAdd != None:
+                itemSL = int(invent.getStockLimit())
+                itemQuant = int(invent.getQuantity())
+                
+
+                if invent.checkItemQuantLessThanStockLimit(itemSL, itemQuant, quantToAdd) == 1:
+                    
+
+                    invent.updateQuantity(quantToAdd + itemQuant)
+
+                    flash(f"You have successfully updated the item {itemName}", 'info')
+                    return redirect(url_for('inventory'))
+                else:
+                    flash("The quantity must be smaller than the stock limit", "danger")
+                    return render_template('manualOrder2.html', title = "Manual Order" , logged_in=logged_in, authLevel=authLevel, itemQuant=itemQuant, itemSL=itemSL)
+            else:                
+                flash("Please don't leave any field empty", "danger")
+                return render_template('manualOrder2.html', title = "Manual Order" , logged_in=logged_in, authLevel=authLevel, itemQuant=itemQuant, itemSL=itemSL)
+    except Exception as e:                
+        flash(e)
+        return render_template('home.html', title = "Manual Order" , logged_in=logged_in, authLevel=authLevel)
 
 
 
