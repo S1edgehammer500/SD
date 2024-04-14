@@ -1371,37 +1371,6 @@ def createInventory():
         return render_template('createInventory.html', error=e, title="Create Inventory", logged_in=logged_in, authLevel=authLevel)
 
 
-
-@app.route("/order/")
-@login_required
-def order():
-    # check to see what navbar to display
-    logged_in = session['logged_in']
-    authLevel = session['authLevel']
-    
-    return render_template('order.html', title="order", logged_in=logged_in, authLevel=authLevel)
-
-@app.route("/createOrder/")
-@login_required
-def createOrder():
-    # check to see what navbar to display
-    logged_in = session['logged_in']
-    authLevel = session['authLevel']
-
-    currentUser = User()
-    currentUser.setLoginDetails(session['code'])
-
-    currentRestaurant = currentUser.getBaseRestaurant()
-
-
-    currentMenu = Menu()
-
-    
-    foodList, priceList, allergyList, idList = currentMenu.getMenuList(currentRestaurant)
-    
-    return render_template('createOrder.html', title="order", logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, allergyList = allergyList, idList = idList, listLen = len(foodList))
-
-
 @app.route("/deleteInventory/", methods=['GET', 'POST'])
 @login_required
 @chef_required
@@ -1459,6 +1428,121 @@ def deleteInventory2():
                 
     except Exception as e:  
         return render_template('deleteInventory.html', error=e, title="Delete Inventory", logged_in=logged_in, authLevel=authLevel)
+
+@app.route("/updateInventory/", methods=['GET', 'POST'])
+@login_required
+@chef_required
+def updateInventory():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    currentUser = User()
+    inventory = Inventory()
+    currentUser.setLoginDetails(session['code'])
+    
+    currentRestaurant = currentUser.getBaseRestaurant()
+    
+    inventoryID = []
+    tempInventoryID = inventory.getInventoryID(currentRestaurant)
+    inventoryID = strip.it(tempInventoryID)
+    
+    itemName = []
+    tempItemName = inventory.getItemNames(currentRestaurant)
+    itemName = strip.it(tempItemName)
+    
+    itemQuantity = []
+    tempItemQuantity = inventory.getItemQuantity(currentRestaurant)
+    itemQuantity = strip.it(tempItemQuantity)
+    
+    itemSL = []
+    tempItemSL = inventory.getItemStockLimit(currentRestaurant)
+    itemSL = strip.it(tempItemSL)
+    
+    return render_template('updateInventory.html', title = "Update Inventory" , logged_in=logged_in, authLevel=authLevel, inventoryID = inventoryID, itemName = itemName, itemQuantity = itemQuantity, itemSL=itemSL, listLen = len(itemName))
+
+@app.route("/updateInventory2/", methods=['GET', 'POST'])
+@login_required
+@chef_required
+def updateInventory2():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    if request.method == "POST":
+        
+        inventoryID = request.form['inventoryID']
+        session['inventoryID'] = inventoryID
+    
+    return render_template('updateInventory2.html', title = "Update Inventory" , logged_in=logged_in, authLevel=authLevel)
+
+@app.route("/updateInventory3/", methods=['GET', 'POST'])
+@login_required
+@chef_required
+def updateInventory3():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    inventoryID = session['inventoryID']
+
+    
+    inventory = Inventory()
+    
+    inventory.setInventoryDetails(inventoryID)
+    print(inventoryID)
+    
+    itemName = inventory.getItemName()
+    try:
+        if request.method == "POST":
+            
+            itemSL = request.form['itemSL']
+            
+            if itemSL != None:
+                if inventory.validateStockLimit(itemSL) == 1:
+                    if inventory.updateStockLimit(itemSL, inventoryID):
+                        flash(f"You have successfully updated the item {itemName}", 'info')
+                        return redirect(url_for('inventory'))
+                    else:
+                        flash("The stock Limit should be within 1-99", "danger")
+                        return render_template('updateInventory2.html', title = "Update Inventory" , logged_in=logged_in, authLevel=authLevel)
+                else:
+                    flash("The stock Limit should be within 1-99", "danger")
+                    return render_template('updateInventory2.html', title = "Update Inventory" , logged_in=logged_in, authLevel=authLevel)
+            else:                
+                flash("Please don't leave any field empty", "danger")
+                return render_template('updateInventory2.html', title = "Update Inventory" , logged_in=logged_in, authLevel=authLevel)
+    except Exception as e:                
+        return render_template('updateInventory2.html', title = "Update Inventory" , logged_in=logged_in, authLevel=authLevel)
+
+    
+    
+
+
+@app.route("/order/")
+@login_required
+def order():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    return render_template('order.html', title="order", logged_in=logged_in, authLevel=authLevel)
+
+@app.route("/createOrder/")
+@login_required
+def createOrder():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    currentUser = User()
+    currentUser.setLoginDetails(session['code'])
+
+    currentRestaurant = currentUser.getBaseRestaurant()
+
+
+    currentMenu = Menu()
+
+    
+    foodList, priceList, allergyList, idList = currentMenu.getMenuList(currentRestaurant)
+    
+    return render_template('createOrder.html', title="order", logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, allergyList = allergyList, idList = idList, listLen = len(foodList))
 
     
 @app.route("/createOrder2/")
