@@ -1495,6 +1495,18 @@ def updateReservation():
 
     return render_template('updateReservation.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
 
+
+@app.route("/updateReservation2/", methods=['POST', 'GET'])
+@login_required
+def updateReservation2():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    return render_template('updateReservation2.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
+
+
+
 @app.route("/deleteReservation/")
 @login_required
 def deleteReservation():
