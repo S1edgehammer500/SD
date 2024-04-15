@@ -2,7 +2,7 @@
 {% block content %} 
 
 
-<form action="/deleteItem/" method="post">
+<form action="/deleteItem2/" method="post">
     <div class="StandardBox">
 
         <h3 class="text-center pt-3 heading">Choose An Item From The Warehouse To Delete</h3> <br>
@@ -15,10 +15,16 @@
                     <th class = "text-center" style = "width: 25%;">Stock Limit</th>
                     <th class = "text-center" style = "width: 10%;">Select</th>
 
+                    {% for i in range(listLen): %} 
+            <tr>
+                <td> {{itemName[i]}} </td>              
+                <td> {{itemQuantity[i]}} </td>
+                <td> {{itemSL[i]}} </td>
+                <td> <input required type="radio" name="itemName" value="{{itemName[i]}}" checked></td>
+            </tr>
+        {% endfor %}
             </table>
-                <br><br>
-
-
+            
                 <form>
                     
                     <div class = "d-grid mb-3">

@@ -69,7 +69,7 @@ class Item: #item class
 
     def validateQuantity(self, quantity):
         if int(quantity)>0:
-            pattern = r'[0-9]{1,2}' 
+            pattern = r'[0-9]{1,4}' 
             if re.fullmatch(pattern, str(quantity)):
                 return 1
             else:
@@ -88,7 +88,7 @@ class Item: #item class
 
     def validateStockLimit(self, stockLimit):
         if int(stockLimit):
-            pattern = r'[0-9]{1,2}'
+            pattern = r'[0-9]{1,4}'
             if re.fullmatch(pattern, str(stockLimit)):
                 return 1
             else:
@@ -190,8 +190,11 @@ class Item: #item class
             cur.execute("SELECT * FROM item")
             rows = cur.fetchall()
             item_list = [(row[0], row[1], row[2]) for row in rows]
+            itemName = [row[0] for row in rows]
+            quantity = [row[1] for row in rows]
+            stockLimit = [row[2] for row in rows]
             conn.close()
-            return item_list
+            return itemName, quantity, stockLimit
         except sqlite3.Error as e:
             print("Error fetching item list:", e)
             return []

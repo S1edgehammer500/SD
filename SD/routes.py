@@ -2554,28 +2554,98 @@ def createItem():
     logged_in = session['logged_in']
     authLevel = session['authLevel']
     
+    item = Item()
     
-
-
-
-    return render_template('createItem.html', title = "Create Item" , logged_in=logged_in, authLevel=authLevel)
-
+    error = ''
+    
+    try:
+        if request.method == "POST": 
+            #getting data from form        
+            itemName = request.form['itemName']
+            quantity = request.form['itemQuantity']
+            stockLimit = request.form['itemSL']                   
+            if itemName != None and quantity != None and stockLimit != None:
+                if item.validateName(itemName) == 1:
+                    if item.validateQuantity(quantity) == 1:
+                        if item.validateQuantity2(quantity, stockLimit) == 1:
+                            if item.validateStockLimit(stockLimit) == 1:
+                                if item.checkName(itemName) != 1:
+                                    if item.createItem(itemName, quantity, stockLimit) == 1:               
+                                        flash("Item has been created", "success")
+                                        return redirect(url_for('home'))
+                                    else:
+                                        flash("Could not create item", "danger")
+                                        return render_template('createItem.html', error=error, title="Create Invnentory", logged_in=logged_in, authLevel=authLevel)
+                                else:
+                                    flash("Item already exists in the restaurant", "danger")
+                                    return render_template('createItem.html', error=error, title="Create Item", logged_in=logged_in, authLevel=authLevel)
+                            else:
+                                flash("Invalid stock limit", "danger")
+                                return render_template('createItem.html', error=error, title="Create Item", logged_in=logged_in, authLevel=authLevel)
+                        else:
+                            flash("Quantity cannot be more than stock limit", "danger")
+                            return render_template('createItem.html', error=error, title="Create Item", logged_in=logged_in, authLevel=authLevel)
+                    else:
+                        flash("Invalid quantity", "danger")
+                        return render_template('createItem.html', error=error, title="Create Item", logged_in=logged_in, authLevel=authLevel)
+                else:
+                    flash("Item not available in the warehouse", "danger")
+                    return render_template('createItem.html', error=error, title="Create Item", logged_in=logged_in, authLevel=authLevel)
+            else:                
+                flash("Fields cannot be empty", "danger")
+                return render_template('createItem.html', error=error, title="Create Item", logged_in=logged_in, authLevel=authLevel)
+        else:            
+            return render_template('createItem.html', error=error, title="Create Item", logged_in=logged_in, authLevel=authLevel)        
+    except Exception as e:                
+        return render_template('createItem.html', error=e, title="Create Item", logged_in=logged_in, authLevel=authLevel)
 
 
 @app.route("/deleteItem/", methods = ['GET', 'POST'])
 @login_required
 @admin_required
-
 def deleteItem():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
+
+    
+    item = Item()
     
     
+    itemList = item.get_item_list()
+    itemName, itemQuantity, itemSL = itemList
+    
 
 
+    return render_template('deleteItem.html', title = "Delete Item" , logged_in=logged_in, authLevel=authLevel, itemName=itemName,itemQuantity=itemQuantity, itemSL=itemSL, listLen=len(itemName))
 
-    return render_template('deleteItem.html', title = "Delete Item" , logged_in=logged_in, authLevel=authLevel)
+@app.route("/deleteItem2/", methods = ['GET', 'POST'])
+@login_required
+@admin_required
+def deleteItem2():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    item = Item()
+    
+    try:
+        if request.method == "POST":
+            # Item name that you wanna delete
+            itemName = request.form['itemName']
+  
+            if item.delete_item(itemName):
+                flash(f"You have successfully deleted the item {itemName}", 'info')
+                return redirect(url_for('deleteItem'))
+            else:
+                flash(f"Item \"{itemName}\" does not exist", 'danger')
+                return redirect(url_for('deleteItem'))
+                
+    except Exception as e:  
+        return render_template('deleteItem.html', title = "Delete Item" , logged_in=logged_in, authLevel=authLevel)
+
+
+   
 
 
 
@@ -2588,12 +2658,17 @@ def updateItem():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
+
+    
+    item = Item()
     
     
+    itemList = item.get_item_list()
+    itemName, itemQuantity, itemSL = itemList
 
 
 
-    return render_template('updateItem.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
+    return render_template('updateItem.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel, itemName=itemName,itemQuantity=itemQuantity, itemSL=itemSL, listLen=len(itemName))
 
 
 
@@ -2601,14 +2676,14 @@ def updateItem():
 @app.route("/updateItem2/", methods = ['GET', 'POST'])
 @login_required
 @admin_required
-
 def updateItem2():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
     
     
-
+    itemName = request.form['itemName']
+    session['itemName'] = itemName
 
 
     return render_template('updateItem2.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
@@ -2622,12 +2697,31 @@ def updateItem3():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
+    itemName = session['itemName']
+
+    item = Item()
     
-    
-
-
-
-    return render_template('updateItem2.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
+    try:
+        if request.method == "POST":
+            
+            itemSL = request.form['itemSL']
+            
+            if itemSL != None:
+                if item.validateStockLimit(itemSL) == 1:
+                    if item.updateStockLimit(itemSL, itemName):
+                        flash(f"You have successfully updated the item stock limit {itemName}", 'info')
+                        return redirect(url_for('updateItem'))
+                    else:
+                        flash("Invalid stock limit input", "danger")
+                        return render_template('updateItem2.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
+                else:
+                    flash("Invalid stock limit input", "danger")
+                    return render_template('updateItem2.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
+            else:                
+                flash("Please don't leave any field empty", "danger")
+                return render_template('updateItem2.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
+    except Exception as e:                
+        return render_template('updateItem2.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
 
 
 
