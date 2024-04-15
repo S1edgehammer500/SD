@@ -214,3 +214,44 @@ class Item: #item class
                 return 0
         except sqlite3.Error as e:
             print("Error deleting item:", e)
+
+
+    def isThereMoreItems(self, itemName, quantity):
+        conn, cur = openConnection()
+        query = "SELECT quantity FROM item WHERE itemName = ?;"
+        cur.execute(query, (itemName,))
+        record = cur.fetchone()
+        conn.close()
+
+        if record is not None:
+            if record[0] >= quantity:
+                return 1
+            else:
+                return 0 
+        else:
+            conn.close()
+            return 0
+
+    def takeAwayItems(self, quantity, itemName):
+        if quantity != None:
+            if self.getName(itemName):
+                itemQuant = self.getQuantity(itemName)
+
+
+                quantity = itemQuant - quantity
+
+                conn, cur = openConnection()
+                query = 'UPDATE item SET quantity = ? WHERE itemName = ?;'
+                cur.execute(query, (quantity, itemName))
+                conn.commit()
+                conn.close()
+                return 1
+            else:
+                return 0
+        else:
+            return 0
+        
+    def checkItemQuantLessThanStockLimit(self, itemSL, itemQuant, quantToAdd):
+        if (quantToAdd + itemQuant) > itemSL:
+            return 0
+        else: return 1

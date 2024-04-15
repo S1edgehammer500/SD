@@ -16,6 +16,7 @@ from Model.reportModel import *
 from Model.inventoryModel import *
 from Model.itemModel import *
 from Model.reservationModel import *
+from Model.ordersModel import *
 
 # User defined
 import strip
@@ -1567,8 +1568,10 @@ def manualOrder3():
     inventoryID = session['inventoryID']
     
     invent = Inventory()
+    item = Item()
     
     invent.setInventoryDetails(inventoryID)
+    item.setItemDetails(invent.getItemName())
     
     itemName = invent.getItemName()
     try:
@@ -1586,11 +1589,11 @@ def manualOrder3():
 
                 if invent.checkItemQuantLessThanStockLimit(itemSL, itemQuant, quantToAdd) == 1:
                     
-                    if invent.isThereMoreItems(itemName, quantToAdd) == 1:
+                    if item.isThereMoreItems(itemName, quantToAdd) == 1:
                     
 
                         invent.updateQuantity(quantToAdd + itemQuant)
-                        invent.takeAwayItems(quantToAdd, itemName)
+                        item.takeAwayItems(quantToAdd, itemName)
 
                         flash(f"You have successfully updated the item {itemName}", 'info')
                         return redirect(url_for('inventory'))
@@ -2857,36 +2860,121 @@ def updateItem3():
 
 
 
+@app.route("/orderItems/", methods=['GET', 'POST'])
+@login_required
+@chef_required
+def orderItems():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    
+    item = Item()
+    
+    
+    itemList = item.get_item_list()
+    itemName, itemQuantity, itemSL = itemList
+
+    return render_template('orderItemsWarehouse.html', title = "Order Item" , logged_in=logged_in, authLevel=authLevel, itemName=itemName,itemQuantity=itemQuantity, itemSL=itemSL, listLen=len(itemName))
+
+
+@app.route("/orderItems2/", methods=['GET', 'POST'])
+@login_required
+@chef_required
+def orderItems2():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    item = Item()
+    
+    if request.method == "POST":
+        
+        itemName = request.form['itemName']
+        session['itemName'] = itemName
+
+        item.setItemDetails(itemName)
+
+        itemQuant = item.getQuantity()
+
+        itemSL = item.getStockLimit()
+
+    
+    return render_template('orderItemsWarehouse2.html', title = "Order Item" , logged_in=logged_in, authLevel=authLevel, itemQuant=itemQuant, itemSL=itemSL)
+
+
+@app.route("/orderItems3/", methods=['GET', 'POST'])
+@login_required
+@chef_required
+def orderItems3():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    itemName = session['itemName']
+    
+    item = Item()
+    
+    item.setItemDetails(itemName)
+    
+    itemName = item.getName()
+    
+    try:
+        
+        if request.method == "POST":
+            
+            
+            quantToAdd = int(request.form['itemQuant'])
+            
+            
+            if quantToAdd != None:
+                itemSL = int(item.getStockLimit())
+                itemQuant = int(item.getQuantity())
+                
+
+                if item.checkItemQuantLessThanStockLimit(itemSL, itemQuant, quantToAdd) == 1:
+
+                    item.updateQuantity(quantToAdd + itemQuant, itemName)
+
+                    flash(f"You have successfully updated the item {itemName}", 'info')
+                    return redirect(url_for('adminOptions'))
+                else:
+                    flash("The quantity must be smaller than the stock limit", "danger")
+                    return render_template('orderItemsWarehouse2.html', title = "Order Item" , logged_in=logged_in, authLevel=authLevel, itemQuant=itemQuant, itemSL=itemSL)
+            else:                
+                flash("Please don't leave any field empty", "danger")
+                return render_template('orderItemsWarehouse2.html', title = "Order Item" , logged_in=logged_in, authLevel=authLevel, itemQuant=itemQuant, itemSL=itemSL)
+    except Exception as e:                
+        flash(e)
+        return render_template('home.html', title = "Order Item" , logged_in=logged_in, authLevel=authLevel)
+
+
 @app.route("/payment/", methods = ['GET', 'POST'])
-
-
-
 def payment():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
-    
-    
 
-
+    session['orderID'] = 11
+    
 
     return render_template('payment.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
 
 
 
 @app.route("/receipt/", methods = ['GET', 'POST'])
-
-
 def receipt():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
     
-    
+    orderPay = Order()
+
+    sameData, diffData = orderPay.showReceipt(session['orderID'])
+
+    sameData.insert(0, request.form['name'])
+
+    sameData[5] = sameData[5][0:10]
 
 
-
-    return render_template('receipt.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
+    return render_template('receipt.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel, sameData=sameData, diffData=diffData, dataLen=len(diffData))
 
 
 if __name__ == "__main__":

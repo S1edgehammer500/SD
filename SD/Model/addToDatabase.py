@@ -40,20 +40,43 @@ readyTime = [date + dt.timedelta(minutes=ran.randint(0,60)) for date in random_d
 
 statuses = ['Order Created','Cooking', 'Ready', 'Delivered', 'Payment Completed','Cancelled']
 
-for restaurant in ["Bristol", "Manchester"]:
+for restaurant in ["Bristol"]:
+    
     for x in range(numOfOrders):
-        query = """INSERT INTO orders (restaurantName, status, orderPrice, tableNumber, startTime, readyTime)
-    VALUES (?, ?, ?, ?, ?, ?);"""
-        cur.execute(query, (restaurant, ran.choice(statuses), round(ran.uniform(1,60), 2), ran.randint(1,12), random_dates[x], readyTime[x]))
+        singleOrder = x
+        totalPrice = 0.0
+
+        #print(singleOrder, restaurant, ran.choice(statuses), totalPrice, ran.randint(1,12), random_dates[x], readyTime[x])
 
 
-# Foodlist Data
-numOfFoodLists = 50
+        query = """INSERT INTO orders (orderID, restaurantName, status, orderPrice, tableNumber, startTime, readyTime)
+    VALUES (?, ?, ?, ?, ?, ?, ?);"""
+        cur.execute(query, (singleOrder, restaurant, ran.choice(statuses), totalPrice, ran.randint(1,12), random_dates[x], readyTime[x]))
 
-for x in range(numOfFoodLists):
-    query = """INSERT INTO foodList (orderID, foodName)
-VALUES (?, ?);"""
-    cur.execute(query, (ran.randint(1,2000), ran.choice(food)))
+        for y in range(ran.randint(1,5)):
+            singleFood = ran.choice(food)
+            # Foodlist Data
+            query = """INSERT INTO foodList (orderID, foodName)
+        VALUES (?, ?);"""
+            cur.execute(query, (singleOrder, singleFood))
+
+            query = "SELECT price FROM food WHERE foodName = ?;"
+            cur.execute(query, (singleFood,))
+            records = cur.fetchone()
+
+            totalPrice += float(records[0])
+
+        query = "UPDATE orders SET orderPrice = ? WHERE orderID = ?;"
+        cur.execute(query, (round(totalPrice, 2), singleOrder))
+        conn.commit()
+
+        
+
+
+        
+
+
+
 
 # Discount Data
 discounts = [10, 25, 50, 75]
@@ -64,12 +87,12 @@ VALUES (?);"""
     cur.execute(query, (discount,))
 
 # DiscountList Data
-discountIDs = [14, 15, 16, 17]
+discountIDs = [1,2,3,4,5,6]
 
 for discount in range(500):
     query = """INSERT INTO discountList (orderID, discountID)
 VALUES (?, ?);"""
-    cur.execute(query, ( ran.randint(1,2000), ran.choice(discountIDs)))
+    cur.execute(query, ( ran.randint(1,1000), ran.choice(discountIDs)))
 
 
 
