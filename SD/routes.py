@@ -15,7 +15,7 @@ from Model.foodModel import *
 from Model.reportModel import *
 from Model.inventoryModel import *
 from Model.itemModel import *
-
+from Model.reservationModel import *
 
 # User defined
 import strip
@@ -1710,8 +1710,17 @@ def reservation():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
+    
+    currentUser = User()
+    reservation = Reservation()
 
-    return render_template('reservation.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
+    currentUser.setLoginDetails(session['code'])
+    
+    currentRestaurant = currentUser.getBaseRestaurant()
+    
+    tables, startTime, endTime, Name = reservation.getReservationList(currentRestaurant)[-4:]
+    
+    return render_template('reservation.html', title="Reservation", logged_in=logged_in, authLevel=authLevel, Name=Name, tables=tables, startTime=startTime, endTime=endTime, listLen=len(Name))
 
 
 @app.route("/createReservation/", methods=['POST', 'GET'])

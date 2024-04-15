@@ -10,14 +10,19 @@
     <table>
 
         <tr>
-            <th class = "hidden text-center" style = "width: 20%;">ID</th>
             <th class = "text-center" style = "width: 20%;">Name</th>
             <th class = "text-center" style = "width: 30%;">Tables</th>
             <th class = "text-center" style = "width: 25%;">Start Time</th>
             <th class = "text-center" style = "width: 25%;">End Time</th>
         </tr>
 
-        <!-- LOOK IN MENU.HTML TO HELP PUT IN DATA -->
+        {% for i in range(listLen): %} 
+                <tr>
+                    <td> {{foodList[i]}} </td>              
+                    <td> {{allergyList[i]}} </td>
+                    <td> £{{priceList[i]}} </td>
+                </tr>
+            {% endfor %}
     
     </table>
 

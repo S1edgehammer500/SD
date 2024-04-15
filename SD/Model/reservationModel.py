@@ -10,6 +10,7 @@ class Reservation: #offers class
         self.__tables = ""
         self.__startTime = ""
         self.__endTime = ""
+        self.__Name = ""
 
     def setReservationDetails(self, ID):
          conn, cur = openConnection()
@@ -20,31 +21,33 @@ class Reservation: #offers class
          tables = record[2]
          startTime = record[3]
          endTime = record[4]
+         Name = record[5]
          self.setTables(tables)
          self.setStartTime(startTime)
          self.setEndTime(endTime)
          self.setID(ID)
          self.setRestaurantName(restaurantName)
+         self.setName(Name)
          conn.close()
 
 
     #setters  
     def setTables(self, tables):
-        if self.validate(tables):
+        if self.validateTables(tables):
             self.__tables = tables
             return 1
         else:
             return 0
         
     def setStartTime(self, startTime):
-        if self.validate(startTime):
+        if self.validateStartTime(startTime):
             self.__startTime = startTime
             return 1
         else:
             return 0 
 
     def setEndTime(self, endTime):
-        if self.validate(endTime):
+        if self.validateEndTime(endTime):
             self.__endTime = endTime
             return 1
         else:
@@ -61,6 +64,12 @@ class Reservation: #offers class
         else:
             return 0
     
+    def setName(self, Name):
+        if self.validateName(Name):
+            self.__Name = Name
+            return 1
+        else:
+            return 0 
     #getters
     def getTables(self):
         return self.__tables
@@ -76,6 +85,9 @@ class Reservation: #offers class
     
     def getRestaurantName(self):
         return self.__restaurantName
+    
+    def getName(self):
+        return self.__Name
     
     #validators
 
@@ -152,13 +164,25 @@ class Reservation: #offers class
                 return 1
         else:
             return 1
+        
+    def validateName(self, Name):
+        if len(Name)>0:
+            pattern = r'[A-Za-z]{3,}'
+            if re.fullmatch(pattern, Name):
+                return 1
+            else:
+                print("Invalid Name Syntax")
+                return 0
+        else:
+            print("Name length too small")
+            return 0
    
         
-    def createReservation(self, restaurantName, tables, startTime, endTime):
+    def createReservation(self, restaurantName, tables, startTime, endTime, Name):
         conn, cur = openConnection()
-        if (self.validateEndTime(restaurantName)) and (self.validateTables(tables)) and (self.validateStartTime(startTime) and self.validateEndTime(endTime, startTime)):
-            query = 'INSERT INTO reservation (restaurantName, tables, startTime, endTime) VALUES (?, ?, ?, ?);'
-            cur.execute(query, (restaurantName, tables, startTime, endTime))
+        if (self.validateEndTime(restaurantName)) and (self.validateTables(tables)) and (self.validateStartTime(startTime) and self.validateEndTime(endTime, startTime) and self.validateName(Name)):
+            query = 'INSERT INTO reservation (restaurantName, tables, startTime, endTime, Name) VALUES (?, ?, ?, ?, ?);'
+            cur.execute(query, (restaurantName, tables, startTime, endTime, Name))
             conn.commit()
             print("new reservation created")
             conn.close()
@@ -181,6 +205,24 @@ class Reservation: #offers class
                 return 0
         except sqlite3.Error as e:
             print("Error deleting reservation:", e)
+            
+    def updateName(self, ID, Name):
+        if Name != None:
+            if self.validateName(Name):
+                if self.checkID(ID):
+                    conn, cur = openConnection()
+                    query = 'UPDATE reservation SET Name = ? WHERE reservationID = ?;'
+                    cur.execute(query, (Name,ID))
+                    conn.commit()
+                    conn.close()
+                    return 1
+                else:
+                    return 0
+            else:
+                return 0
+        else:
+            return 0
+                                
             
     def updateTables(self, ID, tables):
         if tables != None:
@@ -239,13 +281,14 @@ class Reservation: #offers class
         else:
             return 0
         
-    def getReservationList(self):
+    def getReservationList(self, restaurantName):
         try:
             conn, cur = openConnection()
             cur = conn.cursor()
-            cur.execute("SELECT * FROM reservation")
+            query = "SELECT * FROM reservation WHERE restaurantName = ?;"
+            cur.execute(query, (restaurantName,))
             rows = cur.fetchall()
-            reseravtionList = [(row[0], row[1], row[2], row[3], row[4]) for row in rows]
+            reseravtionList = [(row[0], row[2], row[3], row[4], row[5]) for row in rows]
             conn.close()
             return reseravtionList
         except sqlite3.Error as e:
