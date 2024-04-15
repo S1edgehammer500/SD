@@ -40,11 +40,16 @@
     <!--Create restaurant form-->
     <h3 class="text-center pt-3 heading">Add A New Reservation Here</h3> <br>
             
-    <form action="#" method="post">
+    <form action="/createReservation/" method="post">
 
         <div class="form-group">
             <label for="numberOfTables">Number of Tables:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
             <input required style="color:black" id="numberOfTables" min="1" max="100" type="number" class="numberOfTables" name="numberOfTables" size="30" value="#"><br>
+        </div>
+
+        <div class="form-group">
+            <label for="Name">Name of Reservation:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
+            <input required style="color:black" id="Name" class="Name" name="Name" size="30" value=""><br>
         </div>
 
         <div class="form-group">

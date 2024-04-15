@@ -16,10 +16,21 @@
         <div class="form-group">
           <label for="auth">Authorisation Level:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
           <select style="color:black" name="auth" id="auth">
-            <option style="color:black" value="staff">Staff</option>
-            <option style="color:black" value="chef">Chef</option>
-            <option style="color:black" value="manager">Manager</option>
-            <option style="color:black" value="admin">Admin</option>
+            {% if AL == 'staff' %}
+                  <option selected="selected" style="color:black" value="staff">Staff</option>
+                {% else %}
+                  <option style="color:black" value="staff">Staff</option>
+                {% endif%}
+                {% if AL == 'chef' %}
+                  <option selected="selected" style="color:black" value="chef">Chef</option>
+                {% else %}
+                  <option style="color:black" value="chef">Chef</option>
+                {% endif%}
+                {% if AL == 'manager' %}
+                  <option selected="selected" style="color:black" value="manager">Manager</option>
+                {% else %}
+                  <option style="color:black" value="manager">Manager</option>
+                {% endif%}
           </select>
         </div>
     
