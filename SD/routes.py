@@ -1556,35 +1556,45 @@ def manualOrder3():
     invent.setInventoryDetails(inventoryID)
     
     itemName = invent.getItemName()
-    try:
+    #try:
         
-        if request.method == "POST":
+    if request.method == "POST":
+        
+        
+        quantToAdd = int(request.form['itemQuant'])
+        
+        
+        if quantToAdd != None:
+            itemSL = int(invent.getStockLimit())
+            itemQuant = int(invent.getQuantity())
             
-            
-            quantToAdd = int(request.form['itemQuant'])
-            
-            
-            if quantToAdd != None:
-                itemSL = int(invent.getStockLimit())
-                itemQuant = int(invent.getQuantity())
+
+            if invent.checkItemQuantLessThanStockLimit(itemSL, itemQuant, quantToAdd) == 1:
+                
+                if invent.isThereMoreItems(itemName, quantToAdd) == 1:
                 
 
-                if invent.checkItemQuantLessThanStockLimit(itemSL, itemQuant, quantToAdd) == 1:
-                    
-
                     invent.updateQuantity(quantToAdd + itemQuant)
+                    invent.takeAwayItems(quantToAdd, itemName)
 
                     flash(f"You have successfully updated the item {itemName}", 'info')
                     return redirect(url_for('inventory'))
                 else:
-                    flash("The quantity must be smaller than the stock limit", "danger")
+                    flash("There is not enough stock in the warehouse", "danger")
                     return render_template('manualOrder2.html', title = "Manual Order" , logged_in=logged_in, authLevel=authLevel, itemQuant=itemQuant, itemSL=itemSL)
-            else:                
-                flash("Please don't leave any field empty", "danger")
+            else:
+                flash("The quantity must be smaller than the stock limit", "danger")
                 return render_template('manualOrder2.html', title = "Manual Order" , logged_in=logged_in, authLevel=authLevel, itemQuant=itemQuant, itemSL=itemSL)
-    except Exception as e:                
-        flash(e)
-        return render_template('home.html', title = "Manual Order" , logged_in=logged_in, authLevel=authLevel)
+        else:                
+            flash("Please don't leave any field empty", "danger")
+            return render_template('manualOrder2.html', title = "Manual Order" , logged_in=logged_in, authLevel=authLevel, itemQuant=itemQuant, itemSL=itemSL)
+    # except Exception as e:                
+    #     flash(e)
+    #     return render_template('home.html', title = "Manual Order" , logged_in=logged_in, authLevel=authLevel)
+
+
+
+
 
 
 
