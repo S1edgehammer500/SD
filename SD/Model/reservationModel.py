@@ -23,8 +23,8 @@ class Reservation: #offers class
          endTime = record[4]
          Name = record[5]
          self.setTables(tables, restaurantName)
-         self.setStartTime(startTime)
-         self.setEndTime(endTime, startTime)
+         self.setStartTime(datetime.datetime.strptime(startTime, "%Y-%m-%d %H:%M:%S"))
+         self.setEndTime(datetime.datetime.strptime(endTime, "%Y-%m-%d %H:%M:%S"), datetime.datetime.strptime(startTime, "%Y-%m-%d %H:%M:%S"))
          self.setID(ID)
          self.setRestaurantName(restaurantName)
          self.setName(Name)
@@ -122,13 +122,11 @@ class Reservation: #offers class
     def validateTables(self, tables, restaurantName):
         if not isinstance(tables, int):
             return 0  # Returning error message for non-integer input
-
         if 1 <= tables <= 99:  # Checking if tableNumber is within the range
             conn, cur = openConnection()
-            query2 = "SELECT tables FROM restaurant WHERE restaurantName = ?;"
+            query2 = 'SELECT numberOfTables FROM restaurant WHERE restaurantName = ?;'
             cur.execute(query2, (restaurantName,))
             record2 = cur.fetchone()
-
             if record2 is not None and tables <= record2[0]:
                 conn.close()
                 print("Valid table number")
@@ -142,7 +140,6 @@ class Reservation: #offers class
     
     def validateStartTime(self, startTime):
         if startTime != None:
-            startTime = datetime.datetime.strptime(startTime, "%Y-%m-%d %H:%M:%S")
             now = datetime.datetime.now()-datetime.timedelta(minutes=10)
             if startTime < now:
                 print("Time out of range")
@@ -154,10 +151,7 @@ class Reservation: #offers class
         
     def validateEndTime(self, endTime, startTime):
         if endTime != None:
-            end_time = datetime.datetime.strptime(endTime, "%Y-%m-%d %H:%M:%S")
-            start_time = datetime.datetime.strptime(startTime, "%Y-%m-%d %H:%M:%S")
-
-            if end_time < start_time:
+            if endTime < startTime:
                 print("Time out of range")
                 return 0
             else:
@@ -194,7 +188,7 @@ class Reservation: #offers class
         try:
             conn, cur = openConnection()
             if self.checkID(ID):
-                query = "DELETE FROM reservation WHERE offerID = ?;"
+                query = "DELETE FROM reservation WHERE reservationID = ?;"
                 cur.execute(query, (ID,))
                 conn.commit()
                 conn.close()
@@ -263,7 +257,7 @@ class Reservation: #offers class
         else:
             return 0
         
-    def updateStartTime(self, ID, endTime, startTime):
+    def updateEndTime(self, ID, endTime, startTime):
         if endTime != None:
             if self.validateStartTime(endTime):
                 if self.validateEndTime(endTime, startTime):

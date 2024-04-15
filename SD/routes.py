@@ -1769,34 +1769,31 @@ def createReservation():
     currentUser.setLoginDetails(session['code'])
 
     currentRestaurant = currentUser.getBaseRestaurant()
+    print(currentRestaurant)
     
     error = ''
     
     try:
         if request.method == "POST":
             #getting data from form 
-            Name = request.form['Name'] 
-   
-            numberOfTables = request.form['numberOfTables']
-
+            Name = request.form['Name']
+            numberOfTables = int(request.form['numberOfTables'])
             startDate = request.form['dateStart']
-            
-            endDate = request.form['dateEnd']
-            
             startTime = request.form['timeStart']
-            
+            endDate = request.form['dateEnd']
             endTime = request.form['timeEnd']
             
-            print(Name, numberOfTables, startTime, endTime, "HIIIIIII")
-                            
-            if numberOfTables != None and startTime != None and endTime != None and Name != None:
+            start = datetime.datetime.strptime(startDate + " " + startTime + ":00", "%Y-%m-%d %H:%M:%S")
+            end = datetime.datetime.strptime(endDate + " " + endTime + ":00", "%Y-%m-%d %H:%M:%S")
+
+            if numberOfTables != None and start != None and end != None and Name != None:
                 if reservation.validateTables(numberOfTables, currentRestaurant) == 1:
-                    if reservation.validateStartTime(startTime) == 1:
-                        if reservation.validateEndTime(endTime, startTime) == 1:
+                    if reservation.validateStartTime(start) == 1:
+                        if reservation.validateEndTime(end, start) == 1:
                             if reservation.validateName(Name) == 1:
-                                if reservation.createReservation(currentRestaurant, numberOfTables, startTime, endTime, Name) == 1:                      
+                                if reservation.createReservation(currentRestaurant, numberOfTables, start, end, Name) == 1:                      
                                     flash("Reservation is now registered", "success")
-                                    return redirect(url_for('home'))
+                                    return redirect(url_for('reservations'))
                                 else:
                                     flash("Invalid reservation syntax", "danger")
                                     return render_template('createReservation.html', error=error, title="Create Reservation", logged_in=logged_in, authLevel=authLevel)
@@ -1810,7 +1807,7 @@ def createReservation():
                         flash("Invalid start time can't be before today", "danger")
                         return render_template('createReservation.html', error=error, title="Create Reservation", logged_in=logged_in, authLevel=authLevel)
                 else:
-                    flash("Invalid table number can't be more than restaurant", "danger")
+                    flash("Invalid table number can't be more than restaurant tables", "danger")
                     return render_template('createReservation.html', error=error, title="Create Reservation", logged_in=logged_in, authLevel=authLevel)
             else:                
                 flash("Fields cannot be empty", "danger")
@@ -1829,8 +1826,35 @@ def updateReservation():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
+   
+    currentUser = User()
+    reservation = Reservation()
+
+    currentUser.setLoginDetails(session['code'])
     
-    return render_template('updateReservation.html', title="Update Reservation", logged_in=logged_in, authLevel=authLevel)
+    currentRestaurant = currentUser.getBaseRestaurant()
+    
+    reservationIDList = []
+    tempReservationIDList = reservation.getIDList(currentRestaurant)
+    reservationIDList = strip.it(tempReservationIDList)
+    
+    namesList = []
+    tempNamesList = reservation.getNameList(currentRestaurant)
+    namesList = strip.it(tempNamesList)
+    
+    tablesList = []
+    tempTablesList = reservation.getTablesList(currentRestaurant)
+    tablesList = strip.it(tempTablesList)
+    
+    startTimeList = []
+    tempStartTimeList = reservation.getStartTimeList(currentRestaurant)
+    startTimeList = strip.it(tempStartTimeList)
+    
+    endTimeList = []
+    tempEndTimeList = reservation.getEndTimeList(currentRestaurant)
+    endTimeList = strip.it(tempEndTimeList)
+
+    return render_template('updateReservation.html', title="Update Reservation", logged_in=logged_in, authLevel=authLevel, Name=namesList, tables=tablesList, startTime=startTimeList, endTime=endTimeList, reservationID=reservationIDList, listLen=len(namesList))
 
 
 @app.route("/updateReservation2/", methods=['POST', 'GET'])
@@ -1840,8 +1864,66 @@ def updateReservation2():
     logged_in = session['logged_in']
     authLevel = session['authLevel']
 
+    if request.method == "POST":
+        reservationID = request.form['reservationID']
+        session['reservationID'] = reservationID
+        
     return render_template('updateReservation2.html', title="Update Reservation", logged_in=logged_in, authLevel=authLevel)
 
+@app.route("/updateReservation3/", methods=['POST', 'GET'])
+@login_required
+def updateReservation3():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    reservationID = session['reservationID']
+    
+    reservation = Reservation()
+    reservation.setReservationDetails(reservationID)
+    restaurantName = reservation.getRestaurantName()
+    print(restaurantName)
+    try:
+        if request.method == "POST":
+            
+            numberOfTables = int(request.form['numberOfTables'])
+            startDate = request.form['dateStart']
+            startTime = request.form['timeStart']
+            endDate = request.form['dateEnd']
+            endTime = request.form['timeEnd']
+            
+            start = datetime.datetime.strptime(startDate + " " + startTime + ":00", "%Y-%m-%d %H:%M:%S")
+            end = datetime.datetime.strptime(endDate + " " + endTime + ":00", "%Y-%m-%d %H:%M:%S")
+            
+            if numberOfTables != None and start != None and end != None:
+                if reservation.validateTables(numberOfTables, restaurantName) == 1:
+                    if reservation.validateStartTime(start) == 1:
+                        if reservation.validateEndTime(end, start) == 1:
+                            if reservation.updateStartTime(reservationID, start, end):
+                                if reservation.updateEndTime(reservationID, end, start):
+                                    
+                                    flash("You have successfully updated the reservation", 'info')
+                                    return redirect(url_for('reservation'))
+                                else:
+                                    flash("End time has to be after today and the start time", "danger")
+                                    return render_template('updateReservation2.html', title="Update Reservation", logged_in=logged_in, authLevel=authLevel)
+                            else:
+                                flash("Start time has to be later than current time", "danger")
+                                return render_template('updateReservation2.html', title="Update Reservation", logged_in=logged_in, authLevel=authLevel)
+                        else:
+                            flash("End time has to be after today and the start time", "danger")
+                            return render_template('updateReservation2.html', title="Update Reservation", logged_in=logged_in, authLevel=authLevel)        
+                    else:
+                        flash("Start time has to be later than current time", "danger")
+                        return render_template('updateReservation2.html', title="Update Reservation", logged_in=logged_in, authLevel=authLevel)
+                else:
+                    flash("Table number cannot be larger than the restaurants availability", "danger")
+                    return render_template('updateReservation2.html', title="Update Reservation", logged_in=logged_in, authLevel=authLevel)
+            else:                
+                flash("Please don't leave any field empty", "danger")
+                return render_template('updateReservation2.html', title="Update Reservation", logged_in=logged_in, authLevel=authLevel)
+    except Exception as e:                
+        return render_template('updateReservation2.html', title="Update Reservation", logged_in=logged_in, authLevel=authLevel)
+        
 
 
 @app.route("/deleteReservation/")
@@ -1851,8 +1933,58 @@ def deleteReservation():
     logged_in = session['logged_in']
     authLevel = session['authLevel']
 
-    return render_template('deleteReservation.html', title="Delete Reservation", logged_in=logged_in, authLevel=authLevel)
+    currentUser = User()
+    reservation = Reservation()
 
+    currentUser.setLoginDetails(session['code'])
+    
+    currentRestaurant = currentUser.getBaseRestaurant()
+    
+    reservationIDList = []
+    tempReservationIDList = reservation.getIDList(currentRestaurant)
+    reservationIDList = strip.it(tempReservationIDList)
+    
+    namesList = []
+    tempNamesList = reservation.getNameList(currentRestaurant)
+    namesList = strip.it(tempNamesList)
+    
+    tablesList = []
+    tempTablesList = reservation.getTablesList(currentRestaurant)
+    tablesList = strip.it(tempTablesList)
+    
+    startTimeList = []
+    tempStartTimeList = reservation.getStartTimeList(currentRestaurant)
+    startTimeList = strip.it(tempStartTimeList)
+    
+    endTimeList = []
+    tempEndTimeList = reservation.getEndTimeList(currentRestaurant)
+    endTimeList = strip.it(tempEndTimeList)
+
+    return render_template('deleteReservation.html', title="Delete Reservation", logged_in=logged_in, authLevel=authLevel, Name=namesList, tables=tablesList, startTime=startTimeList, endTime=endTimeList, reservationID=reservationIDList, listLen=len(namesList))
+
+@app.route("/deleteReservation2/", methods=['GET', 'POST'])
+@login_required
+def deleteReservation2():
+    reservation = Reservation()
+
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    try:
+        if request.method == "POST":
+            # Item name that you wanna delete
+            reservationID = request.form['reservationID']
+        
+  
+            if reservation.deleteReservation(reservationID):
+                flash("You have successfully deleted the reservation", 'info')
+                return redirect(url_for('reservation'))
+            else:
+                flash("Reservation does not exist", 'danger')
+                return redirect(url_for('deleteReservation'))
+                
+    except Exception as e:  
+        return render_template('deleteReservation.html', error=e, title="Delete Reservation", logged_in=logged_in, authLevel=authLevel)
 
 
 
