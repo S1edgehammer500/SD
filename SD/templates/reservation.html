@@ -16,11 +16,12 @@
             <th class = "text-center" style = "width: 25%;">End Time</th>
         </tr>
 
-        {% for i in range(listLen): %} 
+            {% for i in range(listLen): %} 
                 <tr>
-                    <td> {{foodList[i]}} </td>              
-                    <td> {{allergyList[i]}} </td>
-                    <td> £{{priceList[i]}} </td>
+                    <td> {{Name[i]}} </td>              
+                    <td> {{tables[i]}} </td>
+                    <td> {{startTime[i]}} </td>
+                    <td> {{endTime[i]}} </td>
                 </tr>
             {% endfor %}
     

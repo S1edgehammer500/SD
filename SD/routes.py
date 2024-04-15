@@ -1718,9 +1718,23 @@ def reservation():
     
     currentRestaurant = currentUser.getBaseRestaurant()
     
-    tables, startTime, endTime, Name = reservation.getReservationList(currentRestaurant)[-4:]
+    namesList = []
+    tempNamesList = reservation.getNameList(currentRestaurant)
+    namesList = strip.it(tempNamesList)
     
-    return render_template('reservation.html', title="Reservation", logged_in=logged_in, authLevel=authLevel, Name=Name, tables=tables, startTime=startTime, endTime=endTime, listLen=len(Name))
+    tablesList = []
+    tempTablesList = reservation.getTablesList(currentRestaurant)
+    tablesList = strip.it(tempTablesList)
+    
+    startTimeList = []
+    tempStartTimeList = reservation.getStartTimeList(currentRestaurant)
+    startTimeList = strip.it(tempStartTimeList)
+    
+    endTimeList = []
+    tempEndTimeList = reservation.getEndTimeList(currentRestaurant)
+    endTimeList = strip.it(tempEndTimeList)
+
+    return render_template('reservation.html', title="Reservation", logged_in=logged_in, authLevel=authLevel, Name=namesList, tables=tablesList, startTime=startTimeList, endTime=endTimeList, listLen=len(namesList))
 
 
 @app.route("/createReservation/", methods=['POST', 'GET'])
@@ -1729,8 +1743,66 @@ def createReservation():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
+    
+    currentUser = User()
+    reservation = Reservation()
+    
+    currentUser.setLoginDetails(session['code'])
 
-    return render_template('createReservation.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
+    currentRestaurant = currentUser.getBaseRestaurant()
+    
+    error = ''
+    
+    try:
+        if request.method == "POST":
+            #getting data from form 
+            Name = request.form['Name'] 
+   
+            numberOfTables = request.form['numberOfTables']
+
+            startDate = request.form['dateStart']
+            
+            endDate = request.form['dateEnd']
+            
+            startTime = request.form['timeStart']
+            
+            endTime = request.form['timeEnd']
+            
+            print(Name, numberOfTables, startTime, endTime, "HIIIIIII")
+                            
+            if numberOfTables != None and startTime != None and endTime != None and Name != None:
+                if reservation.validateTables(numberOfTables, currentRestaurant) == 1:
+                    if reservation.validateStartTime(startTime) == 1:
+                        if reservation.validateEndTime(endTime, startTime) == 1:
+                            if reservation.validateName(Name) == 1:
+                                if reservation.createReservation(currentRestaurant, numberOfTables, startTime, endTime, Name) == 1:                      
+                                    flash("Reservation is now registered", "success")
+                                    return redirect(url_for('home'))
+                                else:
+                                    flash("Invalid reservation syntax", "danger")
+                                    return render_template('createReservation.html', error=error, title="Create Reservation", logged_in=logged_in, authLevel=authLevel)
+                            else:
+                                flash("Invalid name input (more than 3 characters)")
+                                return render_template('createReservation.html', error=error, title="Create Reservation", logged_in=logged_in, authLevel=authLevel)
+                        else:
+                            flash("Invalid end time can't be before the start time", "danger")
+                            return render_template('createReservation.html', error=error, title="Create Reservation", logged_in=logged_in, authLevel=authLevel)
+                    else:
+                        flash("Invalid start time can't be before today", "danger")
+                        return render_template('createReservation.html', error=error, title="Create Reservation", logged_in=logged_in, authLevel=authLevel)
+                else:
+                    flash("Invalid table number can't be more than restaurant", "danger")
+                    return render_template('createReservation.html', error=error, title="Create Reservation", logged_in=logged_in, authLevel=authLevel)
+            else:                
+                flash("Fields cannot be empty", "danger")
+                return render_template('createReservation.html', error=error, title="Create Reservation", logged_in=logged_in, authLevel=authLevel)
+        else:            
+            return render_template('createReservation.html', error=error, title="Create Reservation", logged_in=logged_in, authLevel=authLevel)        
+    except Exception as e:                
+        return render_template('createReservation.html', title="Create Reservation", logged_in=logged_in, authLevel=authLevel)
+
+
+    
 
 @app.route("/updateReservation/", methods=['POST', 'GET'])
 @login_required
@@ -1738,8 +1810,8 @@ def updateReservation():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
-
-    return render_template('updateReservation.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
+    
+    return render_template('updateReservation.html', title="Update Reservation", logged_in=logged_in, authLevel=authLevel)
 
 
 @app.route("/updateReservation2/", methods=['POST', 'GET'])
@@ -1749,7 +1821,7 @@ def updateReservation2():
     logged_in = session['logged_in']
     authLevel = session['authLevel']
 
-    return render_template('updateReservation2.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
+    return render_template('updateReservation2.html', title="Update Reservation", logged_in=logged_in, authLevel=authLevel)
 
 
 
@@ -1760,7 +1832,7 @@ def deleteReservation():
     logged_in = session['logged_in']
     authLevel = session['authLevel']
 
-    return render_template('deleteReservation.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
+    return render_template('deleteReservation.html', title="Delete Reservation", logged_in=logged_in, authLevel=authLevel)
 
 
 

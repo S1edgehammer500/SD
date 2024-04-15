@@ -22,9 +22,9 @@ class Reservation: #offers class
          startTime = record[3]
          endTime = record[4]
          Name = record[5]
-         self.setTables(tables)
+         self.setTables(tables, restaurantName)
          self.setStartTime(startTime)
-         self.setEndTime(endTime)
+         self.setEndTime(endTime, startTime)
          self.setID(ID)
          self.setRestaurantName(restaurantName)
          self.setName(Name)
@@ -32,8 +32,8 @@ class Reservation: #offers class
 
 
     #setters  
-    def setTables(self, tables):
-        if self.validateTables(tables):
+    def setTables(self, tables, restaurantName):
+        if self.validateTables(tables, restaurantName):
             self.__tables = tables
             return 1
         else:
@@ -46,8 +46,8 @@ class Reservation: #offers class
         else:
             return 0 
 
-    def setEndTime(self, endTime):
-        if self.validateEndTime(endTime):
+    def setEndTime(self, endTime, startTime):
+        if self.validateEndTime(endTime, startTime):
             self.__endTime = endTime
             return 1
         else:
@@ -180,7 +180,7 @@ class Reservation: #offers class
         
     def createReservation(self, restaurantName, tables, startTime, endTime, Name):
         conn, cur = openConnection()
-        if (self.validateEndTime(restaurantName)) and (self.validateTables(tables)) and (self.validateStartTime(startTime) and self.validateEndTime(endTime, startTime) and self.validateName(Name)):
+        if (self.validateTables(tables,restaurantName)) and (self.validateStartTime(startTime) and self.validateEndTime(endTime, startTime) and self.validateName(Name)):
             query = 'INSERT INTO reservation (restaurantName, tables, startTime, endTime, Name) VALUES (?, ?, ?, ?, ?);'
             cur.execute(query, (restaurantName, tables, startTime, endTime, Name))
             conn.commit()
@@ -226,7 +226,9 @@ class Reservation: #offers class
             
     def updateTables(self, ID, tables):
         if tables != None:
-            if self.validateTables(tables):
+            self.setReservationDetails(ID)
+            restaurantName = self.getRestaurantName()
+            if self.validateTables(tables, restaurantName):
                 if self.checkID(ID):
                     conn, cur = openConnection()
                     query = 'UPDATE reservation SET tables = ? WHERE reservationID = ?;'
@@ -281,19 +283,43 @@ class Reservation: #offers class
         else:
             return 0
         
-    def getReservationList(self, restaurantName):
-        try:
-            conn, cur = openConnection()
-            cur = conn.cursor()
-            query = "SELECT * FROM reservation WHERE restaurantName = ?;"
-            cur.execute(query, (restaurantName,))
-            rows = cur.fetchall()
-            reseravtionList = [(row[0], row[2], row[3], row[4], row[5]) for row in rows]
-            conn.close()
-            return reseravtionList
-        except sqlite3.Error as e:
-            print("Error fetching reservation list:", e)
-            return []
+    def getIDList(self, restaurantName):
+        conn, cur = openConnection()
+        query = 'SELECT reservationID FROM reservation WHERE restaurantName = ? ORDER BY restaurantName;'
+        cur.execute(query, (restaurantName,))
+        record = cur.fetchall()
+        conn.close()
+        return record
     
-
+    def getTablesList(self, restaurantName):
+        conn, cur = openConnection()
+        query = 'SELECT tables FROM reservation WHERE restaurantName = ? ORDER BY restaurantName;'
+        cur.execute(query, (restaurantName,))
+        record = cur.fetchall()
+        conn.close()
+        return record
+    
+    def getStartTimeList(self, restaurantName):
+        conn, cur = openConnection()
+        query = 'SELECT startTime FROM reservation WHERE restaurantName = ? ORDER BY restaurantName;'
+        cur.execute(query, (restaurantName,))
+        record = cur.fetchall()
+        conn.close()
+        return record
+    
+    def getEndTimeList(self, restaurantName):
+        conn, cur = openConnection()
+        query = 'SELECT endTime FROM reservation WHERE restaurantName = ? ORDER BY restaurantName;'
+        cur.execute(query, (restaurantName,))
+        record = cur.fetchall()
+        conn.close()
+        return record
+    
         
+    def getNameList(self, restaurantName):
+        conn, cur = openConnection()
+        query = 'SELECT Name FROM reservation WHERE restaurantName = ? ORDER BY restaurantName;'
+        cur.execute(query, (restaurantName,))
+        record = cur.fetchall()
+        conn.close()
+        return record
