@@ -102,12 +102,6 @@ class Order: #order class
     
     def getReadyTime(self):
         return self.__readyTime
-    
-    def getLastInsertedRow(self):
-        conn, cur = openConnection()
-        orderID = cur.lastrowid
-        conn.close()
-        return orderID
 
     #validators
 
@@ -325,12 +319,16 @@ class Order: #order class
                     cur.execute(query, (status, id))
                     conn.commit()
                     conn.close()
+                    print("Update Status Worked")
                     return 1
                 else:
+                    print("Invalid status")
                     return 0
             else:
+                print("Invalid ID")
                 return 0
         else:
+            print("None")
             return 0
         
     def updatePrice(self, price, id):
@@ -409,6 +407,8 @@ class Order: #order class
             query = 'INSERT INTO orders (restaurantName, status, orderPrice, tableNumber, startTime, readyTime) VALUES (?,?,?,?,?,?);'
             cur.execute(query, (restaurantName, status, 0, tableNumber, startTime, readyTime))
             conn.commit()
+            orderID = cur.lastrowid
+            self.setID(orderID)
             print("new order created")
             conn.close()
             return 1
@@ -528,11 +528,12 @@ class Order: #order class
             conn.close()
             return 0
     
-    def get_order(self):
+    def get_order(self, restaurantName):
         try:
             conn, cur = openConnection()
             cur = conn.cursor()
-            cur.execute("SELECT * FROM orders")
+            query = "SELECT * FROM orders WHERE restaurantName = ? AND status != ? AND status != ?;"
+            cur.execute(query, (restaurantName,'Payment Completed', 'Cancelled'))
             rows = cur.fetchall()
             orders = [(row[0], row[1], row[2], row[3], row[4], row[5], row[6]) for row in rows]
             # Close the connection after fetching data
@@ -542,20 +543,21 @@ class Order: #order class
             print("Error fetching orders:", e)
             return []
         
-    def get_foodList(self, orderID):
-        try:
-            conn, cur = openConnection()
-            cur = conn.cursor()
-            query = "SELECT * FROM foodList WHERE orderID = ?;"
-            cur.execute(query, (orderID,))
-            rows = cur.fetchall()
-            orders = [(row[0], row[1], row[2]) for row in rows]
-            # Close the connection after fetching data
-            conn.close()
-            return orders
-        except sqlite3.Error as e:
-            print("Error fetching food list:", e)
-            return []
+    def getFoodList(self):
+        conn, cur = openConnection()
+        query = "SELECT foodName FROM foodList WHERE orderID == ? ORDER BY foodListID;"
+        cur.execute(query, (self.__ID,))
+        record = cur.fetchall()
+        conn.close()
+        return record
+    
+    def getFoodListPrice(self, foodName):
+        conn, cur = openConnection()
+        query = "SELECT price FROM food WHERE foodName = ?;"
+        cur.execute(query, (foodName,))
+        record = cur.fetchone()
+        conn.close()
+        return record
         
     def get_discountList(self, orderID):
         try:

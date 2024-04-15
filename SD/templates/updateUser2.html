@@ -16,7 +16,11 @@
           <label for="base">Base Restaurant:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
           <select style="color:black" name="base" id="base">
             {% for restaurant in restaurants %}
+              {% if restaurant == BR %}
+                <option selected="selected" value="{{restaurant}}">{{ restaurant }}</option>
+              {% else %}
               <option value='{{restaurant}}'>{{ restaurant }}</option>
+              {% endif %}
             {% endfor %}
           </select>
         </div>
