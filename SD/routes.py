@@ -146,6 +146,15 @@ def home():
     
     return render_template('home.html', title="Home", logged_in=logged_in, authLevel=authLevel)
 
+@app.route("/qrcode/")
+def qrcode():
+    
+    return render_template('qrcode.html', title="QRcode Scanner")
+
+@app.route("/ourMenu/")
+def ourMenu():
+    
+    return render_template('ourMenu.html', title="QRcode Scanner")
 
 
 
