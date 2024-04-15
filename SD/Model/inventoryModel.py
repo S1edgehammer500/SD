@@ -326,3 +326,59 @@ class Inventory: #inventory class
         if (quantToAdd + itemQuant) > itemSL:
             return 0
         else: return 1
+
+
+    def isThereMoreItems(self, itemName, quantity):
+        conn, cur = openConnection()
+        query = "SELECT quantity FROM item WHERE itemName = ?;"
+        cur.execute(query, (itemName,))
+        record = cur.fetchone()
+        conn.close()
+
+        if record is not None:
+            if record[0] >= quantity:
+                return 1
+            else:
+                return 0 
+        else:
+            conn.close()
+            return 0
+
+    def takeAwayItems(self, quantity, itemName):
+        if quantity != None:
+            if self.checkItemName(itemName):
+                itemQuant = self.getWarehouseQuantity(itemName)[0]
+
+
+                quantity = itemQuant - quantity
+
+                conn, cur = openConnection()
+                query = 'UPDATE item SET quantity = ? WHERE itemName = ?;'
+                cur.execute(query, (quantity, itemName))
+                conn.commit()
+                conn.close()
+                return 1
+            else:
+                return 0
+        else:
+            return 0
+        
+    def checkItemName(self, itemName):
+        conn, cur = openConnection()
+        query = 'SELECT * FROM item WHERE itemName = ?;'
+        cur.execute(query, (itemName,))
+        record = cur.fetchone()
+        if record is not None:
+            conn.close()
+            return 1
+        else:
+            conn.close()
+            return 0
+        
+    def getWarehouseQuantity(self, itemName):
+        conn, cur = openConnection()
+        query = 'SELECT quantity FROM item WHERE itemName = ?;'
+        cur.execute(query, (itemName,))
+        record = cur.fetchone()
+        conn.close()
+        return record
