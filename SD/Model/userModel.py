@@ -304,6 +304,13 @@ class User:
         conn.close()
         return record
     
+    def getStaffEmployeeCodes(self):
+        conn, cur = openConnection()
+        query = "SELECT employeeCode FROM users WHERE authorisationLevel != ? AND authorisationLevel != ? AND baseRestaurant = ? ORDER BY employeeCode;"
+        cur.execute(query, ('manager', 'admin', self.__baseRestaurant))
+        record = cur.fetchall()
+        conn.close()
+        return record
         
 
     def __str__(self):

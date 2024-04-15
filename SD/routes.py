@@ -304,22 +304,25 @@ def updateUser():
     employeeCode = []
     tempEmployeeCode = currentUser.getEmployeeCodes()
     employeeCode = strip.it(tempEmployeeCode)
-    print(employeeCode)
-    employeeCode.append(session['code'])
+    if session['authLevel'] == 'admin':
+        print(employeeCode)
+        employeeCode.append(session['code'])
 
 
     baseRestaurant = []
     tempBaseRestaurant = currentUser.getBaseRestaurants()
     baseRestaurant = strip.it(tempBaseRestaurant)
-    baseRestaurant.append(BR)
-    print(baseRestaurant)
+    if session['authLevel'] == 'admin':
+        baseRestaurant.append(BR)
+        print(baseRestaurant)
 
     authorisationLevel = []
     tempAuthorisationLevel = currentUser.getAuthorisationLevels()
     authorisationLevel = strip.it(tempAuthorisationLevel)
-    authorisationLevel.append(AL)
-    print(authorisationLevel)
-    print(AL)
+    if session['authLevel'] == 'admin':
+        authorisationLevel.append(AL)
+        print(authorisationLevel)
+        print(AL)
 
     return render_template('updateUser.html', title = "Update User", logged_in=logged_in, authLevel=authLevel, baseRestaurant=baseRestaurant, authorisationLevel=authorisationLevel, employeeCode=employeeCode, codeLen=len(employeeCode))
     
@@ -395,6 +398,9 @@ def updateUser3():
                             
                             currentUser.updateBaseRestaurant(previousCode, base)
                             currentUser.updateAuthorisation(previousCode, auth)
+                            session['authLevel'] = auth
+                            authLevel = session['authLevel']
+                            
                             print(code)
                             print(previousCode)
                             if code != previousCode:
@@ -2270,7 +2276,7 @@ def deleteStaff():
     currentUser.setLoginDetails(session['code'])
 
     employeeCode = []
-    tempEmployeeCode = currentUser.getEmployeeCodes()
+    tempEmployeeCode = currentUser.getStaffEmployeeCodes()
     employeeCode = strip.it(tempEmployeeCode)
 
 
@@ -2320,28 +2326,19 @@ def updateStaff():
     currentUser = User()
     currentUser.setLoginDetails(session['code'])
 
-    BR = currentUser.getBaseRestaurant()
-    AL = currentUser.getAuthorisation()
-
     employeeCode = []
-    tempEmployeeCode = currentUser.getEmployeeCodes()
+    tempEmployeeCode = currentUser.getStaffEmployeeCodes() 
     employeeCode = strip.it(tempEmployeeCode)
-    print(employeeCode)
-    employeeCode.append(session['code'])
 
 
     baseRestaurant = []
     tempBaseRestaurant = currentUser.getBaseRestaurants()
     baseRestaurant = strip.it(tempBaseRestaurant)
-    baseRestaurant.append(BR)
-    print(baseRestaurant)
+
 
     authorisationLevel = []
     tempAuthorisationLevel = currentUser.getAuthorisationLevels()
     authorisationLevel = strip.it(tempAuthorisationLevel)
-    authorisationLevel.append(AL)
-    print(authorisationLevel)
-    print(AL)
 
     return render_template('updateStaff.html', title = "Update Staff", logged_in=logged_in, authLevel=authLevel, baseRestaurant=baseRestaurant, authorisationLevel=authorisationLevel, employeeCode=employeeCode, codeLen=len(employeeCode))
 
@@ -2422,6 +2419,8 @@ def updateStaff3():
                             
                             currentUser.updateBaseRestaurant(previousCode, base)
                             currentUser.updateAuthorisation(previousCode, auth)
+                            session['authLevel'] = auth
+                            authLevel = session['authLevel']
                             print(code)
                             print(previousCode)
                             if code != previousCode:
