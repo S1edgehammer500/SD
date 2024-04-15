@@ -16,6 +16,7 @@ from Model.reportModel import *
 from Model.inventoryModel import *
 from Model.itemModel import *
 from Model.reservationModel import *
+from Model.ordersModel import *
 
 # User defined
 import strip
@@ -2814,35 +2815,34 @@ def orderItems3():
 
 
 @app.route("/payment/", methods = ['GET', 'POST'])
-
-
-
 def payment():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
-    
-    
 
-
+    session['orderID'] = 11
+    
 
     return render_template('payment.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
 
 
 
 @app.route("/receipt/", methods = ['GET', 'POST'])
-
-
 def receipt():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
     
-    
+    orderPay = Order()
+
+    sameData, diffData = orderPay.showReceipt(session['orderID'])
+
+    sameData.insert(0, request.form['name'])
+
+    sameData[5] = sameData[5][0:10]
 
 
-
-    return render_template('receipt.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
+    return render_template('receipt.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel, sameData=sameData, diffData=diffData, dataLen=len(diffData))
 
 
 if __name__ == "__main__":
