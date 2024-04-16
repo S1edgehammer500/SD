@@ -132,18 +132,15 @@ class Menu: #menu class
             conn.close()
             return 0
         
-    def updateAvailability(self, availability, foodName, restaurantName):
+    def updateAvailability(self, availability, ID):
         if availability != None:
             if self.validateAvailability(availability):
-                if self.validateFoodName(foodName):
-                    conn, cur = openConnection()
-                    query = 'UPDATE menu SET isAvailable = ? WHERE foodName = ? AND restaurantName = ?;'
-                    cur.execute(query, (availability, foodName, restaurantName))
-                    conn.commit()
-                    conn.close()
-                    return 1
-                else:
-                    return 0
+                conn, cur = openConnection()
+                query = 'UPDATE menu SET isAvailable = ? WHERE menuID = ?;'
+                cur.execute(query, (availability, ID))
+                conn.commit()
+                conn.close()
+                return 1
             else:
                 return 0
         else:

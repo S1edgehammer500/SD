@@ -3,25 +3,25 @@
 
 <div class = "StandardBox">
 
-    <h3 class="text-center pt-3 heading">Update Food Item Here</h3> <br>
+    <h3 class="text-center pt-3 heading">Update Menu Item Here</h3> <br>
   
-    <form action="" method="post">
+    <form action="/updateMenu3/" method="post">
   
-    <div class="form-group">
-        <label for="foodName">Food Name: &nbsp; &nbsp;<br></label>
-        <input required style="color:black" class="foodName" name="foodName" placeholder = "{{name}}" size="30" value="{{request.form.foodName}}"><br>
-    </div>
-
-      
-    <div class="form-group">
-        <label for="foodAllergy">Allergies Description: <br></label>
-        <input required style="color:black" class="foodAllergy" name="foodAllergy" placeholder = "{{allergy}}" size="30" value="{{request.form.foodAllergy}}"><br>
-    </div>
-
-    <div class="form-group">
-        <label for="priceOfFood">Price: &nbsp; &nbsp;<br></label>
-        <input required style="color:black" id="priceOfFood" min="1" step='0.01' placeholder="{{price}}" type="number" class="priceOfFood" name="priceOfFood" size="30" value="{{request.form.priceOfFood}}"><br>
-    </div>
+        <div class="form-group">
+            <label for="isAvailable"> Is Available: <br></label>
+            <select required style="color:black" name="isAvailable" placeholder = "{{isAvailable}}" value="{{request.form.isAvailable}}">
+                {% if isAvailable == "1" %}
+                    <option selected="selected" style="color:black" value="1">True</option>
+                {% else %}
+                    <option style="color:black" value="1">True</option>
+                {% endif%}
+                {% if isAvailable == "0" %}
+                    <option selected="selected" style="color:black" value="0">False</option>
+                {% else %}
+                    <option style="color:black" value="0">False</option>
+                {% endif%}
+            </select>
+        </div>
   
           <div class = "d-grid mb-3">
             <button type = "submit"  class = "btn btn-light black">submit</button>

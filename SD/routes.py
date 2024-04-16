@@ -547,7 +547,7 @@ def createMenu():
                         if currentMenu.createMenu(currentRestaurant, foodName) == 1:
                             
                             flash("Item added to the menu", "success")
-                            return redirect(url_for('createMenu'))
+                            return redirect(url_for('menu'))
 
                         else:
                             flash("Failed to add item to the menu", "danger")
@@ -596,7 +596,7 @@ def updateMenu():
     foodList, priceList, allergyList, idList, isAvailableList = currentMenu.getMenuList(currentRestaurant)
 
 
-    return render_template('updateMenu.html', title = "Update Menu" , logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, listLen = len(foodList), idList = idList)
+    return render_template('updateMenu.html', title = "Update Menu" , logged_in=logged_in, authLevel=authLevel,allergyList=allergyList, isAvailableList=isAvailableList, foodList = foodList, priceList = priceList, listLen = len(foodList), idList = idList)
 
 @app.route("/updateMenu2/", methods = ['GET', 'POST'])
 @login_required
@@ -614,45 +614,60 @@ def updateMenu2():
 
     
     currentFood = Food()
+    
+    menu = Menu()
 
     
     
 
     if request.method == "POST":
-        name = request.form['foodName']
-        currentFood.setFoodDetails(name)
+        menuID = request.form['idList']
+        
+        menu.setMenuDetails(menuID)
+        
+        session['ID'] = menuID
+        
+        isAvailable = menu.getIsAvailable()
+        
 
-        price = currentFood.getPrice()
-
-        allergy = currentFood.getAllergyInfo()
-
-
-
-
-
-
-    return render_template('updateMenu2.html', title = "Update Menu" , logged_in=logged_in, authLevel=authLevel, price = price, name = name, allergy = allergy)
+    return render_template('updateMenu2.html', title = "Update Menu" , logged_in=logged_in, authLevel=authLevel, isAvailable=isAvailable)
 
 
 @app.route("/updateMenu3/", methods = ['GET', 'POST'])
 @login_required
 def updateMenu3():
     # check to see what navbar to display
-    logged_in = session['logged_in']
-    authLevel = session['authLevel']
-    
-
-    currentUser = User()
-    currentUser.setLoginDetails(session['code'])
-
-    currentRestaurant = currentUser.getBaseRestaurant()
-
+    menuID = session['ID']
 
     currentMenu = Menu()
-    currentFood = Food()
+
+    try:
+        if request.method == "POST":
+            
+            isAvailable = request.form['isAvailable']
+            print(isAvailable)
+
+            if isAvailable != None:
+                if currentMenu.validateAvailability(isAvailable) == 1:
+                    if currentMenu.updateAvailability(isAvailable, menuID) == 1:
+                        
+                        flash(f"You have successfully updated the item's availability", 'info')
+                        return redirect(url_for('updateMenu'))
+                    else:
+                        flash("Sorry there was an error changing the availability", "danger")
+                        return redirect(url_for('updateMenu3'))
+                else:
+                    flash("Availability syntax incorrect", "danger")
+                    return redirect(url_for('updateMenu3'))
+            else:                
+                flash("Please don't leave any field empty", "danger")
+                return redirect(url_for('updateMenu3'))
+    except Exception as e:                
+        return redirect(url_for('updateMenu3'))  
 
 
-    return redirect(url_for('updateMenu'))
+
+    return redirect(url_for('updateMenu3'))
 
 
 
@@ -1695,7 +1710,7 @@ def createOrder():
     currentMenu = Menu()
 
     
-    foodList, priceList, allergyList, idList = currentMenu.getMenuList(currentRestaurant)
+    foodList, priceList, allergyList, idList, isAvailableList = currentMenu.getMenuList(currentRestaurant)
 
     try:
 
@@ -2217,7 +2232,7 @@ def menu():
     currentMenu = Menu()
 
     
-    foodList, priceList, allergyList, idList = currentMenu.getMenuList(currentRestaurant)
+    foodList, priceList, allergyList, idList, isAvailableList = currentMenu.getMenuList(currentRestaurant)
 
 
     return render_template('menu.html', title = "Menu" , logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, allergyList = allergyList, listLen = len(foodList))
@@ -2238,7 +2253,7 @@ def deleteMenu():
 
     currentRestaurant = currentUser.getBaseRestaurant()
 
-    foodList, priceList, allergyList, idList = currentMenu.getMenuList(currentRestaurant)
+    foodList, priceList, allergyList, idList, isAvailableList = currentMenu.getMenuList(currentRestaurant)
 
 
     error = ""
