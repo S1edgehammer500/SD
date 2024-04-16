@@ -193,9 +193,9 @@ class Menu: #menu class
     
     def getAvailableMenuList(self,restaurantName):
         conn, cur = openConnection()
-        query = 'SELECT food.foodName, price, allergyInfo, menu.menuID, isAvailable FROM food JOIN menu ON food.foodName == menu.foodName WHERE menu.restaurantName = ? WHERE isAvailable=? ORDER BY menu.menuID;'
+        query = 'SELECT food.foodName, price, allergyInfo, menu.menuID, isAvailable FROM food JOIN menu ON food.foodName == menu.foodName WHERE menu.restaurantName = ? AND menu.isAvailable=? ORDER BY menu.menuID;'
 
-        cur.execute(query, (restaurantName,False))
+        cur.execute(query, (restaurantName,True))
         records = cur.fetchall()
         foodList = [row[0] for row in records]
         priceList = [row[1] for row in records]
