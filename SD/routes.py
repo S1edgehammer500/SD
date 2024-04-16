@@ -193,13 +193,13 @@ def createUser():
                             flash("Account is now registered", "success")
                             return redirect(url_for('admin'))
                         else:
-                            flash("Invalid username syntax", "danger")
+                            flash("User already exists", "danger")
                             return render_template('createUser.html', error=error, title="Create User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
                     else:
-                        flash("Invalid password syntax", "danger")
+                        flash("Invalid username syntax", "danger")
                         return render_template('createUser.html', error=error, title="Create User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
                 else:
-                    flash("Invalid username syntax", "danger")
+                    flash("Invalid passowrd syntax", "danger")
                     return render_template('createUser.html', error=error, title="Create User", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
             else:                
                 flash("Password and Confirm Password fields need to match", "danger")
