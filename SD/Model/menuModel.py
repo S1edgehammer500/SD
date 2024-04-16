@@ -234,6 +234,22 @@ class Menu: #menu class
         # Close the connection after fetching data
         conn.close()
         return foodList, priceList, allergyList, idList, isAvailableList
+    
+    def getAvailableMenuList(self,restaurantName):
+        conn, cur = openConnection()
+        query = 'SELECT food.foodName, price, allergyInfo, menu.menuID, isAvailable FROM food JOIN menu ON food.foodName == menu.foodName WHERE menu.restaurantName = ? WHERE isAvailable=? ORDER BY menu.menuID;'
+
+        cur.execute(query, (restaurantName,False))
+        records = cur.fetchall()
+        foodList = [row[0] for row in records]
+        priceList = [row[1] for row in records]
+        allergyList = [row[2] for row in records]
+        idList = [row[3] for row in records]
+        isAvailableList = [row[4] for row in records]
+        
+        # Close the connection after fetching data
+        conn.close()
+        return foodList, priceList, allergyList, idList, isAvailableList
 
         
     def delete_menu(self, id):
