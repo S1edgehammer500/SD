@@ -3161,7 +3161,7 @@ def payment():
     logged_in = session['logged_in']
     authLevel = session['authLevel']
 
-    session['orderID'] = 11
+    
     
 
     return render_template('payment.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
@@ -3179,11 +3179,15 @@ def receipt():
     sameData, diffData = orderPay.showReceipt(session['orderID'])
 
     sameData.insert(0, request.form['name'])
+    
+    if sameData[5] != None:
+        sameData[5] = sameData[5][0:10]
 
-    sameData[5] = sameData[5][0:10]
+    print(sameData[5])
+    
 
 
-    return render_template('receipt.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel, sameData=sameData, diffData=diffData, dataLen=len(diffData))
+    return render_template('receipt.html', title = "Receipt" , logged_in=logged_in, authLevel=authLevel, sameData=sameData, diffData=diffData, dataLen=len(diffData))
 
 
 if __name__ == "__main__":
