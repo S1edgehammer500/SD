@@ -40,23 +40,20 @@ def run_tests():
 
         def test91_update_availability(self):
             availability = False
-            foodName = 'Pizza'
-            restaurantName = 'Bristol'
-            result = self.model.updateAvailability(availability, foodName, restaurantName)
+            ID = 1
+            result = self.model.updateAvailability(availability, ID)
             self.assertEqual(result, 1)
 
         def test92_update_availability_invalid_syntax(self):
-            foodName = 'Pizza'
-            restaurantName = 'Bristol'
+            ID = 1
             availability = "Not available"
-            result = self.model.updateAvailability(availability, foodName, restaurantName)
+            result = self.model.updateAvailability(availability, ID)
             self.assertEqual(result, 0)
 
         def test93_update_availability_invalid_name(self):
-            foodName = 'Nothing'
-            restaurantName = 'Bristol'
+            ID = 1
             availability = False
-            result = self.model.updateAvailability(availability, foodName, restaurantName)
+            result = self.model.updateAvailability(availability, ID)
             self.assertEqual(result, 0)
 
     class TestDeletemenu(unittest.TestCase):
