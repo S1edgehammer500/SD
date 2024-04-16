@@ -38,67 +38,22 @@ def run_tests():
         def setUp(self):
             self.model = Menu()
 
-        def test4_update_restaurantName(self):
-            id = 1
-            restaurantName = 'Manchester'
-            self.model.setMenuDetails(id)
-            result = self.model.updateRestaurantName(restaurantName, id)
-            self.assertEqual(result, 1)
-
-        def test5_update_restaurantName_nonexistant(self):
-            id = 1
-            restaurantName = 'Cardiff'
-            self.model.setMenuDetails(id)
-            result = self.model.updateRestaurantName(restaurantName, id)
-            self.assertEqual(result, 0)
-
-        def test6_update_restaurantName_invalid_id(self):
-            id = 20
-            restaurantName = "Bristol"
-            self.model.setFoodName("Omelette")
-            result = self.model.updateRestaurantName(restaurantName, id)
-            self.assertEqual(result, 0)
-        
-        def test7_update_foodName(self):
-            id = 1
-            foodName = "Omelette"
-            self.model.setMenuDetails(id)
-            result = self.model.updateFoodName(foodName, id)
-            self.assertEqual(result, 1)
-
-        def test8_update_foodName_nonexistant(self):
-            id = 1
-            foodName = "Bacon"
-            self.model.setMenuDetails(id)
-            result = self.model.updateFoodName(foodName, id)
-            self.assertEqual(result, 0)
-
-        def test90_update_foodName_invalid_id(self):
-            id = 20
-            self.model.setRestaurantName("Manchester")
-            foodName = "Omelette"
-            result = self.model.updateFoodName(foodName, id)
-            self.assertEqual(result, 0)
-
         def test91_update_availability(self):
             availability = False
-            foodName = 'Pizza'
-            restaurantName = 'Bristol'
-            result = self.model.updateAvailability(availability, foodName, restaurantName)
+            ID = 1
+            result = self.model.updateAvailability(availability, ID)
             self.assertEqual(result, 1)
 
         def test92_update_availability_invalid_syntax(self):
-            foodName = 'Pizza'
-            restaurantName = 'Bristol'
+            ID = 1
             availability = "Not available"
-            result = self.model.updateAvailability(availability, foodName, restaurantName)
+            result = self.model.updateAvailability(availability, ID)
             self.assertEqual(result, 0)
 
         def test93_update_availability_invalid_name(self):
-            foodName = 'Nothing'
-            restaurantName = 'Bristol'
+            ID = 1
             availability = False
-            result = self.model.updateAvailability(availability, foodName, restaurantName)
+            result = self.model.updateAvailability(availability, ID)
             self.assertEqual(result, 0)
 
     class TestDeletemenu(unittest.TestCase):
