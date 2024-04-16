@@ -131,47 +131,6 @@ class Menu: #menu class
             print("Restaurant and food combination don't exist")
             conn.close()
             return 0
-            
-    def updateRestaurantName(self, restaurantName, id):
-        if restaurantName != None:
-            if self.checkID(id):
-                if self.validateRestaurantName(restaurantName):
-                    if not self.checkRestaurantFood(restaurantName, self.__foodName):
-                        conn, cur = openConnection()
-                        query = 'UPDATE menu SET restaurantName = ? WHERE menuID = ?;'
-                        cur.execute(query, (restaurantName, id))
-                        conn.commit()
-                        conn.close()
-                        return 1
-                    else:
-                        return 0
-                else:
-                    return 0
-            else:
-                return 0
-        else:
-            return 0
-        
-            
-    def updateFoodName(self, foodName, id):
-        if foodName != None:
-            if self.checkID(id):
-                if self.validateFoodName(foodName):
-                    if not self.checkRestaurantFood(self.__restaurantName, foodName):
-                        conn, cur = openConnection()
-                        query = 'UPDATE menu SET foodName = ? WHERE menuID = ?;'
-                        cur.execute(query, (foodName, id))
-                        conn.commit()
-                        conn.close()
-                        return 1
-                    else:
-                        return 0
-                else:
-                    return 0
-            else:
-                return 0
-        else:
-            return 0
         
     def updateAvailability(self, availability, ID):
         if availability != None:
@@ -228,6 +187,22 @@ class Menu: #menu class
         idList = [row[3] for row in records]
         isAvailableList = [row[4] for row in records]
 
+        # Close the connection after fetching data
+        conn.close()
+        return foodList, priceList, allergyList, idList, isAvailableList
+    
+    def getAvailableMenuList(self,restaurantName):
+        conn, cur = openConnection()
+        query = 'SELECT food.foodName, price, allergyInfo, menu.menuID, isAvailable FROM food JOIN menu ON food.foodName == menu.foodName WHERE menu.restaurantName = ? AND menu.isAvailable=? ORDER BY menu.menuID;'
+
+        cur.execute(query, (restaurantName,True))
+        records = cur.fetchall()
+        foodList = [row[0] for row in records]
+        priceList = [row[1] for row in records]
+        allergyList = [row[2] for row in records]
+        idList = [row[3] for row in records]
+        isAvailableList = [row[4] for row in records]
+        
         # Close the connection after fetching data
         conn.close()
         return foodList, priceList, allergyList, idList, isAvailableList

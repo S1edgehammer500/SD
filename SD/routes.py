@@ -1723,7 +1723,7 @@ def createOrder():
             return redirect(url_for('createOrder'))
         return render_template('createOrder.html', title="Create Order", logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, allergyList = allergyList, idList = idList, listLen = len(foodList))
     except Exception as e:                
-        return render_template('createOrder.html', title="order", logged_in=logged_in, authLevel=authLevel, error=e, foodList = foodList, priceList = priceList, allergyList = allergyList, idList = idList, listLen = len(foodList))
+        return render_template('createOrder.html', title="Create Order", logged_in=logged_in, authLevel=authLevel, error=e, foodList = foodList, priceList = priceList, allergyList = allergyList, idList = idList, listLen = len(foodList))
 
 
 
@@ -1833,6 +1833,7 @@ def updateOrder3():
     order = Order()
     order.setOrderDetails(session['orderID'])
     status = order.getStatus()
+    startTime = order.getStartTime()
     try:
         if request.method == 'POST':
             newStatus = request.form['status']
@@ -1844,15 +1845,16 @@ def updateOrder3():
                     flash("Successfully updated order details", "success")
                     return redirect(url_for('order'))
                 elif newStatus == 'Ready':
-                    currentDate = datetime.datetime.now()
-                    currentDate = currentDate.strftime("%Y-%m-%d %H:%M:%S")
-                    startTime = order.getStartTime()
-                    if order.updateReadyTime(currentDate, session['orderID'], startTime):
-                        flash("Successfully updated order details", "success")
-                        return redirect(url_for('order'))
+                    if startTime != None:
+                        currentDate = datetime.datetime.now()
+                        currentDate = currentDate.strftime("%Y-%m-%d %H:%M:%S")
+                        startTime = order.getStartTime()
+                        if order.updateReadyTime(currentDate, session['orderID'], startTime):
+                            flash("Successfully updated order details", "success")
+                            return redirect(url_for('order'))
                     else:
                        print("FAIL")
-                       flash("Start time should be set before Ready time")
+                       flash("Start time should be set before Ready time", "danger")
                        return render_template('updateOrder2.html', title="Update Order", logged_in=logged_in, authLevel=authLevel, error=e, status=status)
                 else:
                     flash("Successfully updated order details", "success")
@@ -2232,7 +2234,7 @@ def menu():
     currentMenu = Menu()
 
     
-    foodList, priceList, allergyList, idList, isAvailableList = currentMenu.getMenuList(currentRestaurant)
+    foodList, priceList, allergyList, idList, isAvailableList = currentMenu.getAvailableMenuList(currentRestaurant)
 
 
     return render_template('menu.html', title = "Menu" , logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, allergyList = allergyList, listLen = len(foodList))
@@ -2448,11 +2450,12 @@ def updateFood2():
             currentFood.setFoodDetails(foodName)
 
             foodPrice = currentFood.getPrice()
+            allergyInfo = currentFood.getAllergyInfo()
 
             print(foodPrice)
             print(foodName)
 
-            return render_template('updateFood2.html', title = "Update Food" , logged_in=logged_in, authLevel=authLevel, foodName = foodName, foodPrice = foodPrice)
+            return render_template('updateFood2.html', title = "Update Food" , logged_in=logged_in, authLevel=authLevel, foodName = foodName, foodPrice = foodPrice, allergyInfo=allergyInfo)
             
 
 
@@ -2481,10 +2484,9 @@ def updateFood3():
             foodName = request.form['foodName']
             foodAllergy = request.form['foodAllergy']
             foodPrice = request.form['foodPrice']
-            foodAvailable = request.form['foodAvailable']
             
             
-            if foodName != None and foodAllergy != None and foodPrice != None and foodAvailable !=None:
+            if foodName != None and foodAllergy != None and foodPrice != None:
 
                 if currentFood.validateName(foodName) == 1:
 
@@ -2492,76 +2494,58 @@ def updateFood3():
                         
                         if currentFood.validatePrice(foodPrice) == 1:
 
-                            if currentFood.validateAvailability(foodAvailable) == 1:
-                                
+                            if session['foodName'] == foodName:
 
-                                if session['foodName'] == foodName:
+                                if currentFood.updatePrice(foodPrice, foodName) ==1:
 
-                                    if currentFood.updatePrice(foodPrice, foodName) ==1:
-
-                                        if currentFood.updateAllergyInfo(foodAllergy, foodName) == 1:
+                                    if currentFood.updateAllergyInfo(foodAllergy, foodName) == 1:
+                                        
                                             
-                                            if currentFood.updateAvailability(foodAvailable, foodName) == 1:
-                                                
+                                        flash("Food updated successfully", "success")
+                                        return redirect(url_for('updateFood'))
+
+
+                                    else:
+                                        flash("Error updating food allergy information", "danger")
+                                        return redirect(url_for('updateFood'))
+
+                                else:
+                                    flash("Error updating food price", "danger")
+                                    return redirect(url_for('updateFood'))
+
+
+                            
+                            
+                            
+                            else:
+
+                                if currentFood.checkName(foodName) != 1:
+
+                                    if currentFood.updateFoodName(session['foodName'], foodName) == 1:
+
+                                        if currentFood.updatePrice(foodPrice, foodName) ==1:
+
+                                            if currentFood.updateAllergyInfo(foodAllergy, foodName) == 1:
+                                        
+                                            
                                                 flash("Food updated successfully", "success")
                                                 return redirect(url_for('updateFood'))
 
                                             else:
-                                                flash("Food availability should either be 1 or 0", "danger")
+                                                flash("Error updating food allergy information", "danger")
                                                 return redirect(url_for('updateFood'))
 
                                         else:
-                                            flash("Error updating food allergy information", "danger")
+                                            flash("Error updating food price", "danger")
                                             return redirect(url_for('updateFood'))
 
                                     else:
-                                        flash("Error updating food price", "danger")
+                                        flash("Food availability should either be 1 or 0", "danger")
                                         return redirect(url_for('updateFood'))
 
-
-                                
-                                
-                                
                                 else:
-
-                                    if currentFood.checkName(foodName) != 1:
-
-                                        if currentFood.updateFoodName(session['foodName'], foodName) == 1:
-
-                                            if currentFood.updatePrice(foodPrice, foodName) ==1:
-
-                                                if currentFood.updateAllergyInfo(foodAllergy, foodName) == 1:
-                                            
-                                                    if currentFood.updateAvailability(foodAvailable, foodName) == 1:
-                                                
-                                                        flash("Food updated successfully", "success")
-                                                        return redirect(url_for('updateFood'))
-
-                                                    else:
-                                                        flash("Food availability should either be 1 or 0", "danger")
-                                                        return redirect(url_for('updateFood'))
-
-                                                else:
-                                                    flash("Error updating food allergy information", "danger")
-                                                    return redirect(url_for('updateFood'))
-
-                                            else:
-                                                flash("Error updating food price", "danger")
-                                                return redirect(url_for('updateFood'))
-
-                                        else:
-                                            flash("Food availability should either be 1 or 0", "danger")
-                                            return redirect(url_for('updateFood'))
-
-                                    else:
-                                        flash("This food already exist in the database", "danger")
-                                        return redirect(url_for('updateFood'))
-
-                                
-
-                            else:
-                                flash("Food availability should either be 1 or 0", "danger")
-                                return redirect(url_for('updateFood'))
+                                    flash("This food already exist in the database", "danger")
+                                    return redirect(url_for('updateFood'))
 
                         else:
                             flash("Food price is invalid (greater than 0)", "danger")
@@ -2605,8 +2589,7 @@ def deleteFood():
 
     foodName = [item[0] for item in foodList]
     foodPrice = [item[1] for item in foodList]
-    foodAvailable = [item[2] for item in foodList]
-    foodAllergy = [item[3] for item in foodList]
+    foodAllergy = [item[2] for item in foodList]
 
     
 
