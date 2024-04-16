@@ -1765,7 +1765,7 @@ def removeFromOrder():
                 print(str(chosenFood))
                 if order.removeFoodFromOrder(session['orderID'],chosenName, chosenFood):
                     flash("Successfully removed food", "success")
-                    return redirect(url_for('removeFromOrder'))
+                    return redirect(url_for('createOrder2'))
                 else:
                     flash("Error removing food", "danger")
                     return redirect(url_for('removeFromOrder'))
