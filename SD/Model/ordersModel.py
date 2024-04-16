@@ -633,17 +633,46 @@ class Order: #order class
         try:
             conn, cur = openConnection()
 
-            query = """SELECT orders.orderID, restaurantName, orderPrice, tableNumber, readyTime, discountValue, food.foodName, price 
-            FROM orders JOIN discountList JOIN discounts JOIN foodList JOIN food
-            WHERE orders.orderID = foodList.orderID AND orders.orderID = discountList.orderID
-            AND discountList.discountID = discounts.discountID AND foodList.foodName = food.foodName
-            AND orders.orderID = ?;"""
+            query = """SELECT * FROM discountList WHERE orderID = ?;"""
             cur.execute(query, (orderID,))
 
-            rows = cur.fetchall()
+            record = cur.fetchone()
+            print(record)
+
+            if record != None:
+
+                query = """SELECT orders.orderID, restaurantName, orderPrice, tableNumber, readyTime, discountValue, food.foodName, price 
+                FROM orders JOIN discountList JOIN discounts JOIN foodList JOIN food
+                WHERE orders.orderID = foodList.orderID AND orders.orderID = discountList.orderID
+                AND discountList.discountID = discounts.discountID AND foodList.foodName = food.foodName
+                AND orders.orderID = ?;"""
+                cur.execute(query, (orderID,))
+
+                rows = cur.fetchall()
+
+                sameOrder = [rows[0][0], rows[0][1], rows[0][2], rows[0][3], rows[0][4], rows[0][5]]
+                diffOrder = [[row[6], row[7]] for row in rows]
+
+            else:
+                query = """SELECT orders.orderID, restaurantName, orderPrice, tableNumber, readyTime, food.foodName, price 
+                FROM orders JOIN foodList JOIN food
+                WHERE orders.orderID = foodList.orderID AND foodList.foodName = food.foodName
+                AND orders.orderID = ?;"""
+                cur.execute(query, (orderID,))
+
+                rows = cur.fetchall()
+
+                sameOrder = [rows[0][0], rows[0][1], rows[0][2], rows[0][3], rows[0][4], None]
+                diffOrder = [[row[5], row[6]] for row in rows]
+
+
+
+            print(rows)
+
+            print(sameOrder)
+            print(diffOrder)
             
-            sameOrder = [rows[0][0], rows[0][1], rows[0][2], rows[0][3], rows[0][4], rows[0][5]]
-            diffOrder = [[row[6], row[7]] for row in rows]
+            
 
             # Close the connection after fetching data
             conn.close()
