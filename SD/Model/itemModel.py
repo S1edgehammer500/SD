@@ -69,7 +69,7 @@ class Item: #item class
 
     def validateQuantity(self, quantity):
         if int(quantity)>0:
-            pattern = r'[0-9]{1,2}' 
+            pattern = r'[0-9]{1,4}' 
             if re.fullmatch(pattern, str(quantity)):
                 return 1
             else:
@@ -88,7 +88,7 @@ class Item: #item class
 
     def validateStockLimit(self, stockLimit):
         if int(stockLimit):
-            pattern = r'[0-9]{1,2}'
+            pattern = r'[0-9]{1,4}'
             if re.fullmatch(pattern, str(stockLimit)):
                 return 1
             else:
@@ -190,8 +190,11 @@ class Item: #item class
             cur.execute("SELECT * FROM item")
             rows = cur.fetchall()
             item_list = [(row[0], row[1], row[2]) for row in rows]
+            itemName = [row[0] for row in rows]
+            quantity = [row[1] for row in rows]
+            stockLimit = [row[2] for row in rows]
             conn.close()
-            return item_list
+            return itemName, quantity, stockLimit
         except sqlite3.Error as e:
             print("Error fetching item list:", e)
             return []
@@ -211,3 +214,44 @@ class Item: #item class
                 return 0
         except sqlite3.Error as e:
             print("Error deleting item:", e)
+
+
+    def isThereMoreItems(self, itemName, quantity):
+        conn, cur = openConnection()
+        query = "SELECT quantity FROM item WHERE itemName = ?;"
+        cur.execute(query, (itemName,))
+        record = cur.fetchone()
+        conn.close()
+
+        if record is not None:
+            if record[0] >= quantity:
+                return 1
+            else:
+                return 0 
+        else:
+            conn.close()
+            return 0
+
+    def takeAwayItems(self, quantity, itemName):
+        if quantity != None:
+            if self.getName(itemName):
+                itemQuant = self.getQuantity(itemName)
+
+
+                quantity = itemQuant - quantity
+
+                conn, cur = openConnection()
+                query = 'UPDATE item SET quantity = ? WHERE itemName = ?;'
+                cur.execute(query, (quantity, itemName))
+                conn.commit()
+                conn.close()
+                return 1
+            else:
+                return 0
+        else:
+            return 0
+        
+    def checkItemQuantLessThanStockLimit(self, itemSL, itemQuant, quantToAdd):
+        if (quantToAdd + itemQuant) > itemSL:
+            return 0
+        else: return 1

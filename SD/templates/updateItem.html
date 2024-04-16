@@ -15,6 +15,14 @@
                     <th class = "text-center" style = "width: 25%;">Stock Limit</th>
                     <th class = "text-center" style = "width: 10%;">Select</th>
 
+                    {% for i in range(listLen): %} 
+            <tr>
+                <td> {{itemName[i]}} </td>              
+                <td> {{itemQuantity[i]}} </td>
+                <td> {{itemSL[i]}} </td>
+                <td> <input required type="radio" name="itemName" value="{{itemName[i]}}" checked></td>
+            </tr>
+        {% endfor %}
             </table>
                 <br><br>
 
@@ -31,17 +39,6 @@
 
 <br>
 
-
-<div class = "reservation-options">
-    <div class="AdminBox">
-        <h3 class="txt-size text-center pt-3">Order Stock Here</h3> <br><br>
-    
-        <a href="{{ url_for('orderItem') }}">
-            <button type="button">Order Item Stock</button>
-        </a>
-
-    </div>
-</div>
 
 
 {% endblock content %}

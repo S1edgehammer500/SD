@@ -2,10 +2,10 @@
 {% block content %} 
 
 
-<form action="/deleteItem2/" method="post">
+<form action="/orderItems2/" method="post">
     <div class="StandardBox">
 
-        <h3 class="text-center pt-3 heading">Choose An Item From The Warehouse To Delete</h3> <br>
+        <h3 class="text-center pt-3 heading">Choose An Item To Order For The Warehouse</h3> <br>
 
             <table border=1 style="color:rgb(255, 255, 255)" class="center">
                 <tr>
@@ -24,7 +24,9 @@
             </tr>
         {% endfor %}
             </table>
-            
+                <br><br>
+
+
                 <form>
                     
                     <div class = "d-grid mb-3">
@@ -36,9 +38,6 @@
 </form>
 
 <br>
-
-
-
 
 
 

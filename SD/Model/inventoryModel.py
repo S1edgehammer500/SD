@@ -222,6 +222,23 @@ class Inventory: #inventory class
         else:
             return 0
         
+    def updateQuantity(self, quantity):
+        if quantity != None:
+            id = self.getID()
+            if self.checkID(id):
+                print(quantity)
+                print(id)
+                conn, cur = openConnection()
+                query = 'UPDATE inventory SET quantity = ? WHERE inventoryID = ?;'
+                cur.execute(query, (quantity, id))
+                conn.commit()
+                conn.close()
+                return 1
+            else:
+                return 0
+        else:
+            return 0
+        
     def createInventory(self, restaurantName, itemName, quantity, stockLimit):
         conn, cur = openConnection()
         if (self.validateRestaurantName(restaurantName)) and (self.validateItemName(itemName)) and not (self.checkRestaurantItem(restaurantName, itemName)) and (self.validateQuantity(quantity)) and (self.validateStockLimit(stockLimit)) and (self.validateQuantity2(quantity, stockLimit)):
@@ -303,3 +320,12 @@ class Inventory: #inventory class
                 return 0
         except sqlite3.Error as e:
             print("Error deleting inventory:", e)
+
+
+    def checkItemQuantLessThanStockLimit(self, itemSL, itemQuant, quantToAdd):
+        if (quantToAdd + itemQuant) > itemSL:
+            return 0
+        else: return 1
+
+
+    

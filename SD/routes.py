@@ -15,8 +15,8 @@ from Model.foodModel import *
 from Model.reportModel import *
 from Model.inventoryModel import *
 from Model.itemModel import *
+from Model.reservationModel import *
 from Model.ordersModel import *
-
 
 # User defined
 import strip
@@ -147,6 +147,15 @@ def home():
     
     return render_template('home.html', title="Home", logged_in=logged_in, authLevel=authLevel)
 
+@app.route("/qrcode/")
+def qrcode():
+    
+    return render_template('qrcode.html', title="QRcode Scanner")
+
+@app.route("/ourMenu/")
+def ourMenu():
+    
+    return render_template('ourMenu.html', title="QRcode Scanner")
 
 
 
@@ -305,22 +314,25 @@ def updateUser():
     employeeCode = []
     tempEmployeeCode = currentUser.getEmployeeCodes()
     employeeCode = strip.it(tempEmployeeCode)
-    print(employeeCode)
-    employeeCode.append(session['code'])
+    if session['authLevel'] == 'admin':
+        print(employeeCode)
+        employeeCode.append(session['code'])
 
 
     baseRestaurant = []
     tempBaseRestaurant = currentUser.getBaseRestaurants()
     baseRestaurant = strip.it(tempBaseRestaurant)
-    baseRestaurant.append(BR)
-    print(baseRestaurant)
+    if session['authLevel'] == 'admin':
+        baseRestaurant.append(BR)
+        print(baseRestaurant)
 
     authorisationLevel = []
     tempAuthorisationLevel = currentUser.getAuthorisationLevels()
     authorisationLevel = strip.it(tempAuthorisationLevel)
-    authorisationLevel.append(AL)
-    print(authorisationLevel)
-    print(AL)
+    if session['authLevel'] == 'admin':
+        authorisationLevel.append(AL)
+        print(authorisationLevel)
+        print(AL)
 
     return render_template('updateUser.html', title = "Update User", logged_in=logged_in, authLevel=authLevel, baseRestaurant=baseRestaurant, authorisationLevel=authorisationLevel, employeeCode=employeeCode, codeLen=len(employeeCode))
     
@@ -396,6 +408,9 @@ def updateUser3():
                             
                             currentUser.updateBaseRestaurant(previousCode, base)
                             currentUser.updateAuthorisation(previousCode, auth)
+                            session['authLevel'] = auth
+                            authLevel = session['authLevel']
+                            
                             print(code)
                             print(previousCode)
                             if code != previousCode:
@@ -1289,7 +1304,7 @@ def createInventory():
     currentRestaurant = currentUser.getBaseRestaurant()
 
     itemsList = currentItem.get_item_list()
-
+    
     #gets all foods in the food database
     allItems = [item[0] for item in itemsList]
 
@@ -1297,8 +1312,6 @@ def createInventory():
 
     #gets all the foods that are not in the restaurants menu but are in the food database
     items = [item for item in allItems if item not in [inventoryItem[0] for inventoryItem in items_in_inventory]]
-
-
 
     error = ''
     
@@ -1485,6 +1498,117 @@ def updateInventory3():
     except Exception as e:                
         return render_template('updateInventory2.html', title = "Update Inventory" , logged_in=logged_in, authLevel=authLevel)
 
+
+@app.route("/manualOrder/", methods=['GET', 'POST'])
+@login_required
+@chef_required
+def manualOrder():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    currentUser = User()
+    invent = Inventory()
+
+    currentUser.setLoginDetails(session['code'])
+    
+    currentRestaurant = currentUser.getBaseRestaurant()
+    session['currentRestaurant'] = currentRestaurant
+    
+    inventoryID = []
+    tempInventoryID = invent.getInventoryID(currentRestaurant)
+    inventoryID = strip.it(tempInventoryID)
+    
+    itemName = []
+    tempItemName = invent.getItemNames(currentRestaurant)
+    itemName = strip.it(tempItemName)
+    
+    itemQuantity = []
+    tempItemQuantity = invent.getItemQuantity(currentRestaurant)
+    itemQuantity = strip.it(tempItemQuantity)
+    
+    itemSL = []
+    tempItemSL = invent.getItemStockLimit(currentRestaurant)
+    itemSL = strip.it(tempItemSL)
+
+    
+    
+    return render_template('manualOrder.html', title = "Manual Order" , logged_in=logged_in, authLevel=authLevel, inventoryID = inventoryID, itemName = itemName, itemQuantity = itemQuantity, itemSL=itemSL, listLen = len(itemName))
+
+
+@app.route("/manualOrder2/", methods=['GET', 'POST'])
+@login_required
+@chef_required
+def manualOrder2():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    invent = Inventory()
+    
+    if request.method == "POST":
+        
+        inventoryID = request.form['inventoryID']
+        session['inventoryID'] = inventoryID
+
+        invent.setInventoryDetails(inventoryID)
+
+        itemQuant = invent.getQuantity()
+
+        itemSL = invent.getStockLimit()
+
+    
+    return render_template('manualOrder2.html', title = "Manual Order" , logged_in=logged_in, authLevel=authLevel, itemQuant=itemQuant, itemSL=itemSL)
+
+
+@app.route("/manualOrder3/", methods=['GET', 'POST'])
+@login_required
+@chef_required
+def manualOrder3():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    inventoryID = session['inventoryID']
+    
+    invent = Inventory()
+    item = Item()
+    
+    invent.setInventoryDetails(inventoryID)
+    item.setItemDetails(invent.getItemName())
+    
+    itemName = invent.getItemName()
+    try:
+        
+        if request.method == "POST":
+            
+            
+            quantToAdd = int(request.form['itemQuant'])
+            
+            
+            if quantToAdd != None:
+                itemSL = int(invent.getStockLimit())
+                itemQuant = int(invent.getQuantity())
+                
+
+                if invent.checkItemQuantLessThanStockLimit(itemSL, itemQuant, quantToAdd) == 1:
+                    
+                    if item.isThereMoreItems(itemName, quantToAdd) == 1:
+                    
+
+                        invent.updateQuantity(quantToAdd + itemQuant)
+                        item.takeAwayItems(quantToAdd, itemName)
+
+                        flash(f"You have successfully updated the item {itemName}", 'info')
+                        return redirect(url_for('inventory'))
+                    else:
+                        flash("There is not enough stock in the warehouse", "danger")
+                        return render_template('manualOrder2.html', title = "Manual Order" , logged_in=logged_in, authLevel=authLevel, itemQuant=itemQuant, itemSL=itemSL)
+                else:
+                    flash("The quantity must be smaller than the stock limit", "danger")
+                    return render_template('manualOrder2.html', title = "Manual Order" , logged_in=logged_in, authLevel=authLevel, itemQuant=itemQuant, itemSL=itemSL)
+            else:                
+                flash("Please don't leave any field empty", "danger")
+                return render_template('manualOrder2.html', title = "Manual Order" , logged_in=logged_in, authLevel=authLevel, itemQuant=itemQuant, itemSL=itemSL)
+    except Exception as e:                
+        flash(e)
+        return render_template('home.html', title = "Manual Order" , logged_in=logged_in, authLevel=authLevel)
 
 
 
@@ -1817,8 +1941,31 @@ def reservation():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
+    
+    currentUser = User()
+    reservation = Reservation()
 
-    return render_template('reservation.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
+    currentUser.setLoginDetails(session['code'])
+    
+    currentRestaurant = currentUser.getBaseRestaurant()
+    
+    namesList = []
+    tempNamesList = reservation.getNameList(currentRestaurant)
+    namesList = strip.it(tempNamesList)
+    
+    tablesList = []
+    tempTablesList = reservation.getTablesList(currentRestaurant)
+    tablesList = strip.it(tempTablesList)
+    
+    startTimeList = []
+    tempStartTimeList = reservation.getStartTimeList(currentRestaurant)
+    startTimeList = strip.it(tempStartTimeList)
+    
+    endTimeList = []
+    tempEndTimeList = reservation.getEndTimeList(currentRestaurant)
+    endTimeList = strip.it(tempEndTimeList)
+
+    return render_template('reservation.html', title="Reservation", logged_in=logged_in, authLevel=authLevel, Name=namesList, tables=tablesList, startTime=startTimeList, endTime=endTimeList, listLen=len(namesList))
 
 
 @app.route("/createReservation/", methods=['POST', 'GET'])
@@ -1827,8 +1974,63 @@ def createReservation():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
+    
+    currentUser = User()
+    reservation = Reservation()
+    
+    currentUser.setLoginDetails(session['code'])
 
-    return render_template('createReservation.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
+    currentRestaurant = currentUser.getBaseRestaurant()
+    print(currentRestaurant)
+    
+    error = ''
+    
+    try:
+        if request.method == "POST":
+            #getting data from form 
+            Name = request.form['Name']
+            numberOfTables = int(request.form['numberOfTables'])
+            startDate = request.form['dateStart']
+            startTime = request.form['timeStart']
+            endDate = request.form['dateEnd']
+            endTime = request.form['timeEnd']
+            
+            start = datetime.datetime.strptime(startDate + " " + startTime + ":00", "%Y-%m-%d %H:%M:%S")
+            end = datetime.datetime.strptime(endDate + " " + endTime + ":00", "%Y-%m-%d %H:%M:%S")
+
+            if numberOfTables != None and start != None and end != None and Name != None:
+                if reservation.validateTables(numberOfTables, currentRestaurant) == 1:
+                    if reservation.validateStartTime(start) == 1:
+                        if reservation.validateEndTime(end, start) == 1:
+                            if reservation.validateName(Name) == 1:
+                                if reservation.createReservation(currentRestaurant, numberOfTables, start, end, Name) == 1:                      
+                                    flash("Reservation is now registered", "success")
+                                    return redirect(url_for('reservations'))
+                                else:
+                                    flash("Invalid reservation syntax", "danger")
+                                    return render_template('createReservation.html', error=error, title="Create Reservation", logged_in=logged_in, authLevel=authLevel)
+                            else:
+                                flash("Invalid name input (more than 3 characters)")
+                                return render_template('createReservation.html', error=error, title="Create Reservation", logged_in=logged_in, authLevel=authLevel)
+                        else:
+                            flash("Invalid end time can't be before the start time", "danger")
+                            return render_template('createReservation.html', error=error, title="Create Reservation", logged_in=logged_in, authLevel=authLevel)
+                    else:
+                        flash("Invalid start time can't be before today", "danger")
+                        return render_template('createReservation.html', error=error, title="Create Reservation", logged_in=logged_in, authLevel=authLevel)
+                else:
+                    flash("Invalid table number can't be more than restaurant tables", "danger")
+                    return render_template('createReservation.html', error=error, title="Create Reservation", logged_in=logged_in, authLevel=authLevel)
+            else:                
+                flash("Fields cannot be empty", "danger")
+                return render_template('createReservation.html', error=error, title="Create Reservation", logged_in=logged_in, authLevel=authLevel)
+        else:            
+            return render_template('createReservation.html', error=error, title="Create Reservation", logged_in=logged_in, authLevel=authLevel)        
+    except Exception as e:                
+        return render_template('createReservation.html', title="Create Reservation", logged_in=logged_in, authLevel=authLevel)
+
+
+    
 
 @app.route("/updateReservation/", methods=['POST', 'GET'])
 @login_required
@@ -1836,8 +2038,35 @@ def updateReservation():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
+   
+    currentUser = User()
+    reservation = Reservation()
 
-    return render_template('updateReservation.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
+    currentUser.setLoginDetails(session['code'])
+    
+    currentRestaurant = currentUser.getBaseRestaurant()
+    
+    reservationIDList = []
+    tempReservationIDList = reservation.getIDList(currentRestaurant)
+    reservationIDList = strip.it(tempReservationIDList)
+    
+    namesList = []
+    tempNamesList = reservation.getNameList(currentRestaurant)
+    namesList = strip.it(tempNamesList)
+    
+    tablesList = []
+    tempTablesList = reservation.getTablesList(currentRestaurant)
+    tablesList = strip.it(tempTablesList)
+    
+    startTimeList = []
+    tempStartTimeList = reservation.getStartTimeList(currentRestaurant)
+    startTimeList = strip.it(tempStartTimeList)
+    
+    endTimeList = []
+    tempEndTimeList = reservation.getEndTimeList(currentRestaurant)
+    endTimeList = strip.it(tempEndTimeList)
+
+    return render_template('updateReservation.html', title="Update Reservation", logged_in=logged_in, authLevel=authLevel, Name=namesList, tables=tablesList, startTime=startTimeList, endTime=endTimeList, reservationID=reservationIDList, listLen=len(namesList))
 
 
 @app.route("/updateReservation2/", methods=['POST', 'GET'])
@@ -1847,8 +2076,66 @@ def updateReservation2():
     logged_in = session['logged_in']
     authLevel = session['authLevel']
 
-    return render_template('updateReservation2.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
+    if request.method == "POST":
+        reservationID = request.form['reservationID']
+        session['reservationID'] = reservationID
+        
+    return render_template('updateReservation2.html', title="Update Reservation", logged_in=logged_in, authLevel=authLevel)
 
+@app.route("/updateReservation3/", methods=['POST', 'GET'])
+@login_required
+def updateReservation3():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    reservationID = session['reservationID']
+    
+    reservation = Reservation()
+    reservation.setReservationDetails(reservationID)
+    restaurantName = reservation.getRestaurantName()
+    print(restaurantName)
+    try:
+        if request.method == "POST":
+            
+            numberOfTables = int(request.form['numberOfTables'])
+            startDate = request.form['dateStart']
+            startTime = request.form['timeStart']
+            endDate = request.form['dateEnd']
+            endTime = request.form['timeEnd']
+            
+            start = datetime.datetime.strptime(startDate + " " + startTime + ":00", "%Y-%m-%d %H:%M:%S")
+            end = datetime.datetime.strptime(endDate + " " + endTime + ":00", "%Y-%m-%d %H:%M:%S")
+            
+            if numberOfTables != None and start != None and end != None:
+                if reservation.validateTables(numberOfTables, restaurantName) == 1:
+                    if reservation.validateStartTime(start) == 1:
+                        if reservation.validateEndTime(end, start) == 1:
+                            if reservation.updateStartTime(reservationID, start, end):
+                                if reservation.updateEndTime(reservationID, end, start):
+                                    
+                                    flash("You have successfully updated the reservation", 'info')
+                                    return redirect(url_for('reservation'))
+                                else:
+                                    flash("End time has to be after today and the start time", "danger")
+                                    return render_template('updateReservation2.html', title="Update Reservation", logged_in=logged_in, authLevel=authLevel)
+                            else:
+                                flash("Start time has to be later than current time", "danger")
+                                return render_template('updateReservation2.html', title="Update Reservation", logged_in=logged_in, authLevel=authLevel)
+                        else:
+                            flash("End time has to be after today and the start time", "danger")
+                            return render_template('updateReservation2.html', title="Update Reservation", logged_in=logged_in, authLevel=authLevel)        
+                    else:
+                        flash("Start time has to be later than current time", "danger")
+                        return render_template('updateReservation2.html', title="Update Reservation", logged_in=logged_in, authLevel=authLevel)
+                else:
+                    flash("Table number cannot be larger than the restaurants availability", "danger")
+                    return render_template('updateReservation2.html', title="Update Reservation", logged_in=logged_in, authLevel=authLevel)
+            else:                
+                flash("Please don't leave any field empty", "danger")
+                return render_template('updateReservation2.html', title="Update Reservation", logged_in=logged_in, authLevel=authLevel)
+    except Exception as e:                
+        return render_template('updateReservation2.html', title="Update Reservation", logged_in=logged_in, authLevel=authLevel)
+        
 
 
 @app.route("/deleteReservation/")
@@ -1858,8 +2145,58 @@ def deleteReservation():
     logged_in = session['logged_in']
     authLevel = session['authLevel']
 
-    return render_template('deleteReservation.html', title="Admin Options", logged_in=logged_in, authLevel=authLevel)
+    currentUser = User()
+    reservation = Reservation()
 
+    currentUser.setLoginDetails(session['code'])
+    
+    currentRestaurant = currentUser.getBaseRestaurant()
+    
+    reservationIDList = []
+    tempReservationIDList = reservation.getIDList(currentRestaurant)
+    reservationIDList = strip.it(tempReservationIDList)
+    
+    namesList = []
+    tempNamesList = reservation.getNameList(currentRestaurant)
+    namesList = strip.it(tempNamesList)
+    
+    tablesList = []
+    tempTablesList = reservation.getTablesList(currentRestaurant)
+    tablesList = strip.it(tempTablesList)
+    
+    startTimeList = []
+    tempStartTimeList = reservation.getStartTimeList(currentRestaurant)
+    startTimeList = strip.it(tempStartTimeList)
+    
+    endTimeList = []
+    tempEndTimeList = reservation.getEndTimeList(currentRestaurant)
+    endTimeList = strip.it(tempEndTimeList)
+
+    return render_template('deleteReservation.html', title="Delete Reservation", logged_in=logged_in, authLevel=authLevel, Name=namesList, tables=tablesList, startTime=startTimeList, endTime=endTimeList, reservationID=reservationIDList, listLen=len(namesList))
+
+@app.route("/deleteReservation2/", methods=['GET', 'POST'])
+@login_required
+def deleteReservation2():
+    reservation = Reservation()
+
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    try:
+        if request.method == "POST":
+            # Item name that you wanna delete
+            reservationID = request.form['reservationID']
+        
+  
+            if reservation.deleteReservation(reservationID):
+                flash("You have successfully deleted the reservation", 'info')
+                return redirect(url_for('reservation'))
+            else:
+                flash("Reservation does not exist", 'danger')
+                return redirect(url_for('deleteReservation'))
+                
+    except Exception as e:  
+        return render_template('deleteReservation.html', error=e, title="Delete Reservation", logged_in=logged_in, authLevel=authLevel)
 
 
 
@@ -2383,7 +2720,7 @@ def deleteStaff():
     currentUser.setLoginDetails(session['code'])
 
     employeeCode = []
-    tempEmployeeCode = currentUser.getEmployeeCodes()
+    tempEmployeeCode = currentUser.getStaffEmployeeCodes()
     employeeCode = strip.it(tempEmployeeCode)
 
 
@@ -2433,28 +2770,19 @@ def updateStaff():
     currentUser = User()
     currentUser.setLoginDetails(session['code'])
 
-    BR = currentUser.getBaseRestaurant()
-    AL = currentUser.getAuthorisation()
-
     employeeCode = []
-    tempEmployeeCode = currentUser.getEmployeeCodes()
+    tempEmployeeCode = currentUser.getStaffEmployeeCodes() 
     employeeCode = strip.it(tempEmployeeCode)
-    print(employeeCode)
-    employeeCode.append(session['code'])
 
 
     baseRestaurant = []
     tempBaseRestaurant = currentUser.getBaseRestaurants()
     baseRestaurant = strip.it(tempBaseRestaurant)
-    baseRestaurant.append(BR)
-    print(baseRestaurant)
+
 
     authorisationLevel = []
     tempAuthorisationLevel = currentUser.getAuthorisationLevels()
     authorisationLevel = strip.it(tempAuthorisationLevel)
-    authorisationLevel.append(AL)
-    print(authorisationLevel)
-    print(AL)
 
     return render_template('updateStaff.html', title = "Update Staff", logged_in=logged_in, authLevel=authLevel, baseRestaurant=baseRestaurant, authorisationLevel=authorisationLevel, employeeCode=employeeCode, codeLen=len(employeeCode))
 
@@ -2535,6 +2863,8 @@ def updateStaff3():
                             
                             currentUser.updateBaseRestaurant(previousCode, base)
                             currentUser.updateAuthorisation(previousCode, auth)
+                            session['authLevel'] = auth
+                            authLevel = session['authLevel']
                             print(code)
                             print(previousCode)
                             if code != previousCode:
@@ -2568,28 +2898,98 @@ def createItem():
     logged_in = session['logged_in']
     authLevel = session['authLevel']
     
+    item = Item()
     
-
-
-
-    return render_template('createItem.html', title = "Create Item" , logged_in=logged_in, authLevel=authLevel)
-
+    error = ''
+    
+    try:
+        if request.method == "POST": 
+            #getting data from form        
+            itemName = request.form['itemName']
+            quantity = request.form['itemQuantity']
+            stockLimit = request.form['itemSL']                   
+            if itemName != None and quantity != None and stockLimit != None:
+                if item.validateName(itemName) == 1:
+                    if item.validateQuantity(quantity) == 1:
+                        if item.validateQuantity2(quantity, stockLimit) == 1:
+                            if item.validateStockLimit(stockLimit) == 1:
+                                if item.checkName(itemName) != 1:
+                                    if item.createItem(itemName, quantity, stockLimit) == 1:               
+                                        flash("Item has been created", "success")
+                                        return redirect(url_for('home'))
+                                    else:
+                                        flash("Could not create item", "danger")
+                                        return render_template('createItem.html', error=error, title="Create Invnentory", logged_in=logged_in, authLevel=authLevel)
+                                else:
+                                    flash("Item already exists in the restaurant", "danger")
+                                    return render_template('createItem.html', error=error, title="Create Item", logged_in=logged_in, authLevel=authLevel)
+                            else:
+                                flash("Invalid stock limit", "danger")
+                                return render_template('createItem.html', error=error, title="Create Item", logged_in=logged_in, authLevel=authLevel)
+                        else:
+                            flash("Quantity cannot be more than stock limit", "danger")
+                            return render_template('createItem.html', error=error, title="Create Item", logged_in=logged_in, authLevel=authLevel)
+                    else:
+                        flash("Invalid quantity", "danger")
+                        return render_template('createItem.html', error=error, title="Create Item", logged_in=logged_in, authLevel=authLevel)
+                else:
+                    flash("Item not available in the warehouse", "danger")
+                    return render_template('createItem.html', error=error, title="Create Item", logged_in=logged_in, authLevel=authLevel)
+            else:                
+                flash("Fields cannot be empty", "danger")
+                return render_template('createItem.html', error=error, title="Create Item", logged_in=logged_in, authLevel=authLevel)
+        else:            
+            return render_template('createItem.html', error=error, title="Create Item", logged_in=logged_in, authLevel=authLevel)        
+    except Exception as e:                
+        return render_template('createItem.html', error=e, title="Create Item", logged_in=logged_in, authLevel=authLevel)
 
 
 @app.route("/deleteItem/", methods = ['GET', 'POST'])
 @login_required
 @admin_required
-
 def deleteItem():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
+
+    
+    item = Item()
     
     
+    itemList = item.get_item_list()
+    itemName, itemQuantity, itemSL = itemList
+    
 
 
+    return render_template('deleteItem.html', title = "Delete Item" , logged_in=logged_in, authLevel=authLevel, itemName=itemName,itemQuantity=itemQuantity, itemSL=itemSL, listLen=len(itemName))
 
-    return render_template('deleteItem.html', title = "Delete Item" , logged_in=logged_in, authLevel=authLevel)
+@app.route("/deleteItem2/", methods = ['GET', 'POST'])
+@login_required
+@admin_required
+def deleteItem2():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    item = Item()
+    
+    try:
+        if request.method == "POST":
+            # Item name that you wanna delete
+            itemName = request.form['itemName']
+  
+            if item.delete_item(itemName):
+                flash(f"You have successfully deleted the item {itemName}", 'info')
+                return redirect(url_for('deleteItem'))
+            else:
+                flash(f"Item \"{itemName}\" does not exist", 'danger')
+                return redirect(url_for('deleteItem'))
+                
+    except Exception as e:  
+        return render_template('deleteItem.html', title = "Delete Item" , logged_in=logged_in, authLevel=authLevel)
+
+
+   
 
 
 
@@ -2602,12 +3002,17 @@ def updateItem():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
+
+    
+    item = Item()
     
     
+    itemList = item.get_item_list()
+    itemName, itemQuantity, itemSL = itemList
 
 
 
-    return render_template('updateItem.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
+    return render_template('updateItem.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel, itemName=itemName,itemQuantity=itemQuantity, itemSL=itemSL, listLen=len(itemName))
 
 
 
@@ -2615,14 +3020,14 @@ def updateItem():
 @app.route("/updateItem2/", methods = ['GET', 'POST'])
 @login_required
 @admin_required
-
 def updateItem2():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
     
     
-
+    itemName = request.form['itemName']
+    session['itemName'] = itemName
 
 
     return render_template('updateItem2.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
@@ -2636,93 +3041,149 @@ def updateItem3():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
+    itemName = session['itemName']
+
+    item = Item()
     
-    
+    try:
+        if request.method == "POST":
+            
+            itemSL = request.form['itemSL']
+            
+            if itemSL != None:
+                if item.validateStockLimit(itemSL) == 1:
+                    if item.updateStockLimit(itemSL, itemName):
+                        flash(f"You have successfully updated the item stock limit {itemName}", 'info')
+                        return redirect(url_for('updateItem'))
+                    else:
+                        flash("Invalid stock limit input", "danger")
+                        return render_template('updateItem2.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
+                else:
+                    flash("Invalid stock limit input", "danger")
+                    return render_template('updateItem2.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
+            else:                
+                flash("Please don't leave any field empty", "danger")
+                return render_template('updateItem2.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
+    except Exception as e:                
+        return render_template('updateItem2.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
 
 
 
-    return render_template('updateItem2.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
-
-
-@app.route("/orderItem/", methods = ['GET', 'POST'])
+@app.route("/orderItems/", methods=['GET', 'POST'])
 @login_required
-
-
-def orderItem():
+@chef_required
+def orderItems():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
+
+    
+    item = Item()
     
     
+    itemList = item.get_item_list()
+    itemName, itemQuantity, itemSL = itemList
+
+    return render_template('orderItemsWarehouse.html', title = "Order Item" , logged_in=logged_in, authLevel=authLevel, itemName=itemName,itemQuantity=itemQuantity, itemSL=itemSL, listLen=len(itemName))
 
 
-
-    return render_template('orderItem.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
-
-
-
-@app.route("/orderItem2/", methods = ['GET', 'POST'])
+@app.route("/orderItems2/", methods=['GET', 'POST'])
 @login_required
-
-
-def orderItem2():
-    # check to see what navbar to display
+@chef_required
+def orderItems2():
     logged_in = session['logged_in']
     authLevel = session['authLevel']
+
+    item = Item()
     
+    if request.method == "POST":
+        
+        itemName = request.form['itemName']
+        session['itemName'] = itemName
+
+        item.setItemDetails(itemName)
+
+        itemQuant = item.getQuantity()
+
+        itemSL = item.getStockLimit()
+
     
+    return render_template('orderItemsWarehouse2.html', title = "Order Item" , logged_in=logged_in, authLevel=authLevel, itemQuant=itemQuant, itemSL=itemSL)
 
 
-
-    return render_template('orderItem2.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
-
-
-@app.route("/orderItem3/", methods = ['GET', 'POST'])
+@app.route("/orderItems3/", methods=['GET', 'POST'])
 @login_required
-
-
-def orderItem3():
-    # check to see what navbar to display
+@chef_required
+def orderItems3():
     logged_in = session['logged_in']
     authLevel = session['authLevel']
+    itemName = session['itemName']
     
+    item = Item()
     
+    item.setItemDetails(itemName)
+    
+    itemName = item.getName()
+    
+    try:
+        
+        if request.method == "POST":
+            
+            
+            quantToAdd = int(request.form['itemQuant'])
+            
+            
+            if quantToAdd != None:
+                itemSL = int(item.getStockLimit())
+                itemQuant = int(item.getQuantity())
+                
 
+                if item.checkItemQuantLessThanStockLimit(itemSL, itemQuant, quantToAdd) == 1:
 
+                    item.updateQuantity(quantToAdd + itemQuant, itemName)
 
-    return render_template('orderItem2.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
+                    flash(f"You have successfully updated the item {itemName}", 'info')
+                    return redirect(url_for('adminOptions'))
+                else:
+                    flash("The quantity must be smaller than the stock limit", "danger")
+                    return render_template('orderItemsWarehouse2.html', title = "Order Item" , logged_in=logged_in, authLevel=authLevel, itemQuant=itemQuant, itemSL=itemSL)
+            else:                
+                flash("Please don't leave any field empty", "danger")
+                return render_template('orderItemsWarehouse2.html', title = "Order Item" , logged_in=logged_in, authLevel=authLevel, itemQuant=itemQuant, itemSL=itemSL)
+    except Exception as e:                
+        flash(e)
+        return render_template('home.html', title = "Order Item" , logged_in=logged_in, authLevel=authLevel)
 
 
 @app.route("/payment/", methods = ['GET', 'POST'])
-
-
-
 def payment():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
-    
-    
 
-
+    session['orderID'] = 11
+    
 
     return render_template('payment.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
 
 
 
 @app.route("/receipt/", methods = ['GET', 'POST'])
-
-
 def receipt():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
     
-    
+    orderPay = Order()
+
+    sameData, diffData = orderPay.showReceipt(session['orderID'])
+
+    sameData.insert(0, request.form['name'])
+
+    sameData[5] = sameData[5][0:10]
 
 
-
-    return render_template('receipt.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel)
+    return render_template('receipt.html', title = "Update Item" , logged_in=logged_in, authLevel=authLevel, sameData=sameData, diffData=diffData, dataLen=len(diffData))
 
 
 if __name__ == "__main__":

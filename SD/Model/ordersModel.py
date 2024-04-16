@@ -580,7 +580,6 @@ class Order: #order class
     def get_discountList(self, orderID):
         try:
             conn, cur = openConnection()
-            cur = conn.cursor()
             query = "SELECT * FROM discountList WHERE orderID = ?;"
             cur.execute(query, (orderID,))
             rows = cur.fetchall()
@@ -629,3 +628,26 @@ class Order: #order class
                 return 0
         except sqlite3.Error as e:
             print("Error deleting order:", e)
+
+    def showReceipt(self, orderID):
+        try:
+            conn, cur = openConnection()
+
+            query = """SELECT orders.orderID, restaurantName, orderPrice, tableNumber, readyTime, discountValue, food.foodName, price 
+            FROM orders JOIN discountList JOIN discounts JOIN foodList JOIN food
+            WHERE orders.orderID = foodList.orderID AND orders.orderID = discountList.orderID
+            AND discountList.discountID = discounts.discountID AND foodList.foodName = food.foodName
+            AND orders.orderID = ?;"""
+            cur.execute(query, (orderID,))
+
+            rows = cur.fetchall()
+            
+            sameOrder = [rows[0][0], rows[0][1], rows[0][2], rows[0][3], rows[0][4], rows[0][5]]
+            diffOrder = [[row[6], row[7]] for row in rows]
+
+            # Close the connection after fetching data
+            conn.close()
+            return sameOrder, diffOrder
+        except sqlite3.Error as e:
+            print("Error fetching food list:", e)
+            return []
