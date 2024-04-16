@@ -1622,10 +1622,65 @@ def order():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
-    
-    return render_template('order.html', title="order", logged_in=logged_in, authLevel=authLevel)
 
-@app.route("/createOrder/")
+    user = User()
+    user.setLoginDetails(session['code'])
+    restaurant = user.getBaseRestaurant()
+
+    order = Order()
+    tempStatus = [status[2] for status in order.get_order(restaurant)]
+    status = strip.it(tempStatus)
+
+    tempPrice = [status[3] for status in order.get_order(restaurant)]
+    price = strip.it(tempPrice)
+
+    tempTableNumber = [tableNumber[4] for tableNumber in order.get_order(restaurant)]
+    tableNumber = strip.it(tempTableNumber)
+
+    tempStartTime = [startTime[5] for startTime in order.get_order(restaurant)]
+    startTime = strip.it(tempStartTime)
+
+    tempReadyTime = [readyTime[6] for readyTime in order.get_order(restaurant)]
+    readyTime = strip.it(tempReadyTime)
+    
+    return render_template('order.html', title="order", logged_in=logged_in, authLevel=authLevel, status=status, price=price, tableNumber=tableNumber, startTime=startTime, readyTime=readyTime, len=len(status))
+
+@app.route("/createTableNumber/", methods = ["GET", "POST"])
+@login_required
+def createTableNumber():
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+
+    currentUser = User()
+    currentUser.setLoginDetails(session['code'])
+
+    currentRestaurant = currentUser.getBaseRestaurant()
+    restaurant = Restaurant()
+    restaurant.setRestaurantDetails(currentRestaurant)
+    numOfTables = restaurant.getNumberOfTables()
+
+    try:
+        if request.method == "POST":
+            status = "Order Created"
+            order = Order()
+            tableNumber = request.form['tableNumber']
+            startTime = None
+            readyTime = None
+            if order.createOrder(currentRestaurant, status, int(tableNumber), startTime, readyTime):
+                flash("Order has been created, you may now add items to it", "success")
+                orderID = order.getID()
+                session['orderID'] = orderID
+                return redirect(url_for("createOrder"))
+            else:
+                flash("Table Number does not exist in your restaurant", "danger")
+                return render_template('createTableNumber.html', title = "Create Order" , logged_in=logged_in, authLevel=authLevel, numOfTables=numOfTables)
+    except Exception as e:                
+        return render_template('createTableNumber.html', title = "Create Order" , logged_in=logged_in, authLevel=authLevel, error=e, numOfTables=numOfTables)
+    return render_template('createTableNumber.html', title="Create Order", logged_in=logged_in, authLevel=authLevel, numOfTables=numOfTables)
+
+    
+
+@app.route("/createOrder/", methods=['GET', 'POST'])
 @login_required
 def createOrder():
     # check to see what navbar to display
@@ -1637,13 +1692,23 @@ def createOrder():
 
     currentRestaurant = currentUser.getBaseRestaurant()
 
-
     currentMenu = Menu()
 
     
     foodList, priceList, allergyList, idList = currentMenu.getMenuList(currentRestaurant)
-    
-    return render_template('createOrder.html', title="order", logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, allergyList = allergyList, idList = idList, listLen = len(foodList))
+
+    try:
+
+        if request.method == 'POST':
+            foodName = request.form['foodName']
+            order = Order()
+            
+            order.addFoodToOrder(session['orderID'], foodName)
+            flash("Successfully added food to order", "success")
+            return redirect(url_for('createOrder'))
+        return render_template('createOrder.html', title="Create Order", logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, allergyList = allergyList, idList = idList, listLen = len(foodList))
+    except Exception as e:                
+        return render_template('createOrder.html', title="order", logged_in=logged_in, authLevel=authLevel, error=e, foodList = foodList, priceList = priceList, allergyList = allergyList, idList = idList, listLen = len(foodList))
 
 
 
@@ -1658,16 +1723,30 @@ def createOrder2():
 
     currentUser = User()
     currentUser.setLoginDetails(session['code'])
+    order = Order()
 
-    currentRestaurant = currentUser.getBaseRestaurant()
+    order.setOrderDetails(session['orderID'])
+    foodList = order.getFoodList()
+    foodList = strip.it(foodList)
 
+    discountList = order.getDiscountValues(session['orderID'])
+    discountList = str(discountList).strip("[")
+    discountList = str(discountList).strip("]")
 
-    currentMenu = Menu()
+    orderPrice = order.getPrice()
+
+    priceList = []
+    
+    for food in foodList:
+        price = order.getFoodListPrice(food)
+        price = strip.it(price)
+        price = str(price).strip("[")
+        price = str(price).strip("]")
+        price = str(price).strip("'")
+        priceList.append(price)
 
     
-    foodList, priceList, allergyList, idList = currentMenu.getMenuList(currentRestaurant)
-    
-    return render_template('createOrder2.html', title="order", logged_in=logged_in, authLevel=authLevel, foodList = foodList, priceList = priceList, allergyList = allergyList, idList = idList, listLen = len(foodList))
+    return render_template('createOrder2.html', title="order", logged_in=logged_in, authLevel=authLevel, foodList=foodList, priceList=priceList, foodLen=len(foodList), discountList=str(discountList), orderPrice=orderPrice)
 
 
 @app.route("/deleteOrder/", methods=['POST', 'GET'])
@@ -1677,7 +1756,7 @@ def deleteOrder():
     logged_in = session['logged_in']
     authLevel = session['authLevel']
     
-    return render_template('deleteOrder.html', title="order", logged_in=logged_in, authLevel=authLevel)
+    return render_template('deleteOrder.html', title="Delete Order", logged_in=logged_in, authLevel=authLevel)
 
 @app.route("/updateOrder/", methods=['POST', 'GET'])
 @login_required
@@ -1685,8 +1764,30 @@ def updateOrder():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
+    user = User()
+    user.setLoginDetails(session['code'])
+    restaurant = user.getBaseRestaurant()
+
+    order = Order()
+    tempID = [orderID[0] for orderID in order.get_order(restaurant)]
+    ID = strip.it(tempID)
+
+    tempStatus = [status[2] for status in order.get_order(restaurant)]
+    status = strip.it(tempStatus)
+
+    tempPrice = [status[3] for status in order.get_order(restaurant)]
+    price = strip.it(tempPrice)
+
+    tempTableNumber = [tableNumber[4] for tableNumber in order.get_order(restaurant)]
+    tableNumber = strip.it(tempTableNumber)
+
+    tempStartTime = [startTime[5] for startTime in order.get_order(restaurant)]
+    startTime = strip.it(tempStartTime)
+
+    tempReadyTime = [readyTime[6] for readyTime in order.get_order(restaurant)]
+    readyTime = strip.it(tempReadyTime)
     
-    return render_template('updateOrder.html', title="order", logged_in=logged_in, authLevel=authLevel)
+    return render_template('updateOrder.html', title="Update Order", logged_in=logged_in, authLevel=authLevel, status=status, price=price, tableNumber=tableNumber, startTime=startTime, readyTime=readyTime, len=len(ID), orderID=ID)
 
 @app.route("/updateOrder2/", methods=['POST', 'GET'])
 @login_required
@@ -1694,9 +1795,59 @@ def updateOrder2():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
-    
-    return render_template('updateOrder2.html', title="order", logged_in=logged_in, authLevel=authLevel)
 
+    try:
+        if request.method == 'POST':
+            orderID = request.form['orderID']
+            session['orderID'] = orderID
+            order = Order()
+            order.setOrderDetails(orderID)
+            status = order.getStatus()
+            return render_template('updateOrder2.html', title="Update Order", logged_in=logged_in, authLevel=authLevel, error=e, status=status)
+
+    except Exception as e:                
+        return render_template('updateOrder2.html', title="Update Order", logged_in=logged_in, authLevel=authLevel, error=e, status=None)
+    
+    return render_template('updateOrder2.html', title="Update Order", logged_in=logged_in, authLevel=authLevel, status=None)
+
+@app.route("/updateOrder3/", methods=['POST', 'GET'])
+@login_required
+def updateOrder3():
+    logged_in=session['logged_in']
+    authLevel=session['authLevel']
+    order = Order()
+    order.setOrderDetails(session['orderID'])
+    status = order.getStatus()
+    try:
+        if request.method == 'POST':
+            newStatus = request.form['status']
+            if order.updateStatus(newStatus, session['orderID']):
+                if newStatus == 'Cooking':
+                    currentDate = datetime.datetime.now()
+                    currentDate = currentDate.strftime("%Y-%m-%d %H:%M:%S")
+                    order.updateStartTime(currentDate, session['orderID'])
+                    flash("Successfully updated order details", "success")
+                    return redirect(url_for('order'))
+                elif newStatus == 'Ready':
+                    currentDate = datetime.datetime.now()
+                    currentDate = currentDate.strftime("%Y-%m-%d %H:%M:%S")
+                    startTime = order.getStartTime()
+                    if order.updateReadyTime(currentDate, session['orderID'], startTime):
+                        flash("Successfully updated order details", "success")
+                        return redirect(url_for('order'))
+                    else:
+                       print("FAIL")
+                       flash("Start time should be set before Ready time")
+                       return render_template('updateOrder2.html', title="Update Order", logged_in=logged_in, authLevel=authLevel, error=e, status=status)
+                else:
+                    flash("Successfully updated order details", "success")
+                    return redirect(url_for('order'))
+            else:
+                flash("Incorrect status", "danger")
+                return render_template('updateOrder2.html', title="Update Order", logged_in=logged_in, authLevel=authLevel, error=e, status=status)
+
+    except Exception as e:                
+        return render_template('updateOrder2.html', title="Update Order", logged_in=logged_in, authLevel=authLevel, error=e, status=status)
 
 @app.route("/removeFromOrder/", methods=['POST', 'GET'])
 @login_required
@@ -1704,8 +1855,48 @@ def removeFromOrder():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
+    currentUser = User()
+    currentUser.setLoginDetails(session['code'])
+    order = Order()
+
+    order.setOrderDetails(session['orderID'])
+    foodList = order.getFoodList()
+    foodList = strip.it(foodList)
+
+    foodListID = order.getFoodListID()
+    foodListID = strip.it(foodListID)
+
+    priceList = []
     
-    return render_template('removeFromOrder.html', title="order", logged_in=logged_in, authLevel=authLevel)
+    for food in foodList:
+        price = order.getFoodListPrice(food)
+        price = strip.it(price)
+        price = str(price).strip("[")
+        price = str(price).strip("]")
+        price = str(price).strip("'")
+        priceList.append(price)
+
+        try:
+            if request.method == "POST":
+                chosenFood = request.form['foodListID']
+                chosenName = order.getSpecificFoodList(chosenFood)
+                chosenName = strip.it(chosenName)
+                chosenName = str(chosenName).strip("[")
+                chosenName = str(chosenName).strip("]")
+                chosenName = str(chosenName).strip("'")
+                print(str(session['orderID']))
+                print(str(chosenName))
+                print(str(chosenFood))
+                if order.removeFoodFromOrder(session['orderID'],chosenName, chosenFood):
+                    flash("Successfully removed food", "success")
+                    return redirect(url_for('createOrder2'))
+                else:
+                    flash("Error removing food", "danger")
+                    return redirect(url_for('removeFromOrder'))
+        except Exception as e:
+            return render_template('removeFromOrder.html', title="Remove From Order", logged_in=logged_in, authLevel=authLevel,foodList=foodList, priceList=priceList, foodLen=len(foodList), foodListID=foodListID, error=e)
+    
+    return render_template('removeFromOrder.html', title="order", logged_in=logged_in, authLevel=authLevel,foodList=foodList, priceList=priceList, foodLen=len(foodList), foodListID=foodListID)
 
 
 
@@ -1720,8 +1911,26 @@ def applyDiscountOrder():
     authLevel = session['authLevel']
     
     discount = Discount()
+    order = Order()
+    order.setOrderDetails(session['orderID'])
 
     dIDs, dValues = discount.get_discounts()
+
+    try:
+        if request.method == 'POST':
+            discountID = request.form['dID']
+            print(str(discountID))
+            if order.addDiscountToOrder(session['orderID'], discountID):
+                flash("Applied discount to order", "success")
+                return redirect(url_for('createOrder2'))
+            else:
+                flash("Error adding discount to order", "danger")
+                return redirect(url_for('applyDiscountOrder'))
+
+    except Exception as e:
+         return render_template('applyDiscountOrder.html', title = "Update Discount", logged_in=logged_in, authLevel = authLevel, dIDs=dIDs, dValues=dValues, discountsLen = len(dIDs), error=e)
+
+
   
     return render_template('applyDiscountOrder.html', title = "Update Discount", logged_in=logged_in, authLevel = authLevel, dIDs=dIDs, dValues=dValues, discountsLen = len(dIDs))
 

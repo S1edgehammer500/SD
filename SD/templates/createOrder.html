@@ -6,6 +6,7 @@
 
 
 <div class = "reservation-holder">
+    <form action="/createOrder/" method="post">
 
     <table>
 
@@ -21,6 +22,7 @@
                     <td> {{foodList[i]}} </td>              
                     <td> {{allergyList[i]}} </td>
                     <td> £{{priceList[i]}} </td>
+                    <td> <input required type="radio" name="foodName" value="{{foodList[i]}}" checked></td>
                 </tr>
             {% endfor %}
 
@@ -35,9 +37,8 @@
 
     <h3 class="txt-size text-center pt-3">Order Options</h3> <br>
 
-    <a href="{{ url_for('createOrder') }}">
-        <button type="button">Add To Order</button>
-    </a>
+        <button type="submit">Add To Order</button>
+    </form>
     <a href="{{ url_for('createOrder2') }}">
         <button type="button">View Order</button>
     </a>

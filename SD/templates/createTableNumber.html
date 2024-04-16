@@ -1,0 +1,26 @@
+{% extends "layout.html" %} 
+{% block content %} 
+<div class = "StandardBox">
+
+    <h3 class="text-center pt-3 heading">Create An Order</h3> <br>
+  
+    <form action="/createTableNumber/" method="post">
+  
+    <div class="form-group">
+        <label for="tableNumber">Table Number (your restaurant has {{ numOfTables }}):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
+        <input required style="color:black" id="tableNumber" min="1" type="number" class="tableNumber" name="tableNumber" size="30" value="{{request.form.tableNumber}}"><br>
+    </div>
+  
+          <div class = "d-grid mb-3">
+            <button type = "submit"  class = "btn btn-light black">submit</button>
+            </div> <br>
+  
+  </div>
+  
+  </div>
+  
+  </div>
+
+
+
+{% endblock content %}

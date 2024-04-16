@@ -1,6 +1,7 @@
 from Model.Database import *
 import re
 import datetime
+import strip
 
 class Order: #order class
 
@@ -142,6 +143,7 @@ class Order: #order class
         
     def validateTableNumber(self, tableNumber, restaurantName):
         if not isinstance(tableNumber, int):
+            print("Table number is not int")
             return 0  # Returning error message for non-integer input
 
         if 1 <= tableNumber <= 99:  # Checking if tableNumber is within the range
@@ -152,13 +154,14 @@ class Order: #order class
 
             if record2 is not None and tableNumber <= record2[0]:
                 conn.close()
-                print("Invalid table number")
+                print("Valid table number")
                 return 1  # Valid table number within the restaurant's table count
             else:
                 conn.close()
                 print("Invalid table number")
                 return 0  # Indicates invalid table number or table number too large
         else:
+            print("Table number out of range")
             return 0  # Indicates table number out of range
         
     def validateStartTime(self, startTime):
@@ -258,11 +261,12 @@ class Order: #order class
         
     def checkFoodInOrder(self, orderID, foodName, foodListID):
         conn, cur = openConnection()
-        query = 'SELECT * FROM foodList WHERE orderID = ? AND foodName = ?;'
-        cur.execute(query, (orderID, foodName))
+        query = 'SELECT * FROM foodList WHERE foodListID = ?;'
+        cur.execute(query, (foodListID,))
         record = cur.fetchone()
         if record is not None:
-            if record[0] != foodListID:
+            if record[1] != orderID and record[2] != foodName:
+                print("Food is not in order")
                 conn.close()
                 return 0
             else:
@@ -317,12 +321,16 @@ class Order: #order class
                     cur.execute(query, (status, id))
                     conn.commit()
                     conn.close()
+                    print("Update Status Worked")
                     return 1
                 else:
+                    print("Invalid status")
                     return 0
             else:
+                print("Invalid ID")
                 return 0
         else:
+            print("None")
             return 0
         
     def updatePrice(self, price, id):
@@ -401,6 +409,8 @@ class Order: #order class
             query = 'INSERT INTO orders (restaurantName, status, orderPrice, tableNumber, startTime, readyTime) VALUES (?,?,?,?,?,?);'
             cur.execute(query, (restaurantName, status, 0, tableNumber, startTime, readyTime))
             conn.commit()
+            orderID = cur.lastrowid
+            self.setID(orderID)
             print("new order created")
             conn.close()
             return 1
@@ -520,11 +530,12 @@ class Order: #order class
             conn.close()
             return 0
     
-    def get_order(self):
+    def get_order(self, restaurantName):
         try:
             conn, cur = openConnection()
             cur = conn.cursor()
-            cur.execute("SELECT * FROM orders")
+            query = "SELECT * FROM orders WHERE restaurantName = ? AND status != ? AND status != ?;"
+            cur.execute(query, (restaurantName,'Payment Completed', 'Cancelled'))
             rows = cur.fetchall()
             orders = [(row[0], row[1], row[2], row[3], row[4], row[5], row[6]) for row in rows]
             # Close the connection after fetching data
@@ -534,20 +545,37 @@ class Order: #order class
             print("Error fetching orders:", e)
             return []
         
-    def get_foodList(self, orderID):
-        try:
-            conn, cur = openConnection()
-            cur = conn.cursor()
-            query = "SELECT * FROM foodList WHERE orderID = ?;"
-            cur.execute(query, (orderID,))
-            rows = cur.fetchall()
-            orders = [(row[0], row[1], row[2]) for row in rows]
-            # Close the connection after fetching data
-            conn.close()
-            return orders
-        except sqlite3.Error as e:
-            print("Error fetching food list:", e)
-            return []
+    def getFoodList(self):
+        conn, cur = openConnection()
+        query = "SELECT foodName FROM foodList WHERE orderID == ? ORDER BY foodListID;"
+        cur.execute(query, (self.__ID,))
+        record = cur.fetchall()
+        conn.close()
+        return record
+    
+    def getSpecificFoodList(self, id):
+        conn, cur = openConnection()
+        query = "SELECT foodName FROM foodList WHERE foodListID = ?;"
+        cur.execute(query, (id,))
+        record = cur.fetchall()
+        conn.close()
+        return record
+    
+    def getFoodListPrice(self, foodName):
+        conn, cur = openConnection()
+        query = "SELECT price FROM food WHERE foodName = ?;"
+        cur.execute(query, (foodName,))
+        record = cur.fetchone()
+        conn.close()
+        return record
+    
+    def getFoodListID(self):
+        conn, cur = openConnection()
+        query = "SELECT foodListID FROM foodList WHERE orderID == ? ORDER BY foodListID;"
+        cur.execute(query, (self.__ID,))
+        record = cur.fetchall()
+        conn.close()
+        return record
         
     def get_discountList(self, orderID):
         try:
@@ -562,6 +590,28 @@ class Order: #order class
         except sqlite3.Error as e:
             print("Error fetching discount list:", e)
             return []
+        
+    def getDiscountValues(self, orderID):
+        conn, cur = openConnection()
+        cur = conn.cursor()
+        query = "SELECT discountID FROM discountList WHERE orderID = ?;"
+        cur.execute(query, (orderID,))
+        rows = cur.fetchall()
+        discountIDs = []
+        rows = strip.it(rows)
+        for row in rows:
+            query2 = "SELECT discountValue FROM discounts WHERE discountID = ?;"
+            cur.execute(query2, (row,))
+            record = cur.fetchone()
+            record = strip.it(record)
+            record = str(record)
+            record = record.strip("[")
+            record = record.strip("]")
+            record = record.strip("'")
+            record = record+"%"
+            discountIDs.append(record)
+        conn.close()
+        return discountIDs
         
     def delete_order(self, id):
         try:

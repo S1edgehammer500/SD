@@ -6,7 +6,7 @@
     <!--Create restaurant form-->
     <h3 class="text-center pt-3 heading">Remove From Order Here</h3> <br>
             
-    <form action="#" method="post">
+    <form action="/removeFromOrder/" method="post">
 
 
 
@@ -17,6 +17,14 @@
                 <th class = "text-center" style = "width: 30%;">Name</th>
                 <th class = "text-center" style = "width: 30%;">Price</th>
                 <th class = "text-center" style = "width: 30%;">Select</th>
+
+                {% for i in range(foodLen): %} 
+                <tr>
+                    <td> {{foodList[i]}} </td>              
+                    <td> {{priceList[i]}} </td>
+                    <td> <input required type="radio" name="foodListID" value="{{foodListID[i]}}" checked></td>
+                </tr>
+            {% endfor %}
                 
         </table>
 
