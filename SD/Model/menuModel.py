@@ -7,6 +7,7 @@ class Menu: #menu class
         self.__ID = ""
         self.__restaurantName = ""
         self.__foodName = ""
+        self.__isAvailable = ""
 
     def setMenuDetails(self, id):
          conn, cur = openConnection()
@@ -15,9 +16,11 @@ class Menu: #menu class
          record = cur.fetchone()
          restaurantName = record[1]
          foodName = record[2]
+         isAvailable = record[3]
          self.setRestaurantName(restaurantName)
          self.setID(id)
          self.setFoodName(foodName)
+         self.setIsAvailable(isAvailable)
          conn.close()
 
 
@@ -38,6 +41,13 @@ class Menu: #menu class
             return 1
         else:
             return 0
+        
+    def setIsAvailable(self, isAvailable):
+        if self.validateAvailability(isAvailable):
+            self.__isAvailable = isAvailable
+            return 1
+        else:
+            return 0
     
     #getters
     def getRestaurantName(self):
@@ -48,6 +58,9 @@ class Menu: #menu class
     
     def getFoodName(self):
         return self.__foodName
+    
+    def getIsAvailable(self):
+        return self.__isAvailable
 
     #validators
 
@@ -77,6 +90,17 @@ class Menu: #menu class
         else:
             print("Food does not exist")
             conn.close()
+            return 0
+        
+    def validateAvailability(self, availability):
+        try:
+            availability_int = int(availability)
+            if availability_int == 0 or availability_int == 1:
+                return 1
+            else:
+                return 0
+        except ValueError:
+            print("Invalid availability format")
             return 0
         
     def checkID(self, ID):
@@ -148,13 +172,30 @@ class Menu: #menu class
                 return 0
         else:
             return 0
+        
+    def updateAvailability(self, availability, foodName, restaurantName):
+        if availability != None:
+            if self.validateAvailability(availability):
+                if self.validateFoodName(foodName):
+                    conn, cur = openConnection()
+                    query = 'UPDATE menu SET isAvailable = ? WHERE foodName = ? AND restaurantName = ?;'
+                    cur.execute(query, (availability, foodName, restaurantName))
+                    conn.commit()
+                    conn.close()
+                    return 1
+                else:
+                    return 0
+            else:
+                return 0
+        else:
+            return 0
 
         
     def createMenu(self, restaurantName, foodName):
         conn, cur = openConnection()
         if (self.validateRestaurantName(restaurantName)) and (self.validateFoodName(foodName)) and not (self.checkRestaurantFood(restaurantName, foodName)):
-            query = 'INSERT INTO menu (restaurantName, foodName) VALUES (?,?);'
-            cur.execute(query, (restaurantName, foodName))
+            query = 'INSERT INTO menu (restaurantName, foodName, isAvailable) VALUES (?,?,?);'
+            cur.execute(query, (restaurantName, foodName, True))
             conn.commit()
             print("new menu created")
             conn.close()
@@ -180,7 +221,7 @@ class Menu: #menu class
     
     def getMenuList(self,restaurantName):
         conn, cur = openConnection()
-        query = 'SELECT food.foodName, price, allergyInfo, menu.menuID FROM food JOIN menu ON food.foodName == menu.foodName WHERE menu.restaurantName = ? ORDER BY menu.menuID;'
+        query = 'SELECT food.foodName, price, allergyInfo, menu.menuID, isAvailable FROM food JOIN menu ON food.foodName == menu.foodName WHERE menu.restaurantName = ? ORDER BY menu.menuID;'
 
         cur.execute(query, (restaurantName,))
         records = cur.fetchall()
@@ -188,10 +229,11 @@ class Menu: #menu class
         priceList = [row[1] for row in records]
         allergyList = [row[2] for row in records]
         idList = [row[3] for row in records]
+        isAvailableList = [row[4] for row in records]
 
         # Close the connection after fetching data
         conn.close()
-        return foodList, priceList, allergyList, idList
+        return foodList, priceList, allergyList, idList, isAvailableList
 
         
     def delete_menu(self, id):

@@ -86,24 +86,6 @@ def run_tests():
             result = self.model.updatePrice(price, name)
             self.assertEqual(result, 0)
         
-        def test7_update_availability(self):
-            name = 'Pizza'
-            availability = False
-            result = self.model.updateAvailability(availability, name)
-            self.assertEqual(result, 1)
-
-        def test8_update_availability_invalid_syntax(self):
-            name = 'Pizza'
-            availability = "Not available"
-            result = self.model.updateAvailability(availability, name)
-            self.assertEqual(result, 0)
-
-        def test9_update_availability_invalid_name(self):
-            name = 'Nothing'
-            availability = False
-            result = self.model.updateAvailability(availability, name)
-            self.assertEqual(result, 0)
-        
         def test91_update_allergy(self):
             name = 'Pizza'
             allergy = "No allergy risks"

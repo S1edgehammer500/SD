@@ -12,7 +12,7 @@ def create_food_table():
         else:
             c.execute('''
             CREATE TABLE food
-            (foodName varchar(200) PRIMARY KEY, price FLOAT NOT NULL, isAvailable BOOL NOT NULL, allergyInfo varchar(1000) NOT NULL)
+            (foodName varchar(200) PRIMARY KEY, price FLOAT NOT NULL, allergyInfo varchar(1000) NOT NULL)
             ''')
             conn.commit()
             print("Table 'food' created successfully")
