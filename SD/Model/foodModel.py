@@ -6,7 +6,6 @@ class Food: #food class
     def __init__(self):
         self.__price = ""
         self.__name = ""
-        self.__isAvailable = ""
         self.__allergyInfo = ""
 
     def setFoodDetails(self, name):
@@ -15,11 +14,9 @@ class Food: #food class
          cur.execute(query,(name,))
          record = cur.fetchone()
          price = record[1]
-         isAvailable = record[2]
-         allergyInfo = record[3]
+         allergyInfo = record[2]
          self.setPrice(price)
          self.setName(name)
-         self.setIsAvailable(isAvailable)
          self.setAllergyInfo(allergyInfo)
          conn.close()
 
@@ -38,13 +35,6 @@ class Food: #food class
             return 1
         else:
             return 0
-        
-    def setIsAvailable(self, isAvailable):
-        if self.validateAvailability(isAvailable):
-            self.__isAvailable = isAvailable
-            return 1
-        else:
-            return 0
 
     def setAllergyInfo(self, allergyInfo):
         if self.validateAllergyInfo(allergyInfo):
@@ -59,9 +49,6 @@ class Food: #food class
     
     def getName(self):
         return self.__name
-    
-    def getIsAvailable(self):
-        return self.__isAvailable
     
     def getAllergyInfo(self):
         return self.__allergyInfo
@@ -103,17 +90,6 @@ class Food: #food class
                 return 0
         except ValueError:
             print("Invalid price format")
-            return 0
-
-    def validateAvailability(self, availability):
-        try:
-            availability_int = int(availability)
-            if availability_int == 0 or availability_int == 1:
-                return 1
-            else:
-                return 0
-        except ValueError:
-            print("Invalid availability format")
             return 0
         
 
@@ -168,23 +144,6 @@ class Food: #food class
         else:
             return 0
         
-            
-    def updateAvailability(self, availability, foodName):
-        if availability != None:
-            if self.validateAvailability(availability):
-                if self.checkName(foodName):
-                    conn, cur = openConnection()
-                    query = 'UPDATE food SET isAvailable = ? WHERE foodName = ?;'
-                    cur.execute(query, (availability, foodName))
-                    conn.commit()
-                    conn.close()
-                    return 1
-                else:
-                    return 0
-            else:
-                return 0
-        else:
-            return 0
         
     def updateAllergyInfo(self, allergyInfo, foodName):
         if allergyInfo != None:
@@ -209,8 +168,8 @@ class Food: #food class
         conn, cur = openConnection()
         if not self.checkName(name):
             if (self.validatePrice(price)) and (self.validateName(name)) and (self.validateAllergyInfo(allergyInfo)):
-                query = 'INSERT INTO food (foodName, price, isAvailable, allergyInfo) VALUES (?,?,?,?);'
-                cur.execute(query, (name, price, True, allergyInfo))
+                query = 'INSERT INTO food (foodName, price, allergyInfo) VALUES (?,?,?);'
+                cur.execute(query, (name, price, allergyInfo))
                 conn.commit()
                 print("new food created")
                 conn.close()
@@ -227,7 +186,7 @@ class Food: #food class
             cur = conn.cursor()
             cur.execute("SELECT * FROM food")
             rows = cur.fetchall()
-            food_list = [(row[0], row[1], row[2], row[3]) for row in rows]
+            food_list = [(row[0], row[1], row[2]) for row in rows]
             conn.close()
             return food_list
         except sqlite3.Error as e:
