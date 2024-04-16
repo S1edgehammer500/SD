@@ -6,7 +6,7 @@
     <!--Create restaurant form-->
     <h3 class="text-center pt-3 heading">Apply Discount To Order Here</h3> <br>
             
-    <form action="#" method="post">
+    <form action="/applyDiscountOrder/" method="post">
 
 
 
@@ -20,9 +20,9 @@
                 <tr>
                     <td> {{dIDs[i]}} </td>              
                     <td> {{dValues[i]}} </td>
-                    <td> <input required type="radio" name="selected" value="{{dIDs[i]}}" checked></td>
+                    <td> <input required type="radio" name="dID" value="{{dIDs[i]}}" checked></td>
                 </tr>
-            {% endfor %}
+                {% endfor %}
         </table>
         <br><br>
 
@@ -32,7 +32,8 @@
         <br>
         <div class="d-grid mb-3">
             <button type="submit" class="btn btn-light black">Confirm</button>
-        </div> <br>
+        </div>
+        </br>
 
     </form>
 </div>

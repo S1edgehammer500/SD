@@ -1,6 +1,7 @@
 from Model.Database import *
 import re
 import datetime
+import strip
 
 class Order: #order class
 
@@ -260,11 +261,12 @@ class Order: #order class
         
     def checkFoodInOrder(self, orderID, foodName, foodListID):
         conn, cur = openConnection()
-        query = 'SELECT * FROM foodList WHERE orderID = ? AND foodName = ?;'
-        cur.execute(query, (orderID, foodName))
+        query = 'SELECT * FROM foodList WHERE foodListID = ?;'
+        cur.execute(query, (foodListID,))
         record = cur.fetchone()
         if record is not None:
-            if record[0] != foodListID:
+            if record[1] != orderID and record[2] != foodName:
+                print("Food is not in order")
                 conn.close()
                 return 0
             else:
@@ -551,11 +553,27 @@ class Order: #order class
         conn.close()
         return record
     
+    def getSpecificFoodList(self, id):
+        conn, cur = openConnection()
+        query = "SELECT foodName FROM foodList WHERE foodListID = ?;"
+        cur.execute(query, (id,))
+        record = cur.fetchall()
+        conn.close()
+        return record
+    
     def getFoodListPrice(self, foodName):
         conn, cur = openConnection()
         query = "SELECT price FROM food WHERE foodName = ?;"
         cur.execute(query, (foodName,))
         record = cur.fetchone()
+        conn.close()
+        return record
+    
+    def getFoodListID(self):
+        conn, cur = openConnection()
+        query = "SELECT foodListID FROM foodList WHERE orderID == ? ORDER BY foodListID;"
+        cur.execute(query, (self.__ID,))
+        record = cur.fetchall()
         conn.close()
         return record
         
@@ -573,6 +591,28 @@ class Order: #order class
         except sqlite3.Error as e:
             print("Error fetching discount list:", e)
             return []
+        
+    def getDiscountValues(self, orderID):
+        conn, cur = openConnection()
+        cur = conn.cursor()
+        query = "SELECT discountID FROM discountList WHERE orderID = ?;"
+        cur.execute(query, (orderID,))
+        rows = cur.fetchall()
+        discountIDs = []
+        rows = strip.it(rows)
+        for row in rows:
+            query2 = "SELECT discountValue FROM discounts WHERE discountID = ?;"
+            cur.execute(query2, (row,))
+            record = cur.fetchone()
+            record = strip.it(record)
+            record = str(record)
+            record = record.strip("[")
+            record = record.strip("]")
+            record = record.strip("'")
+            record = record+"%"
+            discountIDs.append(record)
+        conn.close()
+        return discountIDs
         
     def delete_order(self, id):
         try:
