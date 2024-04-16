@@ -1833,6 +1833,7 @@ def updateOrder3():
     order = Order()
     order.setOrderDetails(session['orderID'])
     status = order.getStatus()
+    startTime = order.getStartTime()
     try:
         if request.method == 'POST':
             newStatus = request.form['status']
@@ -1844,15 +1845,16 @@ def updateOrder3():
                     flash("Successfully updated order details", "success")
                     return redirect(url_for('order'))
                 elif newStatus == 'Ready':
-                    currentDate = datetime.datetime.now()
-                    currentDate = currentDate.strftime("%Y-%m-%d %H:%M:%S")
-                    startTime = order.getStartTime()
-                    if order.updateReadyTime(currentDate, session['orderID'], startTime):
-                        flash("Successfully updated order details", "success")
-                        return redirect(url_for('order'))
+                    if startTime != None:
+                        currentDate = datetime.datetime.now()
+                        currentDate = currentDate.strftime("%Y-%m-%d %H:%M:%S")
+                        startTime = order.getStartTime()
+                        if order.updateReadyTime(currentDate, session['orderID'], startTime):
+                            flash("Successfully updated order details", "success")
+                            return redirect(url_for('order'))
                     else:
                        print("FAIL")
-                       flash("Start time should be set before Ready time")
+                       flash("Start time should be set before Ready time", "danger")
                        return render_template('updateOrder2.html', title="Update Order", logged_in=logged_in, authLevel=authLevel, error=e, status=status)
                 else:
                     flash("Successfully updated order details", "success")
