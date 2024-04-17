@@ -21,7 +21,7 @@
                 {% for i in range(discountLen): %} 
                 <tr>
                     <td> {{discountList[i]}} </td>              
-                    <td> {{valueList[i]}} </td>
+                    <td> {{valueList[i]}}% </td>
                     <td> <input required type="radio" name="discountListID" value="{{discountListID[i]}}" checked></td>
                 </tr>
             {% endfor %}
