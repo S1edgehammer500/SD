@@ -1,6 +1,6 @@
 {% extends "layout.html" %} 
 {% block content %} 
-<form action="#" method="post">
+<form action="/deleteOrder2/" method="post">
     <div class="StandardBox">
 
         <h3 class="text-center pt-3 heading">Choose A Order To Delete Here</h3> <br>
@@ -8,13 +8,24 @@
             <table border=1 style="color:rgb(255, 255, 255)" class="center">
 
                 <tr>
-                    <th class = "text-center" style = "width: 15%;">ID</th>
+                    <th class="hidden">ID</th>
                     <th class = "text-center" style = "width: 15%;">Table No.</th>
                     <th class = "text-center" style = "width: 20%;">Status</th>
                     <th class = "text-center" style = "width: 20%;">Price</th>
                     <th class = "text-center" style = "width: 15%;">Start Time</th>
                     <th class = "text-center" style = "width: 10%;">Select</th>
                 </tr>
+                {% for i in range(len): %} 
+                        <tr>
+                            <td class="hidden"> {{ID[i]}} </td>
+                            <td> {{tableNumber[i]}} </td>              
+                            <td> {{status[i]}} </td>
+                            <td> £{{price[i]}} </td>
+                            <td> {{startTime[i]}} </td>
+                            <td> {{readyTime[i]}} </td>
+                            <td> <input required type="radio" name="ID" value="{{ID[i]}}" checked></td>
+                        </tr>
+                {% endfor %}
             </table>
                 <br><br>
 

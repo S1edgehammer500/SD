@@ -862,27 +862,20 @@ def createDiscount():
     try:
         if request.method == "POST": 
             #getting data from form        
-            discountID = request.form['discountID']
             discountValue = request.form['discountValue']
 
                  
-            if discountID != None and discountValue != None:
+            if discountValue != None:
                 if discount.checkDiscountValue(discountValue) != 1:
-                    if discount.validateDiscountIDSyntax(discountID) == 1:
-                        if discount.validateDiscountValueSyntax(discountValue) == 1:
-        
-
-                            if discount.createDiscount(discountID, discountValue) == 1:                      
-                                flash("Discount is now registered", "success")
-                                return redirect(url_for('home'))
-                            else:
-                                flash("Unexpected Error occured", "danger")
-                                return render_template('home.html', error=error, title="Discount Options", logged_in=logged_in, authLevel=authLevel)
+                    if discount.validateDiscountValueSyntax(discountValue) == 1:
+                        if discount.createDiscount(discountValue) == 1:                      
+                            flash("Discount is now registered", "success")
+                            return redirect(url_for('home'))
                         else:
-                            flash("Invalid discount value", "danger")
-                            return render_template('createDiscount.html', error=error, title="Create Discount", logged_in=logged_in, authLevel=authLevel)
+                            flash("Unexpected Error occured", "danger")
+                            return render_template('home.html', error=error, title="Discount Options", logged_in=logged_in, authLevel=authLevel)
                     else:
-                        flash("Invalid Discount ID syntax", "danger")
+                        flash("Invalid discount value", "danger")
                         return render_template('createDiscount.html', error=error, title="Create Discount", logged_in=logged_in, authLevel=authLevel)
                 else:
                     flash("Discount already exists", "danger")
@@ -1657,7 +1650,7 @@ def order():
     tempStatus = [status[2] for status in order.get_order(restaurant)]
     status = strip.it(tempStatus)
 
-    tempPrice = [status[3] for status in order.get_order(restaurant)]
+    tempPrice = [price[3] for price in order.get_order(restaurant)]
     price = strip.it(tempPrice)
 
     tempTableNumber = [tableNumber[4] for tableNumber in order.get_order(restaurant)]
@@ -1721,7 +1714,7 @@ def createOrder():
     currentMenu = Menu()
 
     
-    foodList, priceList, allergyList, idList, isAvailableList = currentMenu.getMenuList(currentRestaurant)
+    foodList, priceList, allergyList, idList, isAvailableList = currentMenu.getAvailableMenuList(currentRestaurant)
 
     try:
 
@@ -1781,8 +1774,56 @@ def deleteOrder():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
+
+    user = User()
+    user.setLoginDetails(session['code'])
+    restaurant = user.getBaseRestaurant()
+
+    order = Order()
+
+    tempID = [orderID[0] for orderID in order.get_order(restaurant)]
+    ID = strip.it(tempID)
+
+    tempStatus = [status[2] for status in order.get_order(restaurant)]
+    status = strip.it(tempStatus)
+
+    tempPrice = [price[3] for price in order.get_order(restaurant)]
+    price = strip.it(tempPrice)
+
+    tempTableNumber = [tableNumber[4] for tableNumber in order.get_order(restaurant)]
+    tableNumber = strip.it(tempTableNumber)
+
+    tempStartTime = [startTime[5] for startTime in order.get_order(restaurant)]
+    startTime = strip.it(tempStartTime)
+
+    tempReadyTime = [readyTime[6] for readyTime in order.get_order(restaurant)]
+    readyTime = strip.it(tempReadyTime)
+
     
-    return render_template('deleteOrder.html', title="Delete Order", logged_in=logged_in, authLevel=authLevel)
+    return render_template('deleteOrder.html', title="Delete Order", logged_in=logged_in, authLevel=authLevel, status=status, price=price, tableNumber=tableNumber, startTime=startTime, readyTime=readyTime, ID=ID, len=len(ID))
+
+@app.route("/deleteOrder2/", methods=['GET', 'POST'])
+@login_required
+@chef_required
+def deleteOrder2():
+    order = Order()
+
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    try:
+        if request.method == "POST":
+            # order name that you wanna delete
+            ID = request.form['ID']
+            if order.delete_order(ID):
+                flash(f"You have successfully deleted an order", 'info')
+                return redirect(url_for('order'))
+            else:
+                flash(f"This order does not exist", 'danger')
+                return redirect(url_for('deleteOrder'))
+                
+    except Exception as e:  
+        return render_template('deleteOrder.html', error=e, title="Delete Order", logged_in=logged_in, authLevel=authLevel)
 
 @app.route("/updateOrder/", methods=['POST', 'GET'])
 @login_required
@@ -1845,18 +1886,25 @@ def updateOrder3():
     order.setOrderDetails(session['orderID'])
     status = order.getStatus()
     startTime = order.getStartTime()
+    readyTime = order.getReadyTime()
     try:
         if request.method == 'POST':
             newStatus = request.form['status']
-            if order.updateStatus(newStatus, session['orderID']):
-                if newStatus == 'Cooking':
+            if newStatus == 'Cooking':
+                if startTime == None:
+                    order.updateStatus(newStatus, session['orderID'])
                     currentDate = datetime.datetime.now()
                     currentDate = currentDate.strftime("%Y-%m-%d %H:%M:%S")
                     order.updateStartTime(currentDate, session['orderID'])
                     flash("Successfully updated order details", "success")
                     return redirect(url_for('order'))
-                elif newStatus == 'Ready':
-                    if startTime != None:
+                else:
+                    flash("Start time has already been set", "danger")
+                    return redirect(url_for('updateOrder2'))
+            elif newStatus == 'Ready':
+                if startTime != None:
+                    if readyTime == None:
+                        order.updateStatus(newStatus, session['orderID'])
                         currentDate = datetime.datetime.now()
                         currentDate = currentDate.strftime("%Y-%m-%d %H:%M:%S")
                         startTime = order.getStartTime()
@@ -1864,16 +1912,30 @@ def updateOrder3():
                             flash("Successfully updated order details", "success")
                             return redirect(url_for('order'))
                     else:
-                       print("FAIL")
-                       flash("Start time should be set before Ready time", "danger")
-                       return render_template('updateOrder2.html', title="Update Order", logged_in=logged_in, authLevel=authLevel, error=e, status=status)
+                        flash("You have already set the ready time for this order", "danger")
+                        return redirect(url_for('updateOrder2'))
                 else:
-                    flash("Successfully updated order details", "success")
-                    return redirect(url_for('order'))
+                    flash("Start time should be set before Ready time", "danger")
+                    return render_template('updateOrder2.html', title="Update Order", logged_in=logged_in, authLevel=authLevel, error=e, status=status)
+            elif newStatus == "Cancelled":
+                order.delete_order(session['orderID'])
+                flash("Order has been deleted", "success")
+                return redirect(url_for('order'))
+            elif newStatus == 'Delivered':
+                if startTime != None:
+                    if readyTime != None:
+                        order.updateStatus(newStatus, session['orderID'])
+                        flash("Successfully updated order details", "success")
+                        return redirect(url_for('order'))
+                    else:
+                        flash("You have not yet marked the order as ready", "danger")
+                        return redirect(url_for('updateOrder2'))
+                else:
+                    flash("You have not yet marked the order as being started", "danger")
+                    return redirect(url_for)
             else:
-                flash("Incorrect status", "danger")
-                return render_template('updateOrder2.html', title="Update Order", logged_in=logged_in, authLevel=authLevel, error=e, status=status)
-
+                flash("Successfully updated order details", "success")
+                return redirect(url_for('updateOrder2'))
     except Exception as e:                
         return render_template('updateOrder2.html', title="Update Order", logged_in=logged_in, authLevel=authLevel, error=e, status=status)
 
@@ -1944,6 +2006,14 @@ def applyDiscountOrder():
 
     dIDs, dValues = discount.get_discounts()
 
+    discountListIDs, orderIDs, discountIDs = order.getDiscountList(session['orderID'])
+    i = 0
+    while i < len(dIDs):
+        if dIDs[i] in discountIDs:
+            dIDs.remove(dIDs[i])
+        else:
+            i += 1
+
     try:
         if request.method == 'POST':
             discountID = request.form['dID']
@@ -1961,6 +2031,48 @@ def applyDiscountOrder():
 
   
     return render_template('applyDiscountOrder.html', title = "Update Discount", logged_in=logged_in, authLevel = authLevel, dIDs=dIDs, dValues=dValues, discountsLen = len(dIDs))
+
+@app.route("/removeDiscountOrder/", methods=['POST', 'GET'])
+@login_required
+def removeDiscountOrder():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    currentUser = User()
+    currentUser.setLoginDetails(session['code'])
+    order = Order()
+    discount = Discount()
+
+    order.setOrderDetails(session['orderID'])
+
+    discountListID = order.getDiscountListID()
+    discountListID = strip.it(discountListID)
+
+    dIDs, dValues = discount.get_discounts()
+
+    discountListIDs, orderIDs, discountIDs = order.getDiscountList(session['orderID'])
+    discountList = []
+    valueList = []
+    i = 0
+    while i < len(dIDs):
+        if dIDs[i] in discountIDs:
+            discountList.append(dIDs[i])
+            valueList.append(dValues[i])
+        else:
+            i += 1
+        try:
+            if request.method == "POST":
+                chosenDiscountList = request.form['discountListID']
+                if order.removeDiscountFromOrder(session['orderID'],chosenValue, chosenDiscountList):
+                    flash("Successfully removed discount", "success")
+                    return redirect(url_for('createOrder2'))
+                else:
+                    flash("Error removing discount", "danger")
+                    return redirect(url_for('removeDiscountOrder'))
+        except Exception as e:
+            return render_template('removeDiscountOrder.html', title="Remove Discount From Order", logged_in=logged_in, authLevel=authLevel,discountList=discountList, valueList=valueList, discountLen=len(discountList), discountListID=discountListID, error=e)
+    
+    return render_template('removeDiscountOrder.html', title="Remove Discount From Order", logged_in=logged_in, authLevel=authLevel,discountList=discountList, valueList=valueList, discountLen=len(discountList), discountListID=discountListID)
 
 
 @app.route("/reservation/", methods=['POST', 'GET'])
