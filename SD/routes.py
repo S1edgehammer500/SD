@@ -1882,18 +1882,25 @@ def updateOrder3():
     order.setOrderDetails(session['orderID'])
     status = order.getStatus()
     startTime = order.getStartTime()
+    readyTime = order.getReadyTime()
     try:
         if request.method == 'POST':
             newStatus = request.form['status']
-            if order.updateStatus(newStatus, session['orderID']):
-                if newStatus == 'Cooking':
+            if newStatus == 'Cooking':
+                if startTime == None:
+                    order.updateStatus(newStatus, session['orderID'])
                     currentDate = datetime.datetime.now()
                     currentDate = currentDate.strftime("%Y-%m-%d %H:%M:%S")
                     order.updateStartTime(currentDate, session['orderID'])
                     flash("Successfully updated order details", "success")
                     return redirect(url_for('order'))
-                elif newStatus == 'Ready':
-                    if startTime != None:
+                else:
+                    flash("Start time has already been set", "danger")
+                    return redirect(url_for('updateOrder2'))
+            elif newStatus == 'Ready':
+                if startTime != None:
+                    if readyTime == None:
+                        order.updateStatus(newStatus, session['orderID'])
                         currentDate = datetime.datetime.now()
                         currentDate = currentDate.strftime("%Y-%m-%d %H:%M:%S")
                         startTime = order.getStartTime()
@@ -1901,16 +1908,30 @@ def updateOrder3():
                             flash("Successfully updated order details", "success")
                             return redirect(url_for('order'))
                     else:
-                       print("FAIL")
-                       flash("Start time should be set before Ready time", "danger")
-                       return render_template('updateOrder2.html', title="Update Order", logged_in=logged_in, authLevel=authLevel, error=e, status=status)
+                        flash("You have already set the ready time for this order", "danger")
+                        return redirect(url_for('updateOrder2'))
                 else:
-                    flash("Successfully updated order details", "success")
-                    return redirect(url_for('order'))
+                    flash("Start time should be set before Ready time", "danger")
+                    return render_template('updateOrder2.html', title="Update Order", logged_in=logged_in, authLevel=authLevel, error=e, status=status)
+            elif newStatus == "Cancelled":
+                order.delete_order(session['orderID'])
+                flash("Order has been deleted", "success")
+                return redirect(url_for('order'))
+            elif newStatus == 'Delivered':
+                if startTime != None:
+                    if readyTime != None:
+                        order.updateStatus(newStatus, session['orderID'])
+                        flash("Successfully updated order details", "success")
+                        return redirect(url_for('order'))
+                    else:
+                        flash("You have not yet marked the order as ready", "danger")
+                        return redirect(url_for('updateOrder2'))
+                else:
+                    flash("You have not yet marked the order as being started", "danger")
+                    return redirect(url_for)
             else:
-                flash("Incorrect status", "danger")
-                return render_template('updateOrder2.html', title="Update Order", logged_in=logged_in, authLevel=authLevel, error=e, status=status)
-
+                flash("Successfully updated order details", "success")
+                return redirect(url_for('updateOrder2'))
     except Exception as e:                
         return render_template('updateOrder2.html', title="Update Order", logged_in=logged_in, authLevel=authLevel, error=e, status=status)
 

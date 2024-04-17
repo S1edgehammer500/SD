@@ -121,7 +121,7 @@ class Order: #order class
             return 0
 
     def validateStatus(self, status):
-        if status not in ['Order Created','Cooking', 'Ready', 'Delivered', 'Payment Completed','Cancelled']:
+        if status not in ['Order Created','Cooking', 'Ready', 'Delivered', 'Cancelled']:
             print("Invalid status")
             return 0
         else:
@@ -534,8 +534,8 @@ class Order: #order class
         try:
             conn, cur = openConnection()
             cur = conn.cursor()
-            query = "SELECT * FROM orders WHERE restaurantName = ? AND status != ? AND status != ?;"
-            cur.execute(query, (restaurantName,'Payment Completed', 'Cancelled'))
+            query = "SELECT * FROM orders WHERE restaurantName = ? AND status != ?;"
+            cur.execute(query, (restaurantName,'Delivered'))
             rows = cur.fetchall()
             orders = [(row[0], row[1], row[2], row[3], row[4], row[5], row[6]) for row in rows]
             # Close the connection after fetching data
