@@ -39,25 +39,6 @@ class Discount:
         self.__discountValue = discountValue
 
     #updaters
-    def updateDiscountID(self, dID, newdID):
-        conn, cur = openConnection()
-        if self.validateDiscountIDSyntax(newdID):
-            query1 = "SELECT * FROM discounts WHERE discountID = ?;"
-            cur.execute(query1, (newdID, ))
-            record = cur.fetchone()
-            if record is not None:
-                print("Discount ID already exists")
-                conn.close()
-                return 0
-            else:
-                query2 = "UPDATE discounts SET discountID = ? WHERE discountID = ?;"
-                cur.execute(query2, (newdID, dID))
-                conn.commit()
-                conn.close()
-                return 1
-        else:
-            conn.close()
-            return 0
 
     def updateDiscountValue(self, dID, dValue):
         conn, cur = openConnection()
@@ -73,16 +54,6 @@ class Discount:
         
 
     #validators
-    def validateDiscountIDSyntax(self, dID):
-        if len(dID) > 0:
-            # 2 digits
-            pattern = r'[0-9]{2,2}'
-            if re.fullmatch(pattern, dID):
-                return 1
-            else:
-                return 0
-        else:
-            return 0
         
     def validateDiscountValueSyntax(self, dValue):
         if len(dValue) > 0:
@@ -98,34 +69,16 @@ class Discount:
 
     def deleteDiscount(self, dID):
         conn, cur = openConnection()
-        if self.checkDiscountID(dID):
-            query = 'DELETE FROM discounts WHERE discountID = ?;'
-
-            cur.execute(query, (dID,))
-
-            print("Discount successfully deleted")
-            conn.commit()
-            conn.close()
-            return 1
-        else:
-            print("Discount doesn't exist or invalid syntax")
-            conn.close()
-            return 0
         
+        query = 'DELETE FROM discounts WHERE discountID = ?;'
 
-    def checkDiscountID(self, dID):
-        conn, cur = openConnection()
-        query = "SELECT discountID FROM discounts WHERE discountID = ?;"
         cur.execute(query, (dID,))
-        records = cur.fetchone()
-        if records is not None:
-            print("Discount already exists")
-            conn.close()
-            return 1
-        else:
-            print("Discount doesn't exist")
-            conn.close()
-            return 0 
+
+        print("Discount successfully deleted")
+        conn.commit()
+        conn.close()
+        return 1
+        
 
     def checkDiscountValue(self, dValue):
         conn, cur = openConnection()
@@ -133,7 +86,7 @@ class Discount:
         cur.execute(query, (dValue,))
         records = cur.fetchone()
         if records is not None:
-            print("Discount already exists")
+            print("Discount exists")
             conn.close()
             return 1
         else:
@@ -142,14 +95,10 @@ class Discount:
             return 0 
         
     # Saves the users details in the database
-    def createDiscount(self, dID, dValue): #save discount attributes in database
+    def createDiscount(self, dValue): #save discount attributes in database
         conn, cur = openConnection()
         if self.checkDiscountValue(dValue):  
             print('Discount value already exists')
-            conn.close()
-            return 0
-        elif self.checkDiscountID(dID):
-            print('Discount ID already exists')
             conn.close()
             return 0
         elif not (self.validateDiscountValueSyntax(dValue)):
@@ -157,8 +106,10 @@ class Discount:
             conn.close()
             return 0
         else:
-            query = 'INSERT INTO discounts (discountID, discountValue) VALUES (? , ?);'
-            cur.execute(query, (dID, dValue))
+
+            query = 'INSERT INTO discounts (discountValue) VALUES (?);'
+            cur.execute(query, (dValue,))
+            
             print('Discount details successfully saved')
             conn.commit()
             conn.close()
