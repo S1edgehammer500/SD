@@ -831,7 +831,7 @@ def updateRestaurant3():
         return render_template('updateRestaurant2.html', error=e, title = "Update Restaurant", logged_in=logged_in, authLevel=authLevel)
 
 
-#Beggining of discount crud
+#Beginning of discount crud
 
 @app.route("/discountOptions/")
 @login_required
@@ -862,27 +862,24 @@ def createDiscount():
     try:
         if request.method == "POST": 
             #getting data from form        
-            discountID = request.form['discountID']
             discountValue = request.form['discountValue']
 
                  
-            if discountID != None and discountValue != None:
+            if discountValue != None:
                 if discount.checkDiscountValue(discountValue) != 1:
-                    if discount.validateDiscountIDSyntax(discountID) == 1:
-                        if discount.validateDiscountValueSyntax(discountValue) == 1:
-        
+                    
+                    if discount.validateDiscountValueSyntax(discountValue) == 1:
+                        
 
-                            if discount.createDiscount(discountID, discountValue) == 1:                      
-                                flash("Discount is now registered", "success")
-                                return redirect(url_for('home'))
-                            else:
-                                flash("Unexpected Error occured", "danger")
-                                return render_template('home.html', error=error, title="Discount Options", logged_in=logged_in, authLevel=authLevel)
+                        if discount.createDiscount(discountValue) == 1:  
+                            print("1")                    
+                            flash("Discount is now registered", "success")
+                            return redirect(url_for('home'))
                         else:
-                            flash("Invalid discount value", "danger")
-                            return render_template('createDiscount.html', error=error, title="Create Discount", logged_in=logged_in, authLevel=authLevel)
+                            flash("Unexpected Error occured", "danger")
+                            return render_template('home.html', error=error, title="Discount Options", logged_in=logged_in, authLevel=authLevel)
                     else:
-                        flash("Invalid Discount ID syntax", "danger")
+                        flash("Invalid discount value", "danger")
                         return render_template('createDiscount.html', error=error, title="Create Discount", logged_in=logged_in, authLevel=authLevel)
                 else:
                     flash("Discount already exists", "danger")
@@ -923,7 +920,6 @@ def deleteDiscount2():
 
     discount = Discount()
 
-    print("delete")
 
     try:
         if request.method == "POST":
@@ -994,39 +990,27 @@ def updateDiscount3():
     
         if request.method == "POST":
         
-            
-            dID = request.form['discountID']
             dValue = request.form['discountValue']
 
-            print(f"dID {dID}")
             print(f"dValue {dValue}")
 
-            if dID != None and dValue != None:
+            if dValue != None:
     
-                if discount.validateDiscountIDSyntax(dID) == 1:
-        
-                    if discount.validateDiscountValueSyntax(dValue) == 1:
+                if discount.validateDiscountValueSyntax(dValue) == 1:
 
-                        previousdID = session['previousdID']
-                        
+                    previousdID = session['previousdID']
+                    
 
-                        if discount.updateDiscountValue(previousdID, dValue):
-                            print(f"Previous dID {previousdID}")
-
-                            if dID != previousdID:
-                                discount.updateDiscountID(previousdID, dID)
+                    if discount.updateDiscountValue(previousdID, dValue):
 
 
-                            flash(f"You have successfully updated the discount {dID}", 'info')
-                            return redirect(url_for('adminOptions'))
-                        else:
-                            flash("Unexpected error occured")
-                            return render_template('updateDiscount2.html', error="", title = "Update Discount", logged_in=logged_in, authLevel=authLevel)
+                        flash(f"You have successfully updated the discount with value {dValue}", 'info')
+                        return redirect(url_for('adminOptions'))
                     else:
-                        flash("Discount value is in the wrong format")
+                        flash("Unexpected error occured")
                         return render_template('updateDiscount2.html', error="", title = "Update Discount", logged_in=logged_in, authLevel=authLevel)
                 else:
-                    flash("Discount ID is in the wrong format")
+                    flash("Discount value is in the wrong format")
                     return render_template('updateDiscount2.html', error="", title = "Update Discount", logged_in=logged_in, authLevel=authLevel)
             else:                
                 flash("Please don't leave any field empty", "danger")
