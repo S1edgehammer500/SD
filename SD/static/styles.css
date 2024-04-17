@@ -404,7 +404,7 @@ body.page2 {
 
 .StandardBox table {
 
-  width: 400px;
+  width: 320px;
 }
 
 .reservation-holder{
@@ -565,6 +565,11 @@ body.page2 {
     text-align: center;
     margin-top: 20px;
     
+  }
+
+  .StandardBox table {
+
+    width: 540px;
   }
 
   .title {
