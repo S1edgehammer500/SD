@@ -156,6 +156,7 @@
   left: 40%;
   transform: translate(-50%, -50%);
   height: auto;
+  max-height: 100vh; 
   width: 1000px;
 
 }
@@ -183,6 +184,7 @@
   top: 30%;
   left: 50%;
   transform: translate(-50%, -50%);
+  max-height: 100vh; 
   height: auto;
   width: 1000px;
 
@@ -199,16 +201,18 @@
 
 .StandardBox {
   
-  position: absolute;
-  top: 45%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: relative; /* Change from absolute to relative positioning */
+  top: 50px;
   width: 700px;
-  height: auto;
+  max-height: 100vh; /* Limit the height to 80% of the viewport height, adjust as needed */
   border: 3px solid white;
-  background-color: rgba(33, 37, 41); /* Adjust opacity as needed */
-  color: white;         /* Set the text Color */
+  background-color: rgba(33, 37, 41);
+  color: white;
   text-align: center;
+  margin: 0 auto; /* Center the box horizontally */
+  padding: 20px; /* Add padding to the content */
+  box-sizing: border-box; /* Include padding in the total width */
+  
   
 }
 
@@ -325,20 +329,22 @@ body.page2 {
 @media only screen and (max-width: 768px) {
   /* For mobiles: */
 
-  .AdminBox {
+  .AdminBox{
+
     width: 200px;
     height: 200px;
     border: 3px solid white;
     background-color: rgba(33, 37, 41); /* Adjust opacity as needed */
     color: white;         /* Set the text Color */
     text-decoration-line: underline;
-    margin: 100px;
+    margin-bottom: 100px;
+  
   }
 
   .AdminBox button {
     margin: 15px auto; /* Center the buttons horizontally */ 
     display: block;
-    font-size: 14px;
+    font-size: 12px;
     color: rgba(33, 37, 41);
     background-color: white;
     border-color: white;
@@ -355,31 +361,113 @@ body.page2 {
 
 /* Position for AdminUserPos */
 .AdminUserPos {
-  top: 100%; /* Adjusted from 35% for mobile */
+  top: 40%; /* Adjusted from 35% for mobile */
   left: 50%; /* Center horizontally */
 }
 
 
 /* Position for AdminRestaurantPos */
 .AdminRestaurantPos {
-  top: 150%; /* Adjusted from 35% for mobile */
+  top: 80%; /* Adjusted from 35% for mobile */
   left: 50%; /* Center horizontally */
 }
 
 /* Position for AdminWarehousePos */
 .AdminWarehousePos {
-  top: 200%; /* Adjusted from 75% for mobile */
+  top: 120%; /* Adjusted from 75% for mobile */
   left: 50%; /* Center horizontally */
 }
 
 /* Position for AdminFoodPos */
 .AdminFoodPos {
-  top: 250%; /* Adjusted from 75% for mobile */
+  top: 160%; /* Adjusted from 75% for mobile */
   left: 50%; /* Center horizontally */
 }
 
 
+.StandardBox {
+  
+  position: relative; 
+  width: 370px;
+  max-height: 100vh; 
+  border: 3px solid white;
+  background-color: rgba(33, 37, 41);
+  color: white;
+  text-align: center;
+  margin: 0 auto; 
+  padding: 20px; 
+  box-sizing: border-box;
+  margin-bottom: 200px; /* Add space from the bottom */
+  
+  
+}
 
+.StandardBox table {
+
+  width: 400px;
+}
+
+.reservation-holder{
+
+
+  position: relative; /* Change from absolute to relative positioning */
+  top: 100px;
+  left: 0px;
+  transform: none;
+  height: auto;
+  max-height: 100vh; 
+  width: auto;
+  margin-bottom: 500px; /* Add space from the bottom */
+  
+
+}
+
+.reservation-holder table{
+  width: 100%;
+  
+  border: 2px solid white; /* Thick white outline */
+  color: white; /* Text color */
+  background-color: rgba(33, 37, 41);
+}
+
+.reservation-options {
+  position: relative; /* Set position to absolute */
+  top: 100px; /* Position from the top */
+  left: 0px; /* Position from the left */
+  transform: none; /* Center the element */
+}
+
+.title {
+
+
+  position: relative; /* Change from absolute to relative positioning */
+  top: 50px;
+  left: 0px;
+  transform: none;
+  color: white;
+  font-size: 35px;
+  text-decoration: underline;
+}
+
+.txt-size {
+  font-size: 20px;
+}
+
+
+.login-form-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-sizing: border-box;
+  height: auto;
+  width: 370px;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  background-color: rgba(33, 37, 41); /* Adjust opacity as needed */
+  border: 3px solid white;
+}
 
   
 }
@@ -418,7 +506,7 @@ body.page2 {
   .reservation-holder{
 
     position: absolute;
-    top: 30%;
+    top: 40%;
     left: 40%;
     transform: translate(-50%, -50%);
     height: auto;
@@ -438,20 +526,9 @@ body.page2 {
   .reservation-options{
     
     position: absolute;
-    top: 50%;
+    top: 70%;
     left: 85%;
     transform: translate(-50%, -50%);
-  }
-
-  .title {
-
-    position: absolute;
-    top: 15%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
-    font-size: 35px;
-    text-decoration: underline;
   }
 
 
@@ -477,7 +554,7 @@ body.page2 {
   .StandardBox {
   
     position: absolute;
-    top: 45%;
+    top: 60%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 600px;
@@ -490,6 +567,17 @@ body.page2 {
     
   }
 
+  .title {
+
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 50px;
+    text-decoration: underline;
+  }
+  
 
 
 

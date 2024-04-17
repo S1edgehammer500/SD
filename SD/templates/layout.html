@@ -3,8 +3,10 @@
     <head>
       <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
       <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+      
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
         {% if title %}
             <title>Horizon Restaurant - {{ title }}</title>
@@ -16,44 +18,48 @@
     <body class = "page1">
     {% endblock body %}
         <!--nav bar-->
-        <nav class="navbar navbar-inverse">
-            <div class="container-fluid">
-              <ul class="nav navbar-nav">
-                {% if logged_in == True: %} 
-                <div class="navbar-header">
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+          <div class="container-fluid">
+              <div class="navbar-header">
+                  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse">
+                      <span class="sr-only">Toggle navigation</span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                  </button>
                   <a class="navbar-brand" href="{{ url_for('home') }}">Horizon Restaurant</a>
-                </div>
-                  {% if authLevel == 'admin': %} 
-                    <li><a href="{{ url_for('adminOptions') }}">Admin</a></li>
+              </div>
+              <div class="collapse navbar-collapse" id="navbar-collapse">
+                  <ul class="nav navbar-nav">
+                      {% if logged_in %}
+                      {% if authLevel == 'admin' %}
+                      <li><a href="{{ url_for('adminOptions') }}">Admin</a></li>
+
+
+                      <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Reports <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ url_for('salesReport') }}">Sales Report</a></li>
+                            <li><a href="{{ url_for('averageSalesReport') }}">Average Sales Report</a></li>
+                            <li><a href="{{ url_for('averageServingTimeReport') }}">Average Serving Time Report</a></li>
+                            <li><a href="{{ url_for('totalDiscountAmountReport') }}">Total Discount Amount Report</a></li>
+                            <li><a href="{{ url_for('averageDiscountAmountReport') }}">Average Discount Amount Report</a></li>
+                        </ul>
+                    </li>
 
                     <li class="dropdown">
-                      <a class="dropdown-toggle" data-toggle="dropdown" href="#">Reports
+                      <a class="dropdown-toggle" data-toggle="dropdown" href="#">Edit Discounts
                           <span class="caret"></span>
                       </a>
                       <ul class="dropdown-menu">
-                          <li><a href="{{ url_for('salesReport') }}">View Sales Report</a></li>
-                          <li><a href="{{ url_for('averageSalesReport') }}">View Average Sales Report</a></li>
-                          <li><a href="{{ url_for('averageServingTimeReport') }}">View Average Serving Time Report</a></li>
-                          <li><a href="{{ url_for('totalDiscountAmountReport') }}">View Total Discount Amount Report</a></li>
-                          <li><a href="{{ url_for('averageDiscountAmountReport') }}">View Average Discount Amount Report</a></li>
+                          <li><a href="{{ url_for('createDiscount') }}">Add New Discount</a></li>
+                          <li><a href="{{ url_for('updateDiscount') }}">Update Existing Discount</a></li>
+                          <li><a href="{{ url_for('deleteDiscount') }}">Delete Discount</a></li>
+  
                       </ul>
                   </li>
 
                   <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Edit Discounts
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="{{ url_for('createDiscount') }}">Add New Discount</a></li>
-                        <li><a href="{{ url_for('updateDiscount') }}">Update Existing Discount</a></li>
-                        <li><a href="{{ url_for('deleteDiscount') }}">Delete Discount</a></li>
-
-                    </ul>
-                </li>
-
-
-
-                  <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">Edit Menu
                         <span class="caret"></span>
                     </a>
@@ -64,106 +70,100 @@
 
                     </ul>
                 </li>
-                    
 
-                  {% endif %}
+                      {% endif %}
+                      {% if authLevel == 'manager' %}
 
-                  {% if authLevel == 'chef' : %}
-                  <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Edit Menu
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="{{ url_for('createMenu') }}">Add To Menu</a></li>
-                        <li><a href="{{ url_for('updateMenu') }}">Update The Menu</a></li>
-                        <li><a href="{{ url_for('deleteMenu') }}">Delete From Menu</a></li>
+                        <li class="dropdown">
+                          <a class="dropdown-toggle" data-toggle="dropdown" href="#">Staff
+                              <span class="caret"></span>
+                          </a>
+                          <ul class="dropdown-menu">
+                            <li><a href="{{ url_for('createStaff') }}">Add Staff</a></li>
+                            <li><a href="{{ url_for('updateStaff') }}">Edit Staff</a></li>
+                            <li><a href="{{ url_for('deleteStaff') }}">Delete Staff</a></li>
+      
+                        </ul>
+                      </li>
+    
 
-                    </ul>
-                </li>
-                  {% endif %}
+
+                      <li class="dropdown">
+                          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Reports <b class="caret"></b></a>
+                          <ul class="dropdown-menu">
+                              <li><a href="{{ url_for('salesReport') }}">Sales Report</a></li>
+                              <li><a href="{{ url_for('averageSalesReport') }}">Average Sales Report</a></li>
+                              <li><a href="{{ url_for('averageServingTimeReport') }}">Average Serving Time Report</a></li>
+                              <li><a href="{{ url_for('totalDiscountAmountReport') }}">Total Discount Amount Report</a></li>
+                              <li><a href="{{ url_for('averageDiscountAmountReport') }}">Average Discount Amount Report</a></li>
+                          </ul>
+                      </li>
+
+                      <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Edit Discounts
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ url_for('createDiscount') }}">Add New Discount</a></li>
+                            <li><a href="{{ url_for('updateDiscount') }}">Update Existing Discount</a></li>
+                            <li><a href="{{ url_for('deleteDiscount') }}">Delete Discount</a></li>
+    
+                        </ul>
+                    </li>
+
+                    <li class="dropdown">
+                      <a class="dropdown-toggle" data-toggle="dropdown" href="#">Edit Menu
+                          <span class="caret"></span>
+                      </a>
+                      <ul class="dropdown-menu">
+                          <li><a href="{{ url_for('createMenu') }}">Add To Menu</a></li>
+                          <li><a href="{{ url_for('updateMenu') }}">Update The Menu</a></li>
+                          <li><a href="{{ url_for('deleteMenu') }}">Delete From Menu</a></li>
+  
+                      </ul>
+                  </li>
+
+                      {% endif %}
 
 
-                  {% if authLevel == 'manager' : %}
-                  <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Staff
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                      <li><a href="{{ url_for('createStaff') }}">Add Staff</a></li>
-                      <li><a href="{{ url_for('updateStaff') }}">Edit Staff</a></li>
-                      <li><a href="{{ url_for('deleteStaff') }}">Delete Staff</a></li>
+                      {% if authLevel == 'chef' : %}
+                      <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Edit Menu
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ url_for('createMenu') }}">Add To Menu</a></li>
+                            <li><a href="{{ url_for('updateMenu') }}">Update The Menu</a></li>
+                            <li><a href="{{ url_for('deleteMenu') }}">Delete From Menu</a></li>
+    
+                        </ul>
+                    </li>
+                      {% endif %}
 
+                      <li><a href="{{ url_for('menu') }}">Menu</a></li>
+                      <li><a href="{{ url_for('order') }}">Order</a></li>
+                      <li><a href="{{ url_for('inventory') }}">Inventory</a></li>
+                      <li><a href="{{ url_for('reservation') }}">Reservations</a></li>
                   </ul>
-                </li>
 
-
-                  <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Reports
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                      <li><a href="{{ url_for('salesReport') }}">View Sales Report</a></li>
-                      <li><a href="{{ url_for('averageSalesReport') }}">View Average Sales Report</a></li>
-                      <li><a href="{{ url_for('averageServingTimeReport') }}">View Average Serving Time Report</a></li>
-                      <li><a href="{{ url_for('totalDiscountAmountReport') }}">View Total Discount Amount Report</a></li>
-                      <li><a href="{{ url_for('averageDiscountAmountReport') }}">View Average Discount Amount Report</a></li>
-                  </ul>
-                </li>
-
-
-                  <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Edit Discounts
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="{{ url_for('createDiscount') }}">Add New Discount</a></li>
-                        <li><a href="{{ url_for('updateDiscount') }}">Update Existing Discount</a></li>
-                        <li><a href="{{ url_for('deleteDiscount') }}">Delete Discount</a></li>
-
-                    </ul>
-                </li>
-
-
-                  <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Edit Menu
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="{{ url_for('createMenu') }}">Add To Menu</a></li>
-                        <li><a href="{{ url_for('updateMenu') }}">Update The Menu</a></li>
-                        <li><a href="{{ url_for('deleteMenu') }}">Delete From Menu</a></li>
-
-                    </ul>
-                </li>
                   {% endif %}
-
-
-                  <li><a href="{{ url_for('menu') }}"> Menu</a></li>
-                  <li><a href="{{ url_for('order') }}"> Order</a></li>
-                  <li><a href="{{ url_for('inventory') }}">Inventory</a></li>
-                  <li><a href="{{ url_for('reservation') }}">Reservations</a></li>
-
-
-                  
-                  <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Account
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                      <li><a href="{{ url_for('account') }}">My Account</a></li>
-                      <li><a href="{{ url_for('logout') }}">Logout</a></li>
-
-                    </ul>
-                </li>
-                  
-                <li><a href="{{ url_for('payment') }}"> Payment</a></li>
-
-                {% else %}
-                  <li><a href="{{ url_for('login') }}"> Login</a></li>
-                {% endif %}
-              </ul>
-            </div>
-        </nav>
+                  <ul class="nav navbar-nav navbar-left">
+                      {% if logged_in %}
+                      <li class="dropdown">
+                          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Account <b class="caret"></b></a>
+                          <ul class="dropdown-menu">
+                              <li><a href="{{ url_for('account') }}">My Account</a></li>
+                              <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                          </ul>
+                      </li>
+                      <li><a href="{{ url_for('payment') }}">Payment</a></li>
+                      {% else %}
+                      <li><a href="{{ url_for('login') }}">Login</a></li>
+                      {% endif %}
+                  </ul>
+              </div>
+          </div>
+      </nav>
         <br><br><br><br>
 
         {% with messages = get_flashed_messages(with_categories=true) %}

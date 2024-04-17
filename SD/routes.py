@@ -2362,22 +2362,22 @@ def createFood():
 
 
                             else:
-                                flash ("Restaurant is Invalid", "danger")
+                                flash ("Food name already used in the database", "danger")
                                 return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
 
                         else:
-                            flash ("Failed to create food in food table", "danger")
+                            flash ("Food price is invalid", "danger")
                             return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
                     else:  
-                        flash ("Food price is invalid", "danger")
+                        flash ("Food allergy is invalid", "danger")
                         return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
 
                 else:
-                    flash ("Food allergy is invalid", "danger")
+                    flash ("Food name is invalid", "danger")
                     return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
 
             else:
-                flash ("Food name is invalid", "danger")
+                flash ("Please fill in all forms", "danger")
                 return render_template('createFood.html', error=error, title="Create Food", logged_in=logged_in, authLevel=authLevel)
 
         else:

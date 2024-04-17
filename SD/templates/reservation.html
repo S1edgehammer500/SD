@@ -4,6 +4,24 @@
 
 <h1 class = "title">Reservations</h1>
 
+<div class = "reservation-options">
+
+    <div class = "AdminBox">
+
+    <h3 class="txt-size text-center pt-3">Reservation Options</h3>
+
+    <a href="{{ url_for('createReservation') }}">
+        <button type="button">Add Reservation</button>
+    </a>
+    <a href="{{ url_for('updateReservation') }}">
+        <button type="button">Update A Reservation</button>
+    </a>
+    <a href="{{ url_for('deleteReservation') }}">
+        <button type="button">Delete A Reservation</button>
+    </a>
+    </div>
+</div>
+
 
 <div class = "reservation-holder">
 
@@ -29,26 +47,7 @@
 
 </div>
 
-<div class = "reservation-options">
 
-    <div class = "AdminBox">
-
-    <h3 class="txt-size text-center pt-3">Reservation Options</h3>
-
-    <a href="{{ url_for('createReservation') }}">
-        <button type="button">Add Reservation</button>
-    </a>
-    <a href="{{ url_for('updateReservation') }}">
-        <button type="button">Update A Reservation</button>
-    </a>
-    <a href="{{ url_for('deleteReservation') }}">
-        <button type="button">Delete A Reservation</button>
-    </a>
-    </div>
-</div>
-
-
-</div>
 
 
 
