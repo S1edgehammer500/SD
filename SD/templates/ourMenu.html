@@ -11,9 +11,24 @@
 
 <div class = "StandardBox">
 
-    <h3>Meat</h3>
-    <h3>Rice</h3>
-    <h3>Monster</h3>
+    <table>
+
+        <tr>
+            <th class = "text-center" style = "width: 25%;">Name</th>
+            <th class = "text-center" style = "width: 15%;">Price</th>
+            <th class = "text-center" style = "width: 60%;">Allergy Description</th>
+
+        </tr>
+        
+        {% for i in range(listLen): %} 
+            <tr>
+                <td> {{menu[0][i]}} </td>              
+                <td> £{{menu[1][i]}} </td>
+                <td> {{menu[2][i]}} </td>
+            </tr>
+        {% endfor %}
+
+    </table>
 
 </div>
 

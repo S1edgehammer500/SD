@@ -154,8 +154,16 @@ def qrcode():
 
 @app.route("/ourMenu/")
 def ourMenu():
+
+    restaurantName = request.args.get('q')
+
+    menu = Menu()
+
+    todayMenu = menu.getAvailableMenuList(restaurantName)
     
-    return render_template('ourMenu.html', title="QRcode Scanner")
+
+    
+    return render_template('ourMenu.html', title="Our Menu", menu=todayMenu, listLen=len(todayMenu[0]))
 
 
 
@@ -1046,6 +1054,7 @@ def salesReport2():
     logged_in = session['logged_in']
     authLevel = session['authLevel']
 
+
     startDate = request.form['dateStart']
     endDate = request.form['dateEnd']
 
@@ -1065,8 +1074,8 @@ def salesReport2():
         records = sales(startDate, endDate, selected_restaurant)
 
     if records == []:
-        flash("No information for this date range")
-        return redirect(url_for('adminOptions'))
+        flash("No information for this date range", 'danger')
+        return redirect(url_for('salesReport'))
     
     return render_template('salesReport.html', title = "Sales Report", logged_in=logged_in, authLevel=authLevel, records=records, recordsLen=len(records))
     
@@ -1084,7 +1093,7 @@ def averageSalesReport():
 
     restaurants = strip.it(tempRestaurants)
     
-    
+
     return render_template('viewAverageSalesReport.html', title = "Average Sales Report", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
     
 @app.route("/averageSalesReport2/", methods=['GET', 'POST'])
@@ -1093,6 +1102,7 @@ def averageSalesReport():
 def averageSalesReport2():  
     logged_in = session['logged_in']
     authLevel = session['authLevel']
+
 
     startDate = request.form['dateStart']
     endDate = request.form['dateEnd']
@@ -1113,8 +1123,8 @@ def averageSalesReport2():
         records = averageSales(startDate, endDate, selected_restaurant)
 
     if records == []:
-        flash("No information for this date range")
-        return redirect(url_for('adminOptions'))
+        flash("No information for this date range", 'danger')
+        return redirect(url_for('salesReport'))
     
     return render_template('averageSalesReport.html', title = "Average Sales Report", logged_in=logged_in, authLevel=authLevel, records=records, recordsLen=len(records))    
 
@@ -1141,6 +1151,7 @@ def averageServingTimeReport2():
     logged_in = session['logged_in']
     authLevel = session['authLevel']
 
+
     startDate = request.form['dateStart']
     endDate = request.form['dateEnd']
 
@@ -1160,8 +1171,8 @@ def averageServingTimeReport2():
         records = averageServingTime(startDate, endDate, selected_restaurant)
 
     if records == []:
-        flash("No information for this date range")
-        return redirect(url_for('adminOptions'))
+        flash("No information for this date range", 'danger')
+        return redirect(url_for('salesReport'))
     
     return render_template('averageServingTimeReport.html', title = "Average Serving Time Report", logged_in=logged_in, authLevel=authLevel, records=records, recordsLen=len(records)) 
 
@@ -1179,7 +1190,6 @@ def totalDiscountAmountReport():
     tempRestaurants = restaurant.getAllRestaurants()
 
     restaurants = strip.it(tempRestaurants)
-    
     
     return render_template('viewTotalDiscountReport.html', title = "Total Discount Amount Report", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
 
@@ -1209,8 +1219,8 @@ def totalDiscountAmountReport2():
         records = totalDiscountAmount(startDate, endDate, selected_restaurant)
 
     if records == []:
-        flash("No information for this date range")
-        return redirect(url_for('adminOptions'))
+        flash("No information for this date range", 'danger')
+        return redirect(url_for('salesReport'))
     
     return render_template('totalDiscountReport.html', title = "Total Discount Amount Report", logged_in=logged_in, authLevel=authLevel, records=records, recordsLen=len(records))
 
@@ -1228,7 +1238,7 @@ def averageDiscountAmountReport():
 
     restaurants = strip.it(tempRestaurants)
     
-    
+
     return render_template('viewAverageDiscountReport.html', title = "Average Discount Amount Report", logged_in=logged_in, authLevel=authLevel, restaurants=restaurants)
 
 
@@ -1238,6 +1248,7 @@ def averageDiscountAmountReport():
 def averageDiscountAmountReport2():  
     logged_in = session['logged_in']
     authLevel = session['authLevel']
+
 
     startDate = request.form['dateStart']
     endDate = request.form['dateEnd']
@@ -1258,8 +1269,8 @@ def averageDiscountAmountReport2():
         records = averageDiscountAmount(startDate, endDate, selected_restaurant)
 
     if records == []:
-        flash("No information for this date range")
-        return redirect(url_for('adminOptions'))
+        flash("No information for this date range", 'danger')
+        return redirect(url_for('salesReport'))
     
     return render_template('averageDiscountReport.html', title = "Average Discount Amount Report", logged_in=logged_in, authLevel=authLevel, records=records, recordsLen=len(records))
 
