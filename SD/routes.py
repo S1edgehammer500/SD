@@ -1646,7 +1646,7 @@ def order():
     tempStatus = [status[2] for status in order.get_order(restaurant)]
     status = strip.it(tempStatus)
 
-    tempPrice = [status[3] for status in order.get_order(restaurant)]
+    tempPrice = [price[3] for price in order.get_order(restaurant)]
     price = strip.it(tempPrice)
 
     tempTableNumber = [tableNumber[4] for tableNumber in order.get_order(restaurant)]
@@ -1710,7 +1710,7 @@ def createOrder():
     currentMenu = Menu()
 
     
-    foodList, priceList, allergyList, idList, isAvailableList = currentMenu.getMenuList(currentRestaurant)
+    foodList, priceList, allergyList, idList, isAvailableList = currentMenu.getAvailableMenuList(currentRestaurant)
 
     try:
 
@@ -1770,8 +1770,56 @@ def deleteOrder():
     # check to see what navbar to display
     logged_in = session['logged_in']
     authLevel = session['authLevel']
+
+    user = User()
+    user.setLoginDetails(session['code'])
+    restaurant = user.getBaseRestaurant()
+
+    order = Order()
+
+    tempID = [orderID[0] for orderID in order.get_order(restaurant)]
+    ID = strip.it(tempID)
+
+    tempStatus = [status[2] for status in order.get_order(restaurant)]
+    status = strip.it(tempStatus)
+
+    tempPrice = [price[3] for price in order.get_order(restaurant)]
+    price = strip.it(tempPrice)
+
+    tempTableNumber = [tableNumber[4] for tableNumber in order.get_order(restaurant)]
+    tableNumber = strip.it(tempTableNumber)
+
+    tempStartTime = [startTime[5] for startTime in order.get_order(restaurant)]
+    startTime = strip.it(tempStartTime)
+
+    tempReadyTime = [readyTime[6] for readyTime in order.get_order(restaurant)]
+    readyTime = strip.it(tempReadyTime)
+
     
-    return render_template('deleteOrder.html', title="Delete Order", logged_in=logged_in, authLevel=authLevel)
+    return render_template('deleteOrder.html', title="Delete Order", logged_in=logged_in, authLevel=authLevel, status=status, price=price, tableNumber=tableNumber, startTime=startTime, readyTime=readyTime, ID=ID, len=len(ID))
+
+@app.route("/deleteOrder2/", methods=['GET', 'POST'])
+@login_required
+@chef_required
+def deleteOrder2():
+    order = Order()
+
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    
+    try:
+        if request.method == "POST":
+            # order name that you wanna delete
+            ID = request.form['ID']
+            if order.delete_order(ID):
+                flash(f"You have successfully deleted an order", 'info')
+                return redirect(url_for('order'))
+            else:
+                flash(f"This order does not exist", 'danger')
+                return redirect(url_for('deleteOrder'))
+                
+    except Exception as e:  
+        return render_template('deleteOrder.html', error=e, title="Delete Order", logged_in=logged_in, authLevel=authLevel)
 
 @app.route("/updateOrder/", methods=['POST', 'GET'])
 @login_required
