@@ -2058,11 +2058,19 @@ def removeDiscountOrder():
         if dIDs[i] in discountIDs:
             discountList.append(dIDs[i])
             valueList.append(dValues[i])
+            dIDs.remove(dIDs[i])
         else:
             i += 1
         try:
             if request.method == "POST":
                 chosenDiscountList = request.form['discountListID']
+                chosenValue = order.getSpecificDiscountList(chosenDiscountList)
+                chosenValue = strip.it(chosenValue)
+                chosenValue = str(chosenValue).strip("[")
+                chosenValue = str(chosenValue).strip("]")
+                chosenValue = str(chosenValue).strip("'")
+                print("!!!!!!! ORDER ID" + str(session['orderID']))
+                print("!!!!!!!!!!!! DISCOUNT ID" + str(chosenValue))
                 if order.removeDiscountFromOrder(session['orderID'],chosenValue, chosenDiscountList):
                     flash("Successfully removed discount", "success")
                     return redirect(url_for('createOrder2'))

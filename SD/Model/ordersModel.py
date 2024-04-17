@@ -283,9 +283,9 @@ class Order: #order class
         query = 'SELECT * FROM discountList WHERE orderID = ? AND discountID = ?;'
         cur.execute(query, (orderID, discountID))
         record = cur.fetchone()
-        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + str(record))
         if record is not None:
-            if record[0] != discountListID:
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!DISCOUNT LIST" + str(record[0]))
+            if str(record[0]) != str(discountListID):
                 conn.close()
                 return 0
             else:
