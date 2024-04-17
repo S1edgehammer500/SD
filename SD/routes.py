@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, flash, session, jsonify
+from flask import Flask, render_template, request, flash, session, jsonify, make_response
 from passlib.hash import sha256_crypt
 import hashlib
 import gc
@@ -17,6 +17,11 @@ from Model.inventoryModel import *
 from Model.itemModel import *
 from Model.reservationModel import *
 from Model.ordersModel import *
+import pdfkit
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from reportlab.lib import colors
+from reportlab.platypus import Table, TableStyle
 
 # User defined
 import strip
@@ -3294,6 +3299,8 @@ def receipt():
 
     sameData.insert(0, request.form['name'])
     
+    session['name'] = request.form['name']
+    
     if sameData[5] != None:
         sameData[5] = sameData[5][0:10]
 
@@ -3303,6 +3310,92 @@ def receipt():
 
     return render_template('receipt.html', title = "Receipt" , logged_in=logged_in, authLevel=authLevel, sameData=sameData, diffData=diffData, dataLen=len(diffData))
 
+@app.route("/generate_pdfReceipt/", methods=['GET', 'POST'])
+def generate_pdfReceipt():
+    name = session['name']
+    orderPay = Order()
+    sameData, diffData = orderPay.showReceipt(session['orderID'])
+    
+    sameData.insert(0, name)
+    
+    if sameData[5] is not None:
+        sameData[5] = sameData[5][0:10]
+    #rendered_html = render_template('receipt.html', sameData=sameData, diffData=diffData, dataLen=len(diffData))
+
+    # Get food items for the order
+    food_items = orderPay.getSpecificFoodList(session['orderID'])
+
+    # Create PDF using ReportLab
+    response = make_response()
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = 'inline; filename=receipt.pdf'
+
+    # Create a PDF buffer using ReportLab
+    pdf_buffer = response.stream
+    c = canvas.Canvas(pdf_buffer, pagesize=letter)
+
+    # Set up the title
+    c.setFont("Helvetica-Bold", 16)
+    c.drawString(100, 750, "Receipt")
+
+    # Set up the first table header
+    first_table_header = ["Name", "Order ID", "Restaurant Name", "Total Price", "Table Number", "Date Of Payment", "Discount Value"]
+    
+    sameData = ["None" if empty == None else empty for empty in sameData]
+    
+    # Create data for the first table
+    first_table_data = [sameData]
+
+    # Insert first table header
+    first_table_data.insert(0, first_table_header)
+
+    # Create the first table and set style
+    first_table = Table(first_table_data)
+    first_table_style = TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.gray),
+                                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                                    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                                    ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                                    ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                                    ('GRID', (0, 0), (-1, -1), 1, colors.black)])
+    first_table.setStyle(first_table_style)
+
+    # Calculate first table width and height
+    first_table_width, first_table_height = first_table.wrap(400, 200)
+
+    # Draw the first table on the canvas
+    first_table.drawOn(c, (letter[0] - first_table_width) / 2, 600 - first_table_height)
+
+    # Set up the second table header
+    second_table_header = ["Food", "Price"]
+
+    # Create data for the second table
+    second_table_data = diffData
+
+    # Insert second table header
+    second_table_data.insert(0, second_table_header)
+
+    # Create the second table and set style
+    second_table = Table(second_table_data)
+    second_table_style = TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.gray),
+                                     ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                                     ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                                     ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                                     ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                                     ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                                     ('GRID', (0, 0), (-1, -1), 1, colors.black)])
+    second_table.setStyle(second_table_style)
+
+    # Calculate second table width and height
+    second_table_width, second_table_height = second_table.wrap(400, 200)
+
+    # Draw the second table on the canvas
+    second_table.drawOn(c, (letter[0] - second_table_width) / 2, 600 - first_table_height - second_table_height - 30)
+
+    c.showPage()
+    c.save()
+
+    return response
 
 if __name__ == "__main__":
     app.run( debug=True ,host="127.0.0.1", port=5050)
