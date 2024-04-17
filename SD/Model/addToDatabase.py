@@ -18,65 +18,9 @@ food = ["Sushi", "Steak", "Pasta", "Salad", "Tacos", "Sushi Rolls", "Chicken Win
 allergyInfo = ["Milk", "Soy", "Shellfish", "Nut", "Eggs", "Wheat"]
 
 for x in range(len(food)):
-    query = """INSERT INTO food (foodName, price, isAvailable, allergyInfo)
-VALUES (?, ?, ?, ?);"""
-    cur.execute(query, (food[x], round(ran.uniform(10,30), 2), ran.randint(0,1), ran.choice(allergyInfo)))
-
-# Orders Data
-numOfOrders = 1000
-
-def generate_random_dates(start_date, end_date, k):
-    random_dates = []
-    date_range = end_date - start_date
-    for _ in range(k):
-        random_days = ran.randint(0, date_range.days)
-        random_date = start_date + dt.timedelta(seconds=ran.randint(0,60),minutes=ran.randint(0,60),hours=ran.randint(18, 23),days=random_days)
-        random_dates.append(random_date)
-    return random_dates
-start_date = dt.datetime(2024, 1, 1)
-end_date = dt.datetime(2024, 12, 31)
-random_dates = generate_random_dates(start_date, end_date, numOfOrders)
-readyTime = [date + dt.timedelta(minutes=ran.randint(0,60)) for date in random_dates]
-
-statuses = ['Order Created','Cooking', 'Ready', 'Delivered', 'Payment Completed','Cancelled']
-
-for restaurant in ["Bristol"]:
-    
-    for x in range(numOfOrders):
-        singleOrder = x
-        totalPrice = 0.0
-
-        #print(singleOrder, restaurant, ran.choice(statuses), totalPrice, ran.randint(1,12), random_dates[x], readyTime[x])
-
-
-        query = """INSERT INTO orders (orderID, restaurantName, status, orderPrice, tableNumber, startTime, readyTime)
-    VALUES (?, ?, ?, ?, ?, ?, ?);"""
-        cur.execute(query, (singleOrder, restaurant, ran.choice(statuses), totalPrice, ran.randint(1,12), random_dates[x], readyTime[x]))
-
-        for y in range(ran.randint(1,5)):
-            singleFood = ran.choice(food)
-            # Foodlist Data
-            query = """INSERT INTO foodList (orderID, foodName)
-        VALUES (?, ?);"""
-            cur.execute(query, (singleOrder, singleFood))
-
-            query = "SELECT price FROM food WHERE foodName = ?;"
-            cur.execute(query, (singleFood,))
-            records = cur.fetchone()
-
-            totalPrice += float(records[0])
-
-        query = "UPDATE orders SET orderPrice = ? WHERE orderID = ?;"
-        cur.execute(query, (round(totalPrice, 2), singleOrder))
-        conn.commit()
-
-        
-
-
-        
-
-
-
+    query = """INSERT INTO food (foodName, price, allergyInfo)
+VALUES (?, ?, ?);"""
+    cur.execute(query, (food[x], round(ran.uniform(10,30), 2), ran.choice(allergyInfo)))
 
 # Discount Data
 discounts = [10, 25, 50, 75]
@@ -86,13 +30,104 @@ for discount in discounts:
 VALUES (?);"""
     cur.execute(query, (discount,))
 
-# DiscountList Data
-discountIDs = [1,2,3,4,5,6]
+# Orders Data
+numOfOrders = 200
 
-for discount in range(500):
-    query = """INSERT INTO discountList (orderID, discountID)
-VALUES (?, ?);"""
-    cur.execute(query, ( ran.randint(1,1000), ran.choice(discountIDs)))
+def generate_random_dates(start_date, end_date, k):
+    random_dates = []
+    for _ in range(k):
+        random_date = start_date + dt.timedelta(days=ran.randint(0, (end_date - start_date).days),
+                                                hours=ran.randint(18, 23),
+                                                minutes=ran.randint(0, 59),
+                                                seconds=ran.randint(0, 59))
+        random_dates.append(random_date)
+    return random_dates
+
+def generate_ready_times(order_dates):
+    ready_times = [date + dt.timedelta(minutes=ran.randint(15, 60)) for date in order_dates]
+    return ready_times
+
+before_start_date = dt.datetime(2024, 1, 1)
+before_end_date = dt.datetime(2024, 4, 17)
+before_dates = generate_random_dates(before_start_date, before_end_date, numOfOrders)
+before_readyTime = generate_ready_times(before_dates)
+
+start_date = dt.datetime.strptime(dt.datetime.strftime(dt.datetime.today().date(), "%Y-%m-%d  %H:%M:%S"), "%Y-%m-%d  %H:%M:%S")
+end_date = start_date + dt.timedelta(days=1)
+now_dates = generate_random_dates(start_date, end_date, 10)
+readyTime = generate_ready_times(now_dates)
+
+
+before_statuses = ['Payment Completed','Cancelled']
+statuses = ['Order Created','Cooking', 'Ready', 'Delivered', 'Payment Completed','Cancelled']
+
+
+
+def generate_orders(start, numOfOrders, dates, readyTime, statuses, food, discounts):
+    for restaurant in ["Bristol"]:
+        for x in range(start, numOfOrders):
+            singleOrder = x + start
+            totalPrice = 0.0
+            totalDiscount = 0
+            dateToPick = ran.randint(0, len(dates) - 1)
+
+            #print(singleOrder, restaurant, ran.choice(statuses), totalPrice, ran.randint(1,12), random_dates[x], readyTime[x])
+
+
+            query = """INSERT INTO orders (orderID, restaurantName, status, orderPrice, tableNumber, startTime, readyTime)
+        VALUES (?, ?, ?, ?, ?, ?, ?);"""
+            cur.execute(query, (singleOrder, restaurant, ran.choice(statuses), totalPrice, ran.randint(1,12), dates[dateToPick], readyTime[dateToPick]))
+
+            #print(dates[ran.randint(0, len(dates) - 1)], readyTime[ran.randint(0, len(readyTime) -1 )])
+
+            for y in range(ran.randint(1,5)):
+                singleFood = ran.choice(food)
+                # Foodlist Data
+                query = """INSERT INTO foodList (orderID, foodName)
+            VALUES (?, ?);"""
+                cur.execute(query, (singleOrder, singleFood))
+
+                query = "SELECT price FROM food WHERE foodName = ?;"
+                cur.execute(query, (singleFood,))
+                records = cur.fetchone()
+
+                totalPrice += float(records[0])
+
+
+            for z in range(ran.randint(1,2)):
+                if totalDiscount < 50:
+                    singleDiscount = ran.choice(discounts)
+
+                    query = "SELECT discountID FROM discounts WHERE discountValue = ?;"
+                    cur.execute(query, (singleDiscount,))
+                    records = cur.fetchone()
+
+                    totalDiscount += singleDiscount
+
+                    # Foodlist Data
+                    query = """INSERT INTO discountList (orderID, discountID)
+                VALUES (?, ?);"""
+                    cur.execute(query, (singleOrder, records[0]))
+
+                    
+
+            totalPrice = totalPrice - (totalPrice * (totalDiscount / 100))
+
+            query = "UPDATE orders SET orderPrice = ? WHERE orderID = ?;"
+            cur.execute(query, (round(totalPrice, 2), singleOrder))
+            
+
+
+generate_orders(2, numOfOrders, before_dates, before_readyTime, before_statuses, food, discounts)
+print("hello")
+generate_orders(numOfOrders + 1, numOfOrders + 10, now_dates, readyTime, statuses, food, discounts)
+        
+conn.commit()
+
+
+
+
+
 
 
 
