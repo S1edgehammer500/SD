@@ -154,8 +154,16 @@ def qrcode():
 
 @app.route("/ourMenu/")
 def ourMenu():
+
+    restaurantName = request.args.get('q')
+
+    menu = Menu()
+
+    todayMenu = menu.getAvailableMenuList(restaurantName)
     
-    return render_template('ourMenu.html', title="QRcode Scanner")
+
+    
+    return render_template('ourMenu.html', title="Our Menu", menu=todayMenu, listLen=len(todayMenu[0]))
 
 
 
