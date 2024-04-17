@@ -576,17 +576,43 @@ class Order: #order class
         record = cur.fetchall()
         conn.close()
         return record
+    
+    def getDiscountListID(self):
+        conn, cur = openConnection()
+        query = "SELECT discountListID FROM discountList WHERE orderID == ? ORDER BY discountListID;"
+        cur.execute(query, (self.__ID,))
+        record = cur.fetchall()
+        conn.close()
+        return record
+    
+    def getDiscountListValue(self, discountID):
+        conn, cur = openConnection()
+        query = "SELECT discountValue FROM discounts WHERE discountID = ?;"
+        cur.execute(query, (discountID,))
+        record = cur.fetchone()
+        conn.close()
+        return record
+    
+    def getSpecificDiscountList(self, id):
+        conn, cur = openConnection()
+        query = "SELECT discountID FROM discountList WHERE discountListID = ?;"
+        cur.execute(query, (id,))
+        record = cur.fetchall()
+        conn.close()
+        return record
         
-    def get_discountList(self, orderID):
+    def getDiscountList(self, orderID):
         try:
             conn, cur = openConnection()
             query = "SELECT * FROM discountList WHERE orderID = ?;"
             cur.execute(query, (orderID,))
             rows = cur.fetchall()
-            orders = [(row[0], row[1], row[2]) for row in rows]
+            discountListIDs = [row[0] for row in rows]
+            orderIDs = [row[1] for row in rows]
+            discountIDs = [row[2] for row in rows]
             # Close the connection after fetching data
             conn.close()
-            return orders
+            return discountListIDs, orderIDs, discountIDs
         except sqlite3.Error as e:
             print("Error fetching discount list:", e)
             return []

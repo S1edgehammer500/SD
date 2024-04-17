@@ -854,27 +854,20 @@ def createDiscount():
     try:
         if request.method == "POST": 
             #getting data from form        
-            discountID = request.form['discountID']
             discountValue = request.form['discountValue']
 
                  
-            if discountID != None and discountValue != None:
+            if discountValue != None:
                 if discount.checkDiscountValue(discountValue) != 1:
-                    if discount.validateDiscountIDSyntax(discountID) == 1:
-                        if discount.validateDiscountValueSyntax(discountValue) == 1:
-        
-
-                            if discount.createDiscount(discountID, discountValue) == 1:                      
-                                flash("Discount is now registered", "success")
-                                return redirect(url_for('home'))
-                            else:
-                                flash("Unexpected Error occured", "danger")
-                                return render_template('home.html', error=error, title="Discount Options", logged_in=logged_in, authLevel=authLevel)
+                    if discount.validateDiscountValueSyntax(discountValue) == 1:
+                        if discount.createDiscount(discountValue) == 1:                      
+                            flash("Discount is now registered", "success")
+                            return redirect(url_for('home'))
                         else:
-                            flash("Invalid discount value", "danger")
-                            return render_template('createDiscount.html', error=error, title="Create Discount", logged_in=logged_in, authLevel=authLevel)
+                            flash("Unexpected Error occured", "danger")
+                            return render_template('home.html', error=error, title="Discount Options", logged_in=logged_in, authLevel=authLevel)
                     else:
-                        flash("Invalid Discount ID syntax", "danger")
+                        flash("Invalid discount value", "danger")
                         return render_template('createDiscount.html', error=error, title="Create Discount", logged_in=logged_in, authLevel=authLevel)
                 else:
                     flash("Discount already exists", "danger")
@@ -2002,6 +1995,14 @@ def applyDiscountOrder():
 
     dIDs, dValues = discount.get_discounts()
 
+    discountListIDs, orderIDs, discountIDs = order.getDiscountList(session['orderID'])
+    i = 0
+    while i < len(dIDs):
+        if dIDs[i] in discountIDs:
+            dIDs.remove(dIDs[i])
+        else:
+            i += 1
+
     try:
         if request.method == 'POST':
             discountID = request.form['dID']
@@ -2019,6 +2020,48 @@ def applyDiscountOrder():
 
   
     return render_template('applyDiscountOrder.html', title = "Update Discount", logged_in=logged_in, authLevel = authLevel, dIDs=dIDs, dValues=dValues, discountsLen = len(dIDs))
+
+@app.route("/removeDiscountOrder/", methods=['POST', 'GET'])
+@login_required
+def removeDiscountOrder():
+    # check to see what navbar to display
+    logged_in = session['logged_in']
+    authLevel = session['authLevel']
+    currentUser = User()
+    currentUser.setLoginDetails(session['code'])
+    order = Order()
+    discount = Discount()
+
+    order.setOrderDetails(session['orderID'])
+
+    discountListID = order.getDiscountListID()
+    discountListID = strip.it(discountListID)
+
+    dIDs, dValues = discount.get_discounts()
+
+    discountListIDs, orderIDs, discountIDs = order.getDiscountList(session['orderID'])
+    discountList = []
+    valueList = []
+    i = 0
+    while i < len(dIDs):
+        if dIDs[i] in discountIDs:
+            discountList.append(dIDs[i])
+            valueList.append(dValues[i])
+        else:
+            i += 1
+        try:
+            if request.method == "POST":
+                chosenDiscountList = request.form['discountListID']
+                if order.removeDiscountFromOrder(session['orderID'],chosenValue, chosenDiscountList):
+                    flash("Successfully removed discount", "success")
+                    return redirect(url_for('createOrder2'))
+                else:
+                    flash("Error removing discount", "danger")
+                    return redirect(url_for('removeDiscountOrder'))
+        except Exception as e:
+            return render_template('removeDiscountOrder.html', title="Remove Discount From Order", logged_in=logged_in, authLevel=authLevel,discountList=discountList, valueList=valueList, discountLen=len(discountList), discountListID=discountListID, error=e)
+    
+    return render_template('removeDiscountOrder.html', title="Remove Discount From Order", logged_in=logged_in, authLevel=authLevel,discountList=discountList, valueList=valueList, discountLen=len(discountList), discountListID=discountListID)
 
 
 @app.route("/reservation/", methods=['POST', 'GET'])
