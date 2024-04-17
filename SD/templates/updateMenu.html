@@ -8,17 +8,21 @@
 
             <table border=1 style="color:rgb(255, 255, 255)" class="center">
                     <tr>
-                        <th class = "text-center" style = "width: 30%;">ID</th>
+                        <th class = "hidden">ID</th>
                         <th class = "text-center" style = "width: 30%;">Name</th>
-                        <th class = "text-center" style = "width: 30%;">Price</th>
-                        <th class = "text-center" style = "width: 10%;"> Select</th>
+                        <th class = "text-center" style = "width: 30%;">Allergies</th>
+                        <th class = "text-center" style = "width: 20%;">Price</th>
+                        <th class = "text-center" style = "width: 15%;">Is Available</th>
+                        <th class = "text-center" style = "width: 5%;"> Select</th>
                         
                         {% for i in range(listLen): %} 
                         <tr>
-                            <td> {{idList[i]}} </td>
-                            <td> {{foodList[i]}} </td>              
+                            <td class="hidden"> {{idList[i]}} </td>   
+                            <td> {{foodList[i]}} </td>
+                            <td> {{allergyList[i]}} </td>                
                             <td> £{{priceList[i]}} </td>
-                            <td> <input required type="radio" name="foodName" value="{{foodList[i]}}" checked></td>
+                            <td> {{isAvailableList[i]}} </td>
+                            <td> <input required type="radio" name="idList" value="{{idList[i]}}" checked></td>
                         </tr>
                     {% endfor %}
         
