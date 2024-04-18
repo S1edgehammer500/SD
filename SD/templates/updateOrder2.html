@@ -49,11 +49,6 @@
         <div class="form-group">
             <label for="status">Status:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
             <select style="color:black" name="status" id="status" value="{{request.form['status']}}">
-                {% if status == 'Order Created' %}
-                  <option selected="selected" style="color:black" value="Order Created">Order Created</option>
-                {% else %}
-                  <option style="color:black" value="Order Created">Order Created</option>
-                {% endif%}
                 {% if status == 'Cooking' %}
                   <option selected="selected" style="color:black" value="Cooking">Cooking</option>
                 {% else %}

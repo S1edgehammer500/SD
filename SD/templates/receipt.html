@@ -6,6 +6,8 @@
 
   <h2 class="text-center pt-3 heading">Receipt</h2> <br>
 
+  <form action="{{ url_for('generate_pdfReceipt') }}" method="get">
+
   <h3>Receipt Number: <h3> <br>
 
     <table border=1 style="color:rgb(255, 255, 255)" class="center">
@@ -26,7 +28,7 @@
           <td>{{sameData[3]}}</td>
           <td>{{sameData[4]}}</td>
           <td>{{sameData[5]}}</td>
-          <td>{{sameData[6]}}</td>
+          <td>{{sameData[6]}}%</td>
         </tr>
 
 
@@ -52,6 +54,7 @@
 
   <h3>Total: £{{sameData[3]}}<h3> <br>
 
+  <button type="submit" class="btn btn-light black">Download PDF</button>
 
 </div>
 
