@@ -36,6 +36,30 @@
 
 </script>
 
+
+<div class = "alternate-options">
+
+    <div class = "AdminBox">
+
+    <h3 class="txt-size text-center pt-3">Order Options</h3>
+
+    <a href="{{ url_for('removeFromOrder') }}">
+        <button type="button">Remove Item From Order</button>
+    </a>
+
+    <a href="{{ url_for('applyDiscountOrder') }}">
+        <button type="button">Apply Discount</button>
+    </a>
+
+    <a href="{{ url_for('removeDiscountOrder') }}">
+        <button type="button">Remove Discount</button>
+    </a>
+
+    </div>
+
+</div>
+
+
 <div class="StandardBox">
     <!--Create restaurant form-->
     <h3 class="text-center pt-3 heading">View Order</h3> <br>
@@ -73,25 +97,6 @@
 </div>
 
 
-<div class = "reservation-options">
-
-    <div class = "AdminBox">
-
-    <h3 class="txt-size text-center pt-3">Order Options</h3>
-
-    <a href="{{ url_for('removeFromOrder') }}">
-        <button type="button">Remove Item From Order</button>
-    </a>
-
-    <a href="{{ url_for('applyDiscountOrder') }}">
-        <button type="button">Apply Discount</button>
-    </a>
-
-    <a href="{{ url_for('removeDiscountOrder') }}">
-        <button type="button">Remove Discount</button>
-    </a>
-
-</div>
 
 
 </div>

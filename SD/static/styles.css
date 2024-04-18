@@ -151,13 +151,14 @@
 
 .reservation-holder{
 
-  position: absolute;
-  top: 30%;
+  position:relative;
+  top: 250px;
   left: 40%;
   transform: translate(-50%, -50%);
   height: auto;
   max-height: 100vh; 
   width: 1000px;
+  margin-bottom: 500px;
 
 }
 
@@ -176,6 +177,16 @@
   top: 50%;
   left: 85%;
   transform: translate(-50%, -50%);
+}
+
+.alternate-options{
+
+  
+  position: absolute;
+  top: 50%;
+  left: 85%;
+  transform: translate(-50%, -50%);
+
 }
 
 .menu-holder{
@@ -202,7 +213,7 @@
 .StandardBox {
   
   position: relative; /* Change from absolute to relative positioning */
-  top: 50px;
+  top: 150px;
   width: 700px;
   max-height: 100vh; /* Limit the height to 80% of the viewport height, adjust as needed */
   border: 3px solid white;
@@ -286,6 +297,29 @@
 .white{
   color:white;
 }
+
+
+.BackButton{
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+
+.BackButton button{
+
+  margin: 20px auto; /* Center the buttons horizontally */ 
+  display: block;
+  font-size: 16px;
+  color: rgba(33, 37, 41);
+  background-color: white;
+  border-color: white;
+}
+
+
+
+
 
 body {
   /* background-image: url('mainpagebg3.jpg');
@@ -442,7 +476,7 @@ body.page2 {
 
   position: relative; /* Change from absolute to relative positioning */
   top: 50px;
-  left: 0px;
+  left: 0%;
   transform: none;
   color: white;
   font-size: 35px;
@@ -469,7 +503,27 @@ body.page2 {
   border: 3px solid white;
 }
 
-  
+
+.BackButton{
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.menu-holder{
+
+  position: relative; /* Change from absolute to relative positioning */
+  top: 100px;
+  left: 0px;
+  transform: none;
+  height: auto;
+  max-height: 100vh; 
+  width: auto;
+  margin-bottom: 500px; /* Add space from the bottom */
+}
+
+
 }
 
 @media only screen and (min-width: 769px) and (max-width: 1300px) {
@@ -477,19 +531,22 @@ body.page2 {
 
 
 
-  .AdminBox {
+  .AdminBox{
+
     width: 200px;
     height: 200px;
     border: 3px solid white;
     background-color: rgba(33, 37, 41); /* Adjust opacity as needed */
     color: white;         /* Set the text Color */
     text-decoration-line: underline;
+    margin-bottom: 100px;
+  
   }
 
   .AdminBox button {
     margin: 15px auto; /* Center the buttons horizontally */ 
     display: block;
-    font-size: 14px;
+    font-size: 12px;
     color: rgba(33, 37, 41);
     background-color: white;
     border-color: white;
@@ -505,10 +562,8 @@ body.page2 {
 
   .reservation-holder{
 
-    position: absolute;
-    top: 40%;
-    left: 40%;
-    transform: translate(-50%, -50%);
+    position:relative;
+    top: 250px;
     height: auto;
     width: 650px;
   
@@ -553,19 +608,32 @@ body.page2 {
 
   .StandardBox {
   
-    position: absolute;
-    top: 60%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 600px;
-    height: auto;
+    position: relative; /* Change from absolute to relative positioning */
+    top: 150px;
+    width: 700px;
+    max-height: 100vh; /* Limit the height to 80% of the viewport height, adjust as needed */
     border: 3px solid white;
-    background-color: rgba(33, 37, 41); /* Adjust opacity as needed */
-    color: white;         /* Set the text Color */
+    background-color: rgba(33, 37, 41);
+    color: white;
     text-align: center;
-    margin-top: 20px;
+    margin: 0 auto; /* Center the box horizontally */
+    padding: 20px; /* Add padding to the content */
+    box-sizing: border-box; /* Include padding in the total width */
+    margin-bottom: 300px;
+    
     
   }
+
+.alternate-options{
+
+  
+    position: relative; /* Change from absolute to relative positioning */
+    top: 150px;
+    
+  
+
+}
+
 
   .StandardBox table {
 
@@ -581,6 +649,18 @@ body.page2 {
     color: white;
     font-size: 50px;
     text-decoration: underline;
+  }
+
+  .menu-holder{
+
+    position: relative;
+    top: 150px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-height: 100vh; 
+    height: auto;
+    width: 1000px;
+  
   }
   
 
