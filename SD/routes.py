@@ -1744,6 +1744,10 @@ def createOrder2():
 
     order.setOrderDetails(session['orderID'])
     foodList = order.getFoodList()
+    print(str(foodList))
+    if foodList == []:
+        flash("Please add an item to the order before going to this page", "danger")
+        return redirect(url_for('createOrder'))
     foodList = strip.it(foodList)
 
     discountList = order.getDiscountValues(session['orderID'])
