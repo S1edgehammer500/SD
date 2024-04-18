@@ -1,0 +1,104 @@
+{% extends "layout.html" %} 
+{% block content %}
+
+<script>
+    function getDateTime1() {
+      var date = document.getElementById("dateEnd").value;
+      var time = document.getElementById("timeEnd").value;
+      document.getElementById("endDT").innerText = "Selected End Date & Time: " + date + " " + time;
+    }
+
+    function getDateTime2() {
+      var date = document.getElementById("dateStart").value;
+      var time = document.getElementById("timeStart").value;
+      document.getElementById("startDT").innerText = "Selected Start Date & Time: " + date + " " + time;
+    }
+
+    function setMinimumDateTime() {
+        var today = new Date();
+        var hh = today.getHours();
+        var mm = today.getMinutes();
+        var minTime = hh + ":" + mm + ":";
+        document.getElementById("timeStart").setAttribute("min", minTime);
+        document.getElementById("timeEnd").setAttribute("min", minTime);
+    }
+
+    function setMinimumDate() {
+        var today = new Date().toISOString().split('T')[0];
+        document.getElementById("dateStart").setAttribute("min", today);
+        document.getElementById("dateEnd").setAttribute("min", today);
+    }
+
+    window.onload = function() {
+        setMinimumDate();
+        setMinimumDateTime()
+    };
+
+</script>
+
+
+<div class = "alternate-options">
+
+    <div class = "AdminBox">
+
+    <h3 class="txt-size text-center pt-3">Order Options</h3>
+
+    <a href="{{ url_for('removeFromOrder') }}">
+        <button type="button">Remove Item From Order</button>
+    </a>
+
+    <a href="{{ url_for('applyDiscountOrder') }}">
+        <button type="button">Apply Discount</button>
+    </a>
+
+    <a href="{{ url_for('removeDiscountOrder') }}">
+        <button type="button">Remove Discount</button>
+    </a>
+
+    </div>
+
+</div>
+
+
+<div class="StandardBox">
+    <!--Create restaurant form-->
+    <h3 class="text-center pt-3 heading">View Order</h3> <br>
+            
+
+
+
+
+        <table border=1 style="color:rgb(255, 255, 255)" class="center">
+            <th class = "text-center" style = "width: 30%;">Name</th>
+            <th class = "text-center" style = "width: 30%;">Price</th>
+            {% for i in range(foodLen): %} 
+                <tr>
+                    <td> {{foodList[i]}} </td>              
+                    <td> £{{priceList[i]}} </td>
+                </tr>
+            {% endfor %}
+                
+        </table>
+
+
+        <br>
+        <br>
+        <h4> Discount Applied: {{discountList}}</h4>
+
+        <br>
+        <h4> Total: £{{orderPrice}}</h4>
+
+        <br>
+        <div class="d-grid mb-3">
+            <a href="{{ url_for('payment') }}">
+                <button type="button" class="btn btn-light black">Confirm</button>
+            </a>
+        </div> <br>
+</div>
+
+
+
+
+</div>
+
+{% endblock content %}

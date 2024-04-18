@@ -1,0 +1,45 @@
+{% extends "layout.html" %} 
+{% block content %} 
+
+
+<form action="/deleteItem2/" method="post">
+    <div class="StandardBox">
+
+        <h3 class="text-center pt-3 heading">Choose An Item From The Warehouse To Delete</h3> <br>
+
+            <table border=1 style="color:rgb(255, 255, 255)" class="center">
+                <tr>
+                    <th class="hidden">ItemID</th>
+                    <th class = "text-center" style = "width: 40%;" >Item Name &nbsp;&nbsp;</th>
+                    <th class = "text-center" style = "width: 25%;">Quantity &nbsp;&nbsp;</th>
+                    <th class = "text-center" style = "width: 25%;">Stock Limit</th>
+                    <th class = "text-center" style = "width: 10%;">Select</th>
+
+                    {% for i in range(listLen): %} 
+            <tr>
+                <td> {{itemName[i]}} </td>              
+                <td> {{itemQuantity[i]}} </td>
+                <td> {{itemSL[i]}} </td>
+                <td> <input required type="radio" name="itemName" value="{{itemName[i]}}" checked></td>
+            </tr>
+        {% endfor %}
+            </table>
+            
+                <form>
+                    
+                    <div class = "d-grid mb-3">
+                        <button type = "submit"  class = "btn btn-light black">Submit</button>
+                        </div>
+                        <br>
+            </div>
+    </div>
+</form>
+
+<br>
+
+
+
+
+
+
+{% endblock content %}

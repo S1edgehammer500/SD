@@ -1,0 +1,80 @@
+{% extends "layout.html" %} 
+{% block content %}
+
+<script>
+    function getDateTime1() {
+      var date = document.getElementById("dateEnd").value;
+      var time = document.getElementById("timeEnd").value;
+      document.getElementById("endDT").innerText = "Selected End Date & Time: " + date + " " + time;
+    }
+
+    function getDateTime2() {
+      var date = document.getElementById("dateStart").value;
+      var time = document.getElementById("timeStart").value;
+      document.getElementById("startDT").innerText = "Selected Start Date & Time: " + date + " " + time;
+    }
+
+    function setMinimumDateTime() {
+        var today = new Date();
+        var hh = today.getHours();
+        var mm = today.getMinutes();
+        var minTime = hh + ":" + mm + ":";
+        document.getElementById("timeStart").setAttribute("min", minTime);
+        document.getElementById("timeEnd").setAttribute("min", minTime);
+    }
+
+    function setMinimumDate() {
+        var today = new Date().toISOString().split('T')[0];
+        document.getElementById("dateStart").setAttribute("min", today);
+        document.getElementById("dateEnd").setAttribute("min", today);
+    }
+
+    window.onload = function() {
+        setMinimumDate();
+        setMinimumDateTime()
+    };
+
+</script>
+
+<div class="StandardBox">
+    <!--Create restaurant form-->
+    <h3 class="text-center pt-3 heading">Add A New Reservation Here</h3> <br>
+            
+    <form action="/createReservation/" method="post">
+
+        <div class="form-group">
+            <label for="numberOfTables">Number of Tables:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
+            <input required style="color:black" id="numberOfTables" min="1" max="100" type="number" class="numberOfTables" name="numberOfTables" size="30" value="#"><br>
+        </div>
+
+        <div class="form-group">
+            <label for="Name">Name of Reservation:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
+            <input required style="color:black" id="Name" class="Name" name="Name" size="30" value=""><br>
+        </div>
+
+        <div class="form-group">
+            <div class="datetime-selector">
+                <label class="white" for="startDT">Start Date and Time:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
+                <input required type="date" id="dateStart" name="dateStart" >
+                <input required type="time" id="timeStart" name="timeStart" >
+                <p id="startDT" name="startDT"></p>
+            </div>
+        </div>
+            
+        <div class="form-group">
+            <div class="datetime-selector">
+                <label class="white" for="endDT">End Date and Time:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
+                <input required type="date" id="dateEnd" name="dateEnd">
+                <input required type="time" id="timeEnd" name="timeEnd">
+                <p id="endDT" name="endDT"></p>
+            </div>
+        </div>
+
+        <div class="d-grid mb-3">
+            <button type="submit" class="btn btn-light black" onclick="getDateTime1(); getDateTime2();">Submit</button>
+        </div> <br>
+
+    </form>
+</div>
+
+{% endblock content %}

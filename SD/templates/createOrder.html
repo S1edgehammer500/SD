@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+{% block content %}
+
+
+<h1 class = "title">Create Order</h1>
+
+
+
+<div class = "reservation-holder">
+    <form action="/createOrder/" method="post">
+
+    <table>
+
+        <tr>
+            <th class = "text-center" style = "width: 25%;">Name</th>
+            <th class = "text-center" style = "width: 50%;">Allergy Description</th>
+            <th class = "text-center" style = "width: 15%;">Price</th>
+            <th class = "text-center" style = "width: 10%;">Select</th>
+
+        </tr>
+            {% for i in range(listLen): %} 
+                <tr>
+                    <td> {{foodList[i]}} </td>              
+                    <td> {{allergyList[i]}} </td>
+                    <td> £{{priceList[i]}} </td>
+                    <td> <input required type="radio" name="foodName" value="{{foodList[i]}}" checked></td>
+                </tr>
+            {% endfor %}
+
+    </table>
+</div>
+
+    <div class = "reservation-options">
+
+        <div class = "AdminBox">
+    
+        <h3 class="txt-size text-center pt-3">Order Options</h3> <br>
+    
+            <button type="submit">Add To Order</button>
+            
+        <a href="{{ url_for('createOrder2') }}">
+            <button type="button">View Order</button>
+        </a>
+        </div>
+    </div>
+
+
+
+{% endblock content %}

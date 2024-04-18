@@ -1,0 +1,28 @@
+{% extends "layout.html" %} 
+{% block content %} 
+<div class = "StandardBox">
+
+    <h3 class="text-center pt-3 heading">Enter the number of items you want to order:</h3> <br>
+
+    <h4 class="text-center">It must be less than the stock limit of {{itemSL - itemQuant}}</h4> <br>
+  
+    <form action="/manualOrder3/" method="post">
+    <div class="form-group">
+        <label for="itemQuant">Item Quantity (0-{{itemSL - itemQuant}}):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
+        <input required style="color:black" id="itemQuant" min="0" max="{{itemSL - itemQuant}}" type="number" class="itemQuant" name="itemQuant"><br>
+    </div>
+    
+  
+          <div class = "d-grid mb-3">
+            <button type = "submit"  class = "btn btn-light black">submit</button>
+            </div> <br>
+  
+  </div>
+  
+  </div>
+  
+  </div>
+
+
+
+{% endblock content %}

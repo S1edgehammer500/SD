@@ -1,0 +1,23 @@
+{% extends "layout.html" %} 
+{% block content %}
+
+
+
+<div class = "StandardBox">
+<!--Create restaurant form-->
+    <h3 class="text-center pt-3 heading">Add A New Discount Here</h3> <br>
+            
+    <form action="/createDiscount/" method="post">
+            <div class="form-group">
+                <label for="discountValue">Discount Value (1-100):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
+                <input required style="color:black" id="discountValue" min="1" max="100" type="number" class="discountValue" name="discountValue" size="30" value="{{request.form.discountValue}}"><br>
+            </div>
+
+            <div class = "d-grid mb-3">
+                <button type = "submit"  class = "btn btn-light black">submit</button>
+            </div> <br>
+
+    </form>
+
+</div>
+{% endblock content %}

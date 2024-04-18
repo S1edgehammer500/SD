@@ -1,0 +1,89 @@
+{% extends "layout.html" %} 
+{% block content %} 
+
+
+<script>
+    function getDateTime1() {
+      var date = document.getElementById("dateEnd").value;
+      var time = document.getElementById("timeEnd").value;
+      document.getElementById("endDT").innerText = "Selected End Date & Time: " + date + " " + time;
+    }
+
+    function getDateTime2() {
+      var date = document.getElementById("dateStart").value;
+      var time = document.getElementById("timeStart").value;
+      document.getElementById("startDT").innerText = "Selected Start Date & Time: " + date + " " + time;
+    }
+
+    function setMinimumDateTime() {
+        var today = new Date();
+        var hh = today.getHours();
+        var mm = today.getMinutes();
+        var minTime = hh + ":" + mm + ":";
+        document.getElementById("timeStart").setAttribute("min", minTime);
+        document.getElementById("timeEnd").setAttribute("min", minTime);
+    }
+
+    function setMinimumDate() {
+        var today = new Date().toISOString().split('T')[0];
+        document.getElementById("dateStart").setAttribute("min", today);
+        document.getElementById("dateEnd").setAttribute("min", today);
+    }
+
+    window.onload = function() {
+        setMinimumDate();
+        setMinimumDateTime()
+    };
+
+</script>
+
+
+
+    <div class = "StandardBox">
+
+      <h3 class="text-center pt-3 heading">Update The Order Here</h3> <br>
+    
+      <form action="/updateOrder3/" method="post">
+    
+
+        <div class="form-group">
+            <label for="status">Status:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
+            <select style="color:black" name="status" id="status" value="{{request.form['status']}}">
+                {% if status == 'Cooking' %}
+                  <option selected="selected" style="color:black" value="Cooking">Cooking</option>
+                {% else %}
+                  <option style="color:black" value="Cooking">Cooking</option>
+                {% endif%}
+                {% if status == 'Ready' %}
+                  <option selected="selected" style="color:black" value="Ready">Ready</option>
+                {% else %}
+                  <option style="color:black" value="Ready">Ready</option>
+                {% endif %}
+                {% if status == 'Delivered' %}
+                  <option selected="selected" style="color:black" value="Delivered">Delivered</option>
+                {% else %}
+                  <option style="color:black" value="Delivered">Delivered</option>
+                {% endif%}
+                {% if status == 'Cancelled' %}
+                    <option selected="selected" style="color:black" value="Cancelled">Cancelled</option>
+                {% else %}
+                    <option style="color:black" value="Cancelled">Cancelled</option>
+                {% endif %}
+          </select>
+          </div>
+            <div class = "d-grid mb-3">
+              <button type = "submit"  class = "btn btn-light black">submit</button>
+              </div> <br>
+    </form>
+    
+    </div>
+    
+    </div>
+    
+    </div>
+
+
+
+
+
+{% endblock content %}

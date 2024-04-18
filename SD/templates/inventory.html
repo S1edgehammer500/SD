@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+{% block content %}
+
+
+<h1 class = "title">Inventory</h1>
+
+
+<div class = "reservation-options">
+
+    <div class = "AdminBox">
+
+    <h3 class="txt-size text-center pt-3">Inventory Options</h3>
+
+    <a href="{{ url_for('createInventory') }}">
+        <button type="button">Add To Inventory</button>
+    </a>
+    <a href="{{url_for('updateInventory') }}">
+        <button type="button">Update The Inventory</button>
+    </a>
+    <a href="{{ url_for('deleteInventory') }}">
+        <button type="button">Delete From Inventory</button>
+    </a>
+    <a href="{{ url_for('manualOrder') }}">
+        <button type="button">Order Items</button>
+    </a>
+    </div>
+</div>
+
+<div class = "reservation-holder">
+
+    <table>
+
+        <tr>
+            <th class = "text-center" style = "width: 40%;">Item Name</th>
+            <th class = "text-center" style = "width: 30%;">Quantity</th>
+            <th class = "text-center" style = "width: 30%;">Stock Limit</th>
+            
+        </tr>
+
+            {% for i in range(listLen): %} 
+                <tr>
+                    <td> {{items[i]}} </td>              
+                    <td> {{quantity[i]}} </td>
+                    <td> {{stockLimit[i]}} </td>
+                </tr>
+            {% endfor %}
+    
+    </table>
+
+</div>
+
+
+
+
+{% endblock content %}

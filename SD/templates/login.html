@@ -1,4 +1,11 @@
 {% extends "layout.html" %} 
+
+{%block body%}
+<body class = "page2">
+
+{%endblock%}
+
+
 {% block content %}
 <script>
   function showPassword() {
@@ -10,29 +17,40 @@
     }
   }
 </script>
+
 <!--Login Form-->
 <form action="/login/" method="post">
   <section class="vh-100">
     <div class="container h-100">
       <div class="row-d-flex justify-content-center">
-        <div class="login-form-container col-11 col-m-11 col-x-11">
-          <h1 style="font-weight: bold">Login To Your Account</h1>
-          <div class="register-form">
+        <div class="login-form-container">
+          <h1 style="font-weight: bold">Log In Here</h1>
+
+
             <br>
-            <div class="form-group">
-              <label for="code">Employee Code:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></label>
-              <input required style="color:black" id="code" class="code" name="code" size="30" value="{{request.form.code}}"><br>
-            </div>
-            <div class="form-group">
-              <label for="password">Password:<br></label>
-              <input required style="color:black" type="password" id="password" class="password" name="password" size="30" value="{{request.form.password}}"><br>
-              <input type="checkbox" onclick="showPassword()">Show Password
-            </div>
-            <input style="color:black" type="submit" value="Log In"><br><br>            
+            <div class = "input group mb-3">
+              <input class = "form-control" id="code" required = "True" placeholder= "Employee Code" name = "code" size = 30 value = "{{request.form.code}}"><br>
           </div>
+              
+              
+          <div class = "input group  mb-3">
+            <input type = "password" class = "form-control" id="password"  required = "True" placeholder= "Password" name = "password" size = 30 value = "{{request.form.password}}"><br>
+          </div>
+            
+          <div class = "input group mb-3">
+            <input type="checkbox" onclick="showPassword()">Show Password
+          </div><br>
+
+         <div class = "d-grid mb-3">
+          <button type = "submit"  class = "btn btn-light black">Log In</button>
+          </div>
+        
         </div>
+
+        
       </div>
     </div>
   </section>
 </form>
+
 {% endblock content %}

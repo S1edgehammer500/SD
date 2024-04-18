@@ -1,0 +1,49 @@
+{% extends "layout.html" %} 
+{% block content %} 
+<form action="/updateOrder2/" method="post">
+    <div class="StandardBox">
+
+        <h3 class="text-center pt-3 heading">Choose A Order To Update Here</h3> <br>
+                <table border=1 style="color:rgb(255, 255, 255)" class="center">
+                    <tr>
+                        <th class="hidden">OrderID</th>
+                        <th class = "text-center" style = "width: 10%;">Table Number</th>
+                        <th class = "text-center" style = "width: 20%;">Status</th>
+                        <th class = "text-center" style = "width: 10%;">Price</th>
+                        <th class = "text-center" style = "width: 30%;">Start Time</th>
+                        <th class = "text-center" style = "width: 30%;">Ready Time</th>
+                    {% for i in range(len): %} 
+                        <tr>
+                            <td class="hidden"> {{orderID[i]}} </td>
+                            <td> {{tableNumber[i]}} </td>              
+                            <td> {{status[i]}} </td>
+                            <td> £{{price[i]}} </td>
+                            <td> {{startTime[i]}} </td>
+                            <td> {{readyTime[i]}} </td>
+                            <td> <input required type="radio" name="orderID" value="{{orderID[i]}}" checked></td>
+                        </tr>
+                    {% endfor %}
+                </table>
+
+            </table>
+                <br><br>
+
+
+                <form>
+                    
+                    <div class = "d-grid mb-3">
+                        <button type = "submit"  class = "btn btn-light black">Submit</button>
+                        </div>
+                        <br>
+            </div>
+    </div>
+</form>
+
+<br>
+
+
+
+
+
+
+{% endblock content %}

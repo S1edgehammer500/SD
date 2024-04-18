@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block content %}
+<section class="vh-100">
+    <div class="container h-100">
+        <div class="row-d-flex justify-content-center">
+            <div class="register-form-container col-11 col-m-11 col-x-11">
+                <a href="{{ url_for('createDiscount') }}">
+                    <button type="button">Add New Discount</button>
+                </a>
+                <a href="{{ url_for('updateDiscount') }}">
+                    <button type="button">Update Discount Details</button>
+                </a>
+                <a href="{{ url_for('deleteDiscount') }}">
+                    <button type="button">Delete Discount</button>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+{% endblock content %}

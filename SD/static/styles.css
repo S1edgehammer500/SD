@@ -1,154 +1,768 @@
 .register-form {
-    border: 2px solid;
-    height: auto;
-    margin: auto;
-    background-color: black;
-    box-sizing: border-box;
-    color: grey;
-    opacity: 0.8;
+  border: 2px solid;
+  height: auto;
+  margin: auto;
+  background-color: black;
+  box-sizing: border-box;
+  color: grey;
+  opacity: 0.8;
 }
 
 .register-form-container {
-    box-sizing: content-box;
-    height: auto;
-    width: 1000px;
-    color: white;
-    text-align: center;
-    font-weight: bold;
-    background-color: black;
-    opacity: 0.95;
-}
-
-.login-form-container {
-  box-sizing: border-box;
+  box-sizing: content-box;
   height: auto;
-  width:1000px;
+  width: 1000px;
   color: white;
   text-align: center;
   font-weight: bold;
   background-color: black;
   opacity: 0.95;
+}
+
+.login-form-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-sizing: border-box;
+  height: auto;
+  width: 650px;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  background-color: rgba(33, 37, 41); /* Adjust opacity as needed */
+  border: 3px solid white;
+}
+
+.login-form-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-sizing: border-box;
+  height: auto;
+  width: 650px;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  background-color: rgba(33, 37, 41); /* Adjust opacity as needed */
+  border: 3px solid white;
+}
+
+.AdminUserPos{
+  position: absolute;
+  top: 35%;
+  left: 30%;
+  transform: translate(-50%, -50%);
+}
+
+.AdmiFoodPos{
+  position: absolute;
+  top: 35%;
+  left: 30%;
+  transform: translate(-50%, -50%);
+}
+
+.AdminRestaurantPos{
+  position: absolute;
+  top: 35%;
+  left: 70%;
+  transform: translate(-50%, -50%);
+}
+
+.AdminWarehousePos{
+  position: absolute;
+  top: 75%;
+  left: 30%;
+  transform: translate(-50%, -50%);
+}
+
+.AdminFoodPos{
+  position: absolute;
+  top: 75%;
+  left: 70%;
+  transform: translate(-50%, -50%);
+}
+
+
+.AdminBox{
+
+  width: 250px;
+  height: 250px;
+  border: 3px solid white;
+  background-color: rgba(33, 37, 41); /* Adjust opacity as needed */
+  color: white;         /* Set the text Color */
+  text-decoration-line: underline;
+  
 
 }
 
+  .AdminBox button {
+    margin: 20px auto; /* Center the buttons horizontally */ 
+    display: block;
+    font-size: 16px;
+    color: rgba(33, 37, 41);
+    background-color: white;
+    border-color: white;
+
+  }
+
+
+.title {
+
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 50px;
+  text-decoration: underline;
+}
+
+.custom-checkbox {
+
+
+  appearance: none; /* Removes default styles */
+  width: 15px;
+  height: 15px;
+  border: 2px solid #ccc; /* Border color */
+  border-radius: 4px; /* Rounded corners */
+  cursor: pointer;
+  background-color: white;
+  border-color: white;
+  
+  
+}
+
+.custom-checkbox:checked {
+  background-color: white; /* Background color when checked */
+}
+
+.custom-checkbox:checked::before {
+  content: 'X'; /* Unicode character for a tick mark */
+  display: block;
+  width: 100%;
+  height: 100%;
+  font-size: 12px; /* Adjust size of the tick mark */
+  line-height: 15px;
+  text-align: center;
+  color: black; /* Tick mark color */
+}
+
+.reservation-holder{
+
+  position:relative;
+  top: 250px;
+  left: 40%;
+  transform: translate(-50%, -50%);
+  height: auto;
+  max-height: 100vh; 
+  width: 1000px;
+  margin-bottom: 500px;
+
+}
+
+.reservation-holder table{
+  width: 100%;
+  
+  border: 2px solid white; /* Thick white outline */
+  color: white; /* Text color */
+  background-color: rgba(33, 37, 41);
+}
+
+
+.reservation-options{
+  
+  position: absolute;
+  top: 50%;
+  left: 85%;
+  transform: translate(-50%, -50%);
+}
+
+.alternate-options{
+
+  
+  position: absolute;
+  top: 50%;
+  left: 85%;
+  transform: translate(-50%, -50%);
+
+}
+
+.menu-holder{
+
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-height: 100vh; 
+  height: auto;
+  width: 1000px;
+
+}
+
+.menu-holder table{
+  width: 100%;
+  
+  border: 2px solid white; /* Thick white outline */
+  color: white; /* Text color */
+  background-color: rgba(33, 37, 41);
+}
+
+
+.StandardBox {
+  
+  position: relative; /* Change from absolute to relative positioning */
+  top: 150px;
+  width: 700px;
+  max-height: 100vh; /* Limit the height to 80% of the viewport height, adjust as needed */
+  border: 3px solid white;
+  background-color: rgba(33, 37, 41);
+  color: white;
+  text-align: center;
+  margin: 0 auto; /* Center the box horizontally */
+  padding: 20px; /* Add padding to the content */
+  box-sizing: border-box; /* Include padding in the total width */
+  
+  
+}
+
+.StandardBox button {
+  background-color: white;
+  border-color: white;
+  color: rgba(33, 37, 41);
+}
+
+.StandardBox input {
+  background-color: white;
+  border-color: white;
+  
+}
+
+
+.StandardBox select {
+
+  background-color: white;
+  border-color: white;
+  color: rgba(33, 37, 41);
+}
+
+
+.StandardBox table {
+
+  width: 600px;
+  
+  border: 2px solid white; /* Thick white outline */
+  color: white; /* Text color */
+
+}
+  /* Style for table headings */
+  th, td {
+    border: 2px solid white; 
+    padding: 10px;
+    text-align: center;
+  }
+
+.StandardBox h1 {
+  font-size: 60px;
+}
+.datetime-selector {
+  color: rgba(33, 37, 41);
+}
+
+.heading {
+
+  text-decoration: underline;
+  font-weight: bold;
+
+
+}
+
+
+.flash{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  position: fixed; /* Fixed position to keep the messages visible even when scrolling */
+  top: 70px; /* Adjust as needed */
+  left: 20px; /* Adjust as needed */
+  z-index: 9999; /* Ensure messages are displayed on top of other content */
+}
+
+  .black {
+
+  color: rgba(33, 37, 41);
+}
+
+.white{
+  color:white;
+}
+
+
+.BackButton{
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+
+.BackButton button{
+
+  margin: 20px auto; /* Center the buttons horizontally */ 
+  display: block;
+  font-size: 16px;
+  color: rgba(33, 37, 41);
+  background-color: white;
+  border-color: white;
+}
+
+
+
+
+
 body {
-    background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Restaurant_N%C3%A4sinneula.jpg/640px-Restaurant_N%C3%A4sinneula.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+  /* background-image: url('mainpagebg3.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed; */
+
+  margin: 0;
+  padding: 0;
+}
+
+body.page1 {
+  background-image: url('congruent_outline.png');
+
+}
+
+body.page2 {
+  background-image: url('mainpagebg3.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 .row:after {
-    content: "";
-    clear: both;
+  content: "";
+  clear: both;
+  display: block;
+}
+[class*="col-"] {
+  float: left;
+  padding: 15px;
+}
+
+[class*="col-"] {
+  width: 100%;
+}
+
+@media only screen and (max-width: 768px) {
+  /* For mobiles: */
+
+  .AdminBox{
+
+    width: 200px;
+    height: 200px;
+    border: 3px solid white;
+    background-color: rgba(33, 37, 41); /* Adjust opacity as needed */
+    color: white;         /* Set the text Color */
+    text-decoration-line: underline;
+    margin-bottom: 100px;
+  
+  }
+
+  .AdminBox button {
+    margin: 15px auto; /* Center the buttons horizontally */ 
     display: block;
-}
-[class*="col-"] {
-    float: left;
-    padding: 15px;
+    font-size: 12px;
+    color: rgba(33, 37, 41);
+    background-color: white;
+    border-color: white;
+
+  }
+
+
+
+/* Default position for all elements */
+.AdminElement {
+  position: absolute;
+  transform: translate(-50%, -50%);
 }
 
-[class*="col-"] {
+/* Position for AdminUserPos */
+.AdminUserPos {
+  top: 40%; /* Adjusted from 35% for mobile */
+  left: 50%; /* Center horizontally */
+}
+
+
+/* Position for AdminRestaurantPos */
+.AdminRestaurantPos {
+  top: 80%; /* Adjusted from 35% for mobile */
+  left: 50%; /* Center horizontally */
+}
+
+/* Position for AdminWarehousePos */
+.AdminWarehousePos {
+  top: 120%; /* Adjusted from 75% for mobile */
+  left: 50%; /* Center horizontally */
+}
+
+/* Position for AdminFoodPos */
+.AdminFoodPos {
+  top: 160%; /* Adjusted from 75% for mobile */
+  left: 50%; /* Center horizontally */
+}
+
+
+.StandardBox {
+  
+  position: relative; 
+  width: 370px;
+  max-height: 100vh; 
+  border: 3px solid white;
+  background-color: rgba(33, 37, 41);
+  color: white;
+  text-align: center;
+  margin: 0 auto; 
+  padding: 20px; 
+  box-sizing: border-box;
+  margin-bottom: 200px; /* Add space from the bottom */
+  
+  
+}
+
+.StandardBox table {
+
+  width: 320px;
+}
+
+.reservation-holder{
+
+
+  position: relative; /* Change from absolute to relative positioning */
+  top: 100px;
+  left: 0px;
+  transform: none;
+  height: auto;
+  max-height: 100vh; 
+  width: auto;
+  margin-bottom: 500px; /* Add space from the bottom */
+  
+
+}
+
+.reservation-holder table{
+  width: 100%;
+  
+  border: 2px solid white; /* Thick white outline */
+  color: white; /* Text color */
+  background-color: rgba(33, 37, 41);
+}
+
+.reservation-options {
+  position: relative; /* Set position to absolute */
+  top: 100px; /* Position from the top */
+  left: 0px; /* Position from the left */
+  transform: none; /* Center the element */
+}
+
+.title {
+
+
+  position: relative; /* Change from absolute to relative positioning */
+  top: 50px;
+  left: 0%;
+  transform: none;
+  color: white;
+  font-size: 35px;
+  text-decoration: underline;
+}
+
+.txt-size {
+  font-size: 20px;
+}
+
+
+.login-form-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-sizing: border-box;
+  height: auto;
+  width: 370px;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  background-color: rgba(33, 37, 41); /* Adjust opacity as needed */
+  border: 3px solid white;
+}
+
+
+.BackButton{
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.menu-holder{
+
+  position: relative; /* Change from absolute to relative positioning */
+  top: 100px;
+  left: 0px;
+  transform: none;
+  height: auto;
+  max-height: 100vh; 
+  width: auto;
+  margin-bottom: 500px; /* Add space from the bottom */
+}
+
+
+}
+
+@media only screen and (min-width: 769px) and (max-width: 1300px) {
+  /* For tablets: */
+
+
+
+  .AdminBox{
+
+    width: 200px;
+    height: 200px;
+    border: 3px solid white;
+    background-color: rgba(33, 37, 41); /* Adjust opacity as needed */
+    color: white;         /* Set the text Color */
+    text-decoration-line: underline;
+    margin-bottom: 100px;
+  
+  }
+
+  .AdminBox button {
+    margin: 15px auto; /* Center the buttons horizontally */ 
+    display: block;
+    font-size: 12px;
+    color: rgba(33, 37, 41);
+    background-color: white;
+    border-color: white;
+
+  }
+
+
+  .txt-size {
+    font-size: 20px;
+  }
+
+
+
+  .reservation-holder{
+
+    position:relative;
+    top: 250px;
+    height: auto;
+    width: 650px;
+  
+  }
+  
+  .reservation-holder table{
     width: 100%;
+    
+    border: 2px solid white; /* Thick white outline */
+    color: white; /* Text color */
+    background-color: rgba(33, 37, 41);
+  }
+  
+  
+  .reservation-options{
+    
+    position: absolute;
+    top: 70%;
+    left: 85%;
+    transform: translate(-50%, -50%);
+  }
+
+
+  .menu-holder{
+
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: auto;
+    width: 700px;
+  
+  }
+  
+  .menu-holder table{
+    width: 100%;
+    
+    border: 2px solid white; /* Thick white outline */
+    color: white; /* Text color */
+    background-color: rgba(33, 37, 41);
+  }
+
+  .StandardBox {
+  
+    position: relative; /* Change from absolute to relative positioning */
+    top: 150px;
+    width: 700px;
+    max-height: 100vh; /* Limit the height to 80% of the viewport height, adjust as needed */
+    border: 3px solid white;
+    background-color: rgba(33, 37, 41);
+    color: white;
+    text-align: center;
+    margin: 0 auto; /* Center the box horizontally */
+    padding: 20px; /* Add padding to the content */
+    box-sizing: border-box; /* Include padding in the total width */
+    margin-bottom: 300px;
+    
+    
+  }
+
+.alternate-options{
+
+  
+    position: relative; /* Change from absolute to relative positioning */
+    top: 150px;
+    
+  
+
 }
 
-@media only screen and (min-width: 400px) {
-    /* For mobiles: */
-    .col-x-1 {width: 8.33%; font-size: 6px;}
-    .col-x-2 {width: 16.66%;}
-    .col-x-3 {width: 25%;}
-    .col-x-4 {width: 33.33%;}
-    .col-x-5 {width: 41.66%;}
-    .col-x-6 {width: 50%;}
-    .col-x-7 {width: 58.33%;}
-    .col-x-8 {width: 66.66%;}
-    .col-x-9 {width: 75%;}
-    .col-x-10 {width: 83.33%;}
-    .col-x-11 {width: 91.66%;}
-    .col-x-12 {width: 100%;}
-}
 
-@media only screen and (min-width: 700px) {
-    /* For tablets: */
-    .col-m-1 {width: 8.33%; font-size: 13px;}
-    .col-m-2 {width: 16.66%;}
-    .col-m-3 {width: 25%;}
-    .col-m-4 {width: 33.33%;}
-    .col-m-5 {width: 41.66%;}
-    .col-m-6 {width: 50%;}
-    .col-m-7 {width: 58.33%;}
-    .col-m-8 {width: 66.66%;}
-    .col-m-9 {width: 75%;}
-    .col-m-10 {width: 83.33%;}
-    .col-m-11 {width: 91.66%;}
-    .col-m-12 {width: 100%;}
+  .StandardBox table {
+
+    width: 540px;
+  }
+
+  .title {
+
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 50px;
+    text-decoration: underline;
+  }
+
+  .menu-holder{
+
+    position: relative;
+    top: 150px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-height: 100vh; 
+    height: auto;
+    width: 1000px;
+  
+  }
+  
+
+
+
 }
-@media only screen and (min-width: 900px) {
-    /* For desktop: */
-    .col-1 {width: 8.33%; font-size:20px;}
-    .col-2 {width: 16.66%;}
-    .col-3 {width: 25%;}
-    .col-4 {width: 33.33%;}
-    .col-5 {width: 41.66%;}
-    .col-6 {width: 50%;}
-    .col-7 {width: 58.33%;}
-    .col-8 {width: 66.66%;}
-    .col-9 {width: 75%;}
-    .col-10 {width: 83.33%;}
-    .col-11 {width: 91.66%;}
-    .col-12 {width: 100%;}
+@media only screen and (min-width: 1300px) {
+  /* For desktop: */
+
+
+
+
+
+
 }
 
 .center {
-  margin-left: auto;
-  margin-right: auto;
+margin-left: auto;
+margin-right: auto;
 }
 
-  .homeBox {
-    border: solid 1px;
-    margin-right: 200px;
-    background-color: black;
-    color: white;
-    height: 100px;
-    font-weight: bold;
-    text-align: center;
-    text-decoration: none;
-    opacity: 0.9;
-  }
+.homeBox {
+  border: solid 1px;
+  margin-right: 200px;
+  background-color: black;
+  color: white;
+  height: 100px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  opacity: 0.9;
+}
 
-  .receiptBox {
-    border: solid 1px;
-    margin-right: 200px;
-    background-color: black;
-    color: white;
-    height: auto;
-    width: fit-content;
-    font-weight: bold;
-    text-align: center;
-    text-decoration: none;
-    opacity: 0.9;
-  }
+.receiptBox {
+  border: solid 1px;
+  margin-right: 200px;
+  background-color: black;
+  color: white;
+  height: auto;
+  width: fit-content;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  opacity: 0.9;
+}
 
-  .resourcesBox {
-    border: solid 1px;
-    margin-right: 200px;
-    background-color: black;
-    color: white;
-    height: auto;
-    font-weight: bold;
-    text-align: center;
-    text-decoration: none;
-    opacity: 0.9;
-  }
-  
-  .footer {
-    bottom: 0;
-    left:0;
-    width: 100%;
-    background-color: white;
-    color: black;
-    opacity: 0.8;
-  }
+.resourcesBox {
+  border: solid 1px;
+  margin-right: 200px;
+  background-color: black;
+  color: white;
+  height: auto;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  opacity: 0.9;
+}
+
+.footer {
+  bottom: 0;
+  left:0;
+  width: 100%;
+  background-color:  rgba(33, 37, 41);
+  color: white;
+  opacity: 0.9;
+
+}
+
+
+
+:root {
+  --scrollbar-track-color: #333; /* scrollbar track */
+  --scrollbar-thumb-color: #666; /* scrollbar thumb */
+  --scrollbar-corner-color: #333; /* scrollbar corner */
+}
+
+/* Style the scrollbar for WebKit (Chrome, Safari, Opera) */
+::-webkit-scrollbar {
+  width: 12px; /* Width of the scrollbar */
+}
+
+/* Style the scrollbar track */
+::-webkit-scrollbar-track {
+  background-color: var(--scrollbar-track-color);
+}
+
+/* Style the scrollbar thumb */
+::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb-color);
+}
+
+/* Style the scrollbar corner */
+::-webkit-scrollbar-corner {
+  background-color: var(--scrollbar-corner-color);
+}
+
+/* Style the scrollbar track */
+html {
+  scrollbar-color: var(--scrollbar-thumb-color) var(--scrollbar-track-color);
+}
+
+/* Style the scrollbar thumb */
+html::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb-color);
+}

@@ -1,0 +1,26 @@
+{% extends "layout.html" %} 
+{% block content %} 
+
+
+<div class="StandardBox">
+
+    <h3 class="text-center pt-3 heading">Sales report</h3> <br>
+
+        <table border=1 style="color:rgb(255, 255, 255)" class="center">
+                <tr>
+                    <th class = "text-center" style = "width: 30%;">Gross Profit&nbsp;&nbsp;</th>
+                    <th class = "text-center" style = "width: 30%;">Restaurant Name&nbsp;&nbsp;</th>
+                    {% for i in range(recordsLen): %} 
+                        <tr>
+                            <td> £{{records[i][0]}} </td>              
+                            <td> {{records[i][1]}} </td>
+                        </tr>
+                    {% endfor %}
+            </table>
+            <br><br>
+        </div>
+</div>
+
+
+<br>
+{% endblock content %}
