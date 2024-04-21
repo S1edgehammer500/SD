@@ -3312,9 +3312,12 @@ def receipt():
     sameData.insert(0, request.form['name'])
     
     session['name'] = request.form['name']
+
+    sameData[5] = datetime.datetime.now()
+    sameData[5] = sameData[5].strftime("%Y-%m-%d %H:%M:%S")
     
     if sameData[5] != None:
-        sameData[5] = sameData[5][0:10]
+        sameData[5] = sameData[5]
 
     print(sameData[5])
     
@@ -3329,9 +3332,12 @@ def generate_pdfReceipt():
     sameData, diffData = orderPay.showReceipt(session['orderID'])
     
     sameData.insert(0, name)
+
+    sameData[5] = datetime.datetime.now()
+    sameData[5] = sameData[5].strftime("%Y-%m-%d %H:%M:%S")
     
     if sameData[5] is not None:
-        sameData[5] = sameData[5][0:10]
+        sameData[5] = sameData[5]
     #rendered_html = render_template('receipt.html', sameData=sameData, diffData=diffData, dataLen=len(diffData))
 
     # Get food items for the order
