@@ -1321,7 +1321,7 @@ def createInventory():
     
     currentRestaurant = currentUser.getBaseRestaurant()
 
-    itemsList = currentItem.get_item_list()
+    itemsList, itemName, quantity, stockLimit = currentItem.get_item_list()
     
     #gets all foods in the food database
     allItems = [item[0] for item in itemsList]
@@ -1412,6 +1412,8 @@ def deleteInventory():
 @chef_required
 def deleteInventory2():
     inventory = Inventory()
+    
+    
 
     logged_in = session['logged_in']
     authLevel = session['authLevel']
@@ -3089,7 +3091,7 @@ def deleteItem():
     
     
     itemList = item.get_item_list()
-    itemName, itemQuantity, itemSL = itemList
+    itemList, itemName, itemQuantity, itemSL = itemList
     
 
 
@@ -3140,7 +3142,7 @@ def updateItem():
     
     
     itemList = item.get_item_list()
-    itemName, itemQuantity, itemSL = itemList
+    itemList, itemName, itemQuantity, itemSL = itemList
 
 
 
@@ -3214,7 +3216,7 @@ def orderItems():
     
     
     itemList = item.get_item_list()
-    itemName, itemQuantity, itemSL = itemList
+    itemList, itemName, itemQuantity, itemSL = itemList
 
     return render_template('orderItemsWarehouse.html', title = "Order Item" , logged_in=logged_in, authLevel=authLevel, itemName=itemName,itemQuantity=itemQuantity, itemSL=itemSL, listLen=len(itemName))
 
@@ -3272,7 +3274,7 @@ def orderItems3():
 
                 if item.checkItemQuantLessThanStockLimit(itemSL, itemQuant, quantToAdd) == 1:
 
-                    item.updateQuantity(quantToAdd + itemQuant, itemName)
+                    item.updateQuantity((quantToAdd + itemQuant), itemName)
 
                     flash(f"You have successfully updated the item {itemName}", 'info')
                     return redirect(url_for('adminOptions'))

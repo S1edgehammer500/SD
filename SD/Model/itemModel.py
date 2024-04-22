@@ -194,7 +194,7 @@ class Item: #item class
             quantity = [row[1] for row in rows]
             stockLimit = [row[2] for row in rows]
             conn.close()
-            return itemName, quantity, stockLimit
+            return item_list, itemName, quantity, stockLimit
         except sqlite3.Error as e:
             print("Error fetching item list:", e)
             return []
