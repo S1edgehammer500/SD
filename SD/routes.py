@@ -245,6 +245,7 @@ def userOptions():
 
 
 @app.route("/adminOptions/")
+@admin_required
 @login_required
 def adminOptions():
     # check to see what navbar to display
@@ -2860,7 +2861,7 @@ def deleteStaff():
     baseRestaurant = strip.it(tempBaseRestaurant)
 
     authorisationLevel = []
-    tempAuthorisationLevel = currentUser.getAuthorisationLevels()
+    tempAuthorisationLevel = currentUser.getStaffAuthorisationLevels()
     authorisationLevel = strip.it(tempAuthorisationLevel)
 
     try:
@@ -2912,7 +2913,7 @@ def updateStaff():
 
 
     authorisationLevel = []
-    tempAuthorisationLevel = currentUser.getAuthorisationLevels()
+    tempAuthorisationLevel = currentUser.getStaffAuthorisationLevels()
     authorisationLevel = strip.it(tempAuthorisationLevel)
 
     return render_template('updateStaff.html', title = "Update Staff", logged_in=logged_in, authLevel=authLevel, baseRestaurant=baseRestaurant, authorisationLevel=authorisationLevel, employeeCode=employeeCode, codeLen=len(employeeCode))

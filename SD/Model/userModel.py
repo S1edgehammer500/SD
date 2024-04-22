@@ -272,6 +272,14 @@ class User:
         conn.close()
         return record
     
+    def getStaffAuthorisationLevels(self):
+        conn, cur = openConnection()
+        query = "SELECT authorisationLevel FROM users WHERE authorisationLevel != ? AND authorisationLevel != ? AND baseRestaurant = ? ORDER BY employeeCode;"
+        cur.execute(query, ('admin', 'manager', self.__baseRestaurant))
+        record = cur.fetchall()
+        conn.close()
+        return record
+    
     def getBaseRestaurants(self):
         conn, cur = openConnection()
         query = "SELECT baseRestaurant FROM users WHERE authorisationLevel != ? AND baseRestaurant = ? ORDER BY employeeCode;"
