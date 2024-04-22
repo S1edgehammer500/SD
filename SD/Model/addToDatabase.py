@@ -12,6 +12,25 @@ import datetime as dt
 conn, cur = openConnection()
 
 
+# Restaurant Data
+values = ["Bristol", "12", "Cardiff", "17", "Birmingham", "56", "Newcastle", "20", "Manchester", "25", "Liverpool", "99"]
+
+for x in range(0, len(values), 2):
+    query = """INSERT INTO restaurant (restaurantName, numberOfTables)
+VALUES (?, ?)"""
+    cur.execute(query, (values[x], values[x+1]))
+
+# Users Data
+values = ["Luqmaan", "Somalia", "chef", "Bristol", "Jake", "England", "admin", "Bristol", "Serhii", "Ukraine", "admin", "Liverpool", "Plamen", "Bulgaria", "manager", "Liverpool", "Andre", "Jamaica", "admin", "Cardiff", "Olanrewaju", "Nigeria", "staff", "Cardiff"]
+
+for x in range(0, len(values), 4):
+    query = """INSERT INTO users (employeeCode, password, authorisationLevel, baseRestaurant)
+VALUES (?, ?, ?, ?);"""
+    cur.execute(query, (values[x], sha256_crypt.hash(values[x+1]), values[x+2], values[x+3]))
+
+
+
+
 # Food Data
 food = ["Sushi", "Steak", "Pasta", "Salad", "Tacos", "Sushi Rolls", "Chicken Wings", "Ribs", "Soup", "Sandwiches", "Curry", "Seafood Platter", "Desserts", "Stir-Fry", "Dim Sum", "Nachos", "Pho", "Paella"]
 
@@ -58,8 +77,8 @@ now_dates = generate_random_dates(start_date, end_date, 10)
 readyTime = generate_ready_times(now_dates)
 
 
-before_statuses = ['Payment Completed','Cancelled']
-statuses = ['Order Created','Cooking', 'Ready', 'Delivered', 'Payment Completed','Cancelled']
+before_statuses = ['Payment Completed']
+statuses = ['Order Created','Cooking', 'Ready', 'Delivered', 'Payment Completed']
 
 
 
@@ -119,35 +138,8 @@ def generate_orders(start, numOfOrders, dates, readyTime, statuses, food, discou
 
 
 generate_orders(2, numOfOrders, before_dates, before_readyTime, before_statuses, food, discounts)
-print("hello")
-generate_orders(numOfOrders + 1, numOfOrders + 10, now_dates, readyTime, statuses, food, discounts)
-        
-conn.commit()
+generate_orders(numOfOrders + 1, numOfOrders + 50, now_dates, readyTime, statuses, food, discounts)
 
-
-
-
-
-
-
-
-# # Users Data
-# values = ["Luqmaan", "Somalia", "chef", "1", "Jake", "England", "staff", "2", "Serhii", "Ukraine", "admin", "3", "Plamen", "Bulgaria", "manager", "4", "Andre", "Jamaica", "staff", "5"]
-
-# for x in range(0, len(values), 4):
-#     query = """INSERT INTO users (employeeCode, password, authorisationLevel, baseRestaurant)
-# VALUES (?, ?, ?, ?);"""
-#     cur.execute(query, (values[x], sha256_crypt.hash(values[x+1]), values[x+2], values[x+3]))
-
-
-# # Restaurant Data
-# values = ["Bristol", "12", "Cardiff", "17", "Birmingham", "56", "Newcastle", "20", "Manchester", "25", "Liverpool", "99"]
-
-# for x in range(0, len(values), 2):
-#     query = """INSERT INTO restaurant (restaurantName, numberOfTables)
-# VALUES (?, ?)"""
-#     cur.execute(query, (values[x], values[x+1]))
-#     print((values[x], values[x+1]))
 
 conn.commit()
 conn.close()
