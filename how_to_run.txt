@@ -1,0 +1,16 @@
+In order to run this project, you must click run on LoginApp.py, which should bring you to a login screen. The following are login details and their different roles:
+Usercode:        Password:      Authorisation Level:
+Jake             England        admin
+Staff            Staffuser      staff
+Luqmaan          Somalia        chef
+Test             Manager        manager
+
+When you run routes.py, you will see a login screen and a navbar with all the CRUD operation on them, as well as an admin only section. You can change your own base restaurant as an admin to edit other restaurants
+
+In order to run this app you need to install:
+pip install tk
+pip install tkcalender
+pip install passlib
+pip install pillow
+pip install reportLab
+pip install pdfkit
