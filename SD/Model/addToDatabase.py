@@ -71,8 +71,8 @@ now_dates = generate_random_dates(start_date, end_date, 10)
 readyTime = generate_ready_times(now_dates)
 
 
-before_statuses = ['Payment Completed']
-statuses = ['Order Created','Cooking', 'Ready', 'Delivered', 'Payment Completed']
+before_statuses = ['Delivered']
+statuses = ['Order Created','Cooking', 'Ready', 'Delivered']
 
 
 
@@ -132,7 +132,7 @@ def generate_orders(start, numOfOrders, dates, readyTime, statuses, food, discou
 
 
 generate_orders(2, numOfOrders, before_dates, before_readyTime, before_statuses, food, discounts)
-generate_orders(numOfOrders + 1, numOfOrders + 50, now_dates, readyTime, statuses, food, discounts)
+generate_orders(numOfOrders + 1, numOfOrders + 10, now_dates, readyTime, statuses, food, discounts)
 
 
 conn.commit()

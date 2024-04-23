@@ -191,14 +191,15 @@
 
 .menu-holder{
 
-  position: absolute;
-  top: 30%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  max-height: 100vh; 
+  
+  position: relative; /* Change from absolute to relative positioning */
+  top: 100px;
+  left: 17%;
+  transform: none;
   height: auto;
+  max-height: 100vh; 
   width: 1000px;
-
+  margin-bottom: 500px; /* Add space from the bottom */
 }
 
 .menu-holder table{
