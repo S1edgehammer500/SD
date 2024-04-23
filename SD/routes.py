@@ -279,6 +279,10 @@ def deleteUser():
     tempAuthorisationLevel = currentUser.getAuthorisationLevels()
     authorisationLevel = strip.it(tempAuthorisationLevel)
 
+    if employeeCode == []:
+        flash("There are no available users to delete", "danger")
+        return redirect(url_for('home'))
+
     return render_template('deleteUser.html', title = "Delete User", logged_in=logged_in, authLevel=authLevel, baseRestaurant=baseRestaurant, authorisationLevel=authorisationLevel, employeeCode=employeeCode, codeLen=len(employeeCode))
 
 @app.route("/deleteUser2/", methods=['GET', 'POST'])
@@ -295,6 +299,9 @@ def deleteUser2():
         if request.method == "POST":
             # Code that you wanna delete
             code = request.form['code']
+            if code == None:
+                flash("You need to select a valid option", "danger")
+                return redirect(url_for('deleteUser'))
 
             # Users code. DON'T DELETE
             usercode = session['code']
@@ -322,6 +329,7 @@ def updateUser():
     currentUser = User()
     currentUser.setLoginDetails(session['code'])
 
+
     BR = currentUser.getBaseRestaurant()
     AL = currentUser.getAuthorisation()
 
@@ -348,6 +356,10 @@ def updateUser():
         print(authorisationLevel)
         print(AL)
 
+    if employeeCode == []:
+        flash("There are no available users to update", "danger")
+        return redirect(url_for('home'))
+
     return render_template('updateUser.html', title = "Update User", logged_in=logged_in, authLevel=authLevel, baseRestaurant=baseRestaurant, authorisationLevel=authorisationLevel, employeeCode=employeeCode, codeLen=len(employeeCode))
     
 @app.route("/updateUser2/", methods=['GET', 'POST'])
@@ -367,6 +379,9 @@ def updateUser2():
 
     if request.method == "POST":
         code = request.form['code']
+        if code == None:
+                flash("You need to select a valid option", "danger")
+                return redirect(url_for('deleteUser'))
         session['previousCode'] = code
         currentUser.setLoginDetails(session['previousCode'])
 
@@ -609,6 +624,10 @@ def updateMenu():
     
     foodList, priceList, allergyList, idList, isAvailableList = currentMenu.getMenuList(currentRestaurant)
 
+    if foodList == []:
+        flash("There are no available items to update", "danger")
+        return redirect(url_for('home'))
+
 
     return render_template('updateMenu.html', title = "Update Menu" , logged_in=logged_in, authLevel=authLevel,allergyList=allergyList, isAvailableList=isAvailableList, foodList = foodList, priceList = priceList, listLen = len(foodList), idList = idList)
 
@@ -704,6 +723,10 @@ def deleteRestaurant():
     tempNumberOfTables= [tables[1] for tables in restaurant.get_restaurants()]
     numberOfTables = strip.it(tempNumberOfTables)
 
+    if restaurantName == []:
+        flash("There are no available restaurants to delete", "danger")
+        return redirect(url_for('home'))
+
     return render_template('deleteRestaurant.html', title = "Delete Restaurant", logged_in=logged_in, authLevel = authLevel, restaurantName=restaurantName, numberOfTables=numberOfTables, restaurantNameLen=len(restaurantName))
 
 
@@ -759,6 +782,10 @@ def updateRestaurant():
     numberOfTables = []
     tempNumberOfTables= [tables[1] for tables in restaurant.get_restaurants()]
     numberOfTables = strip.it(tempNumberOfTables)
+
+    if restaurantName == []:
+        flash("There are no available restaurants to update", "danger")
+        return redirect(url_for('home'))
 
     
     return render_template('updateRestaurant.html', title = "Update Restaurant", logged_in=logged_in, authLevel = authLevel, restaurantName=restaurantName, numberOfTables=numberOfTables, restaurantNameLen=len(restaurantName))
@@ -913,6 +940,9 @@ def deleteDiscount():
     discount = Discount()
     
     dIDs, dValues = discount.get_discounts()
+    if dIDs == []:
+        flash("There are no available discounts to delete", "danger")
+        return redirect(url_for('home'))
 
     return render_template('deleteDiscount.html', title = "Delete Discount", logged_in=logged_in, authLevel = authLevel, dIDs=dIDs, dValues=dValues, discountsLen = len(dIDs))
 
@@ -958,6 +988,10 @@ def updateDiscount():
     discount = Discount()
 
     dIDs, dValues = discount.get_discounts()
+
+    if dIDs == []:
+        flash("There are no available users to update", "danger")
+        return redirect(url_for('home'))
   
     return render_template('updateDiscount.html', title = "Update Discount", logged_in=logged_in, authLevel = authLevel, dIDs=dIDs, dValues=dValues, discountsLen = len(dIDs))
 
@@ -1404,6 +1438,10 @@ def deleteInventory():
     itemSL = []
     tempItemSL = inventory.getItemStockLimit(currentRestaurant)
     itemSL = strip.it(tempItemSL)
+
+    if inventoryID == []:
+        flash("There are no available items to delete", "danger")
+        return redirect(url_for('home'))
     
     return render_template('deleteInventory.html', title = "Delete Inventory" , logged_in=logged_in, authLevel=authLevel, inventoryID = inventoryID, itemName = itemName, itemQuantity = itemQuantity, itemSL=itemSL, listLen = len(itemName))
 
@@ -1464,6 +1502,10 @@ def updateInventory():
     itemSL = []
     tempItemSL = inventory.getItemStockLimit(currentRestaurant)
     itemSL = strip.it(tempItemSL)
+
+    if inventoryID == []:
+        flash("There are no available items to update", "danger")
+        return redirect(url_for('home'))
     
     return render_template('updateInventory.html', title = "Update Inventory" , logged_in=logged_in, authLevel=authLevel, inventoryID = inventoryID, itemName = itemName, itemQuantity = itemQuantity, itemSL=itemSL, listLen = len(itemName))
 
@@ -1804,6 +1846,10 @@ def deleteOrder():
     tempReadyTime = [readyTime[6] for readyTime in order.get_order(restaurant)]
     readyTime = strip.it(tempReadyTime)
 
+    if ID == []:
+        flash("There are no available orders to delete", "danger")
+        return redirect(url_for('home'))
+
     
     return render_template('deleteOrder.html', title="Delete Order", logged_in=logged_in, authLevel=authLevel, status=status, price=price, tableNumber=tableNumber, startTime=startTime, readyTime=readyTime, ID=ID, len=len(ID))
 
@@ -1858,6 +1904,10 @@ def updateOrder():
 
     tempReadyTime = [readyTime[6] for readyTime in order.get_order(restaurant)]
     readyTime = strip.it(tempReadyTime)
+
+    if ID == []:
+        flash("There are no available orders to update", "danger")
+        return redirect(url_for('home'))
     
     return render_template('updateOrder.html', title="Update Order", logged_in=logged_in, authLevel=authLevel, status=status, price=price, tableNumber=tableNumber, startTime=startTime, readyTime=readyTime, len=len(ID), orderID=ID)
 
@@ -2219,6 +2269,10 @@ def updateReservation():
     tempEndTimeList = reservation.getEndTimeList(currentRestaurant)
     endTimeList = strip.it(tempEndTimeList)
 
+    if reservationIDList == []:
+        flash("There are no available reservations to update", "danger")
+        return redirect(url_for('home'))
+
     return render_template('updateReservation.html', title="Update Reservation", logged_in=logged_in, authLevel=authLevel, Name=namesList, tables=tablesList, startTime=startTimeList, endTime=endTimeList, reservationID=reservationIDList, listLen=len(namesList))
 
 
@@ -2325,6 +2379,10 @@ def deleteReservation():
     tempEndTimeList = reservation.getEndTimeList(currentRestaurant)
     endTimeList = strip.it(tempEndTimeList)
 
+    if reservationIDList == []:
+        flash("There are no available reservations to delete", "danger")
+        return redirect(url_for('home'))
+
     return render_template('deleteReservation.html', title="Delete Reservation", logged_in=logged_in, authLevel=authLevel, Name=namesList, tables=tablesList, startTime=startTimeList, endTime=endTimeList, reservationID=reservationIDList, listLen=len(namesList))
 
 @app.route("/deleteReservation2/", methods=['GET', 'POST'])
@@ -2392,6 +2450,10 @@ def deleteMenu():
     currentRestaurant = currentUser.getBaseRestaurant()
 
     foodList, priceList, allergyList, idList, isAvailableList = currentMenu.getMenuList(currentRestaurant)
+
+    if foodList == []:
+        flash("There are no available items to delete", "danger")
+        return redirect(url_for('home'))
 
 
     error = ""
@@ -2558,6 +2620,10 @@ def updateFood():
 
     foodName = [item[0] for item in foodList]
     foodPrice = [item[1] for item in foodList]
+
+    if foodName == []:
+        flash("There are no available food to update", "danger")
+        return redirect(url_for('home'))
     
 
 
@@ -2727,7 +2793,9 @@ def deleteFood():
     foodPrice = [item[1] for item in foodList]
     foodAllergy = [item[2] for item in foodList]
 
-    
+    if foodName == []:
+        flash("There are no available food items to delete", "danger")
+        return redirect(url_for('home'))    
 
 
     return render_template('deleteFood.html', title = "Delete Food" , logged_in=logged_in, authLevel=authLevel, foodName = foodName, foodPrice = foodPrice, listLen = len(foodName))
@@ -2866,6 +2934,10 @@ def deleteStaff():
     tempAuthorisationLevel = currentUser.getStaffAuthorisationLevels()
     authorisationLevel = strip.it(tempAuthorisationLevel)
 
+    if employeeCode == []:
+        flash("There are no available users to delete", "danger")
+        return redirect(url_for('home'))
+
     try:
         if request.method == "POST":
             # Code that you wanna delete
@@ -2917,6 +2989,10 @@ def updateStaff():
     authorisationLevel = []
     tempAuthorisationLevel = currentUser.getStaffAuthorisationLevels()
     authorisationLevel = strip.it(tempAuthorisationLevel)
+
+    if employeeCode == []:
+        flash("There are no available users to update", "danger")
+        return redirect(url_for('home'))
 
     return render_template('updateStaff.html', title = "Update Staff", logged_in=logged_in, authLevel=authLevel, baseRestaurant=baseRestaurant, authorisationLevel=authorisationLevel, employeeCode=employeeCode, codeLen=len(employeeCode))
 
@@ -3092,6 +3168,10 @@ def deleteItem():
     
     itemList = item.get_item_list()
     itemList, itemName, itemQuantity, itemSL = itemList
+
+    if itemList== []:
+        flash("There are no available items to delete", "danger")
+        return redirect(url_for('home'))
     
 
 
@@ -3143,6 +3223,10 @@ def updateItem():
     
     itemList = item.get_item_list()
     itemList, itemName, itemQuantity, itemSL = itemList
+
+    if itemList == []:
+        flash("There are no available items to update", "danger")
+        return redirect(url_for('home'))
 
 
 
