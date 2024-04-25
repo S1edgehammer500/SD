@@ -234,8 +234,8 @@ class Item: #item class
 
     def takeAwayItems(self, quantity, itemName):
         if quantity != None:
-            if self.getName(itemName):
-                itemQuant = self.getQuantity(itemName)
+            if self.checkName(itemName):
+                itemQuant = self.getQuantity()
 
 
                 quantity = itemQuant - quantity
