@@ -10,14 +10,14 @@ def sales(startDate, endDate, restaurantName = None):
     if restaurantName == None:
         query = """SELECT sum(orderPrice), restaurantName 
                 FROM orders
-                WHERE orders.startTime BETWEEN (?) AND (?) AND status = "Payment Completed"
+                WHERE orders.startTime BETWEEN (?) AND (?) AND status = "Delivered"
                 GROUP by orders.restaurantName;"""
         cur.execute(query, (startDate, endDate))
 
     elif type(restaurantName) == str:
         query = """SELECT sum(orderPrice), restaurantName 
                 FROM orders
-                WHERE orders.startTime BETWEEN (?) AND (?) AND orders.restaurantName = (?) AND status = "Payment Completed"
+                WHERE orders.startTime BETWEEN (?) AND (?) AND orders.restaurantName = (?) AND status = "Delivered"
                 GROUP by orders.restaurantName;"""
         cur.execute(query, (startDate, endDate, restaurantName))
 
@@ -27,7 +27,7 @@ def sales(startDate, endDate, restaurantName = None):
 
         query = """SELECT sum(orderPrice), restaurantName 
                 FROM orders
-                WHERE orders.startTime BETWEEN (?) AND (?) AND status = "Payment Completed" AND (orders.restaurantName = (?)"""
+                WHERE orders.startTime BETWEEN (?) AND (?) AND status = "Delivered" AND (orders.restaurantName = (?)"""
         
         for name in range(1, len(restaurantName)):
             query += " OR orders.restaurantName = (?)"
@@ -58,14 +58,14 @@ def averageSales(startDate, endDate, restaurantName = None):
     if restaurantName == None:
         query = """SELECT avg(orderPrice), restaurantName 
                 FROM orders
-                WHERE orders.startTime BETWEEN (?) AND (?) AND status = "Payment Completed"
+                WHERE orders.startTime BETWEEN (?) AND (?) AND status = "Delivered"
                 GROUP by orders.restaurantName;"""
         cur.execute(query, (startDate, endDate))
 
     elif type(restaurantName) == str:
         query = """SELECT avg(orderPrice), restaurantName 
                 FROM orders
-                WHERE orders.startTime BETWEEN (?) AND (?) AND orders.restaurantName = (?) AND status = "Payment Completed"
+                WHERE orders.startTime BETWEEN (?) AND (?) AND orders.restaurantName = (?) AND status = "Delivered"
                 GROUP by orders.restaurantName;"""
         cur.execute(query, (startDate, endDate, restaurantName))
 
@@ -74,7 +74,7 @@ def averageSales(startDate, endDate, restaurantName = None):
 
         query = """SELECT avg(orderPrice), restaurantName 
                 FROM orders 
-                WHERE orders.startTime BETWEEN (?) AND (?)  AND status = "Payment Completed" AND (orders.restaurantName = (?)"""
+                WHERE orders.startTime BETWEEN (?) AND (?)  AND status = "Delivered" AND (orders.restaurantName = (?)"""
         
         for name in range(1, len(restaurantName)):
             query += " OR orders.restaurantName = (?)"
@@ -156,14 +156,14 @@ def totalDiscountAmount(startDate, endDate, restaurantName = None):
     if restaurantName == None:
         query = """SELECT sum(orderPrice - (orderPrice * (discountValue / 100))), restaurantName
                 FROM orders JOIN discounts JOIN discountList
-                WHERE orders.orderID = discountList.orderID AND discounts.discountID = discountList.discountID AND orders.startTime BETWEEN (?) AND (?) AND status = "Payment Completed"
+                WHERE orders.orderID = discountList.orderID AND discounts.discountID = discountList.discountID AND orders.startTime BETWEEN (?) AND (?) AND status = "Delivered"
                 GROUP by orders.restaurantName;"""
         cur.execute(query, (startDate, endDate))
 
     elif type(restaurantName) == str:
         query = """SELECT sum(orderPrice - (orderPrice * (discountValue / 100))), restaurantName
                 FROM orders JOIN discounts JOIN discountList
-                WHERE orders.orderID = discountList.orderID AND discounts.discountID = discountList.discountID AND orders.startTime BETWEEN (?) AND (?) AND orders.restaurantName = (?) AND status = "Payment Completed"
+                WHERE orders.orderID = discountList.orderID AND discounts.discountID = discountList.discountID AND orders.startTime BETWEEN (?) AND (?) AND orders.restaurantName = (?) AND status = "Delivered"
                 GROUP by orders.restaurantName;"""
         cur.execute(query, (startDate, endDate, restaurantName))
 
@@ -172,7 +172,7 @@ def totalDiscountAmount(startDate, endDate, restaurantName = None):
 
         query = """SELECT sum(orderPrice - (orderPrice * (discountValue / 100))), restaurantName
                 FROM orders JOIN discounts JOIN discountList
-                WHERE orders.orderID = discountList.orderID AND discounts.discountID = discountList.discountID AND orders.startTime AND status = "Payment Completed" AND BETWEEN (?) AND (?)
+                WHERE orders.orderID = discountList.orderID AND discounts.discountID = discountList.discountID AND orders.startTime AND status = "Delivered" AND BETWEEN (?) AND (?)
                 AND (orders.restaurantName = (?)"""
         
         for name in range(1, len(restaurantName)):
@@ -202,14 +202,14 @@ def averageDiscountAmount(startDate, endDate, restaurantName = None):
     if restaurantName == None:
         query = """SELECT avg(orderPrice - (orderPrice * (discountValue / 100))), restaurantName
                 FROM orders JOIN discounts JOIN discountList
-                WHERE orders.orderID = discountList.orderID AND discounts.discountID = discountList.discountID AND orders.startTime BETWEEN (?) AND (?) AND status = "Payment Completed"
+                WHERE orders.orderID = discountList.orderID AND discounts.discountID = discountList.discountID AND orders.startTime BETWEEN (?) AND (?) AND status = "Delivered"
                 GROUP by orders.restaurantName;"""
         cur.execute(query, (startDate, endDate))
 
     elif type(restaurantName) == str:
         query = """SELECT avg(orderPrice - (orderPrice * (discountValue / 100))), restaurantName
                 FROM orders JOIN discounts JOIN discountList
-                WHERE orders.orderID = discountList.orderID AND discounts.discountID = discountList.discountID AND orders.startTime BETWEEN (?) AND (?) AND orders.restaurantName = (?) AND status = "Payment Completed"
+                WHERE orders.orderID = discountList.orderID AND discounts.discountID = discountList.discountID AND orders.startTime BETWEEN (?) AND (?) AND orders.restaurantName = (?) AND status = "Delivered"
                 GROUP by orders.restaurantName;"""
         cur.execute(query, (startDate, endDate, restaurantName))
 
@@ -219,7 +219,7 @@ def averageDiscountAmount(startDate, endDate, restaurantName = None):
         query = """SELECT avg(orderPrice - (orderPrice * (discountValue / 100))), restaurantName
                 FROM orders JOIN discounts JOIN discountList
                 WHERE orders.orderID = discountList.orderID AND discounts.discountID = discountList.discountID AND orders.startTime BETWEEN (?) AND (?)
-                AND status = "Payment Completed" AND (orders.restaurantName = (?)"""
+                AND status = "Delivered" AND (orders.restaurantName = (?)"""
         
         for name in range(1, len(restaurantName)):
             query += " OR orders.restaurantName = (?)"
